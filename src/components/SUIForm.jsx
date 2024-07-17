@@ -1,14 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Dropdown, Form, FormInput } from "semantic-ui-react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const BASE_URL =
-  !process.env.NODE_ENV || process.env.NODE_ENV === "development"
-    ? "http://localhost:4000"
-    : "https://gradr-backend.onrender.com";
+const BASE_URL = import.meta.env.DEV
+  ? "http://localhost:4000"
+  : "https://gradr-backend.onrender.com";
 
 const SUIForm = () => {
   const nav = useNavigate();
@@ -20,6 +19,7 @@ const SUIForm = () => {
     file1: undefined,
     file2: undefined,
   });
+
   const { isFetching, isLoading, isError, isSuccess, error, mutate } =
     useMutation({
       mutationKey: ["gradeData"],
@@ -29,6 +29,10 @@ const SUIForm = () => {
         return res;
       },
     });
+
+  // useEffect(() => {
+  //   toast.success("Use sample question and grade in README.md for testing.");
+  // }, []);
 
   const handleChange = (e, { name, value }) => {
     if (/file\d/i.test(name)) {
@@ -71,12 +75,12 @@ const SUIForm = () => {
   ];
 
   if (isError) {
-    setLoading(false);
+    // setLoading(false);
     toast.error(error?.message);
   }
 
   if (isSuccess) {
-    setLoading(false);
+    // setLoading(false);
     toast.success("Grading succesful");
     setTimeout(() => {
       nav("/results");
