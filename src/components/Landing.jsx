@@ -27,7 +27,7 @@ const Landing = () => {
         icon
         labelPosition="right"
         size="huge"
-        onClick={() => nav("assessments")}
+        onClick={() => nav("login")}
       >
         Try it out
         <Icon name="right arrow" />

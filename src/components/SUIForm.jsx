@@ -1,17 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Dropdown, Form, FormInput } from "semantic-ui-react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const BASE_URL = import.meta.env.DEV
-  ? "http://localhost:4000"
-  : "https://gradr-backend.onrender.com";
+import { BASE_URL } from "../requests/constants";
 
 const SUIForm = () => {
   const nav = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     marks: 0,
     dependencyLevel: 0,
@@ -30,10 +27,6 @@ const SUIForm = () => {
       },
     });
 
-  // useEffect(() => {
-  //   toast.success("Use sample question and grade in README.md for testing.");
-  // }, []);
-
   const handleChange = (e, { name, value }) => {
     if (/file\d/i.test(name)) {
       const files = e.nativeEvent.target.files;
@@ -47,8 +40,9 @@ const SUIForm = () => {
   };
 
   const handleGrade = async () => {
-    setLoading(true);
-    toast.success("Performing grading. Be patient.");
+    toast.success("Performing grading. Be patient.", {
+      duration: 6000,
+    });
     const formData = new FormData();
     for (const [key, val] of Object.entries(form)) {
       formData.append(key, val);
@@ -75,12 +69,10 @@ const SUIForm = () => {
   ];
 
   if (isError) {
-    // setLoading(false);
     toast.error(error?.message);
   }
 
   if (isSuccess) {
-    // setLoading(false);
     toast.success("Grading succesful");
     setTimeout(() => {
       nav("/results");
@@ -160,7 +152,7 @@ const SUIForm = () => {
       </div>
 
       <Button primary type="submit" onClick={handleGrade}>
-        {isFetching || isLoading || loading ? "Grading..." : "Grade"}
+        {isFetching || isLoading ? "Grading..." : "Grade"}
       </Button>
     </Form>
   );

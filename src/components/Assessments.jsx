@@ -1,10 +1,18 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import SUIForm from "./SUIForm";
 import SUITable from "./SUITable";
 import { ModalContext } from "../pages/Home";
+import { useSearchParams } from "react-router-dom";
 
 const Assessments = () => {
   const { showModal } = useContext(ModalContext);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("code")) {
+      localStorage.setItem("code", searchParams.get("code"));
+    }
+  }, [searchParams]);
 
   return (
     <div className="w-100 p-4 flex flex-col justify-between gap-2 border-l-stone-950">
