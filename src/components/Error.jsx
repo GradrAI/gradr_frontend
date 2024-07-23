@@ -10,7 +10,7 @@ const Error = () => {
       <Button
         primary
         onClick={() => {
-          nav("/");
+          nav("..");
           window.location.reload();
         }}
       >
