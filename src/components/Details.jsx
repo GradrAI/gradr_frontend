@@ -27,6 +27,7 @@ const Details = () => {
 
   console.log("data: ", data);
   if (data?.length) {
+    const filteredData = data.filter((el) => el);
     const {
       data: {
         question,
@@ -35,7 +36,7 @@ const Details = () => {
         onlineAnswers,
         answerFilesUrls,
       },
-    } = data[0];
+    } = filteredData[0];
 
     _filePath = answerFilesUrls[id];
     _markingGuide = markingGuide;
