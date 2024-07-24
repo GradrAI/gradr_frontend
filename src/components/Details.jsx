@@ -1,13 +1,11 @@
 // import { PDFViewer } from "@react-pdf/renderer";
 // import RDocument from "./RDocument";
 import { useMutationState } from "@tanstack/react-query";
-import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "semantic-ui-react";
 const Details = () => {
   const { id } = useParams();
   const nav = useNavigate();
-  const [clicked, setClicked] = useState(-1);
 
   const data = useMutationState({
     filters: "gradeData",
@@ -23,7 +21,7 @@ const Details = () => {
     _explanation = "",
     _feedback = "",
     _onlineAnswers = "",
-    _filePath = "";
+    _studentAnswer = "";
 
   console.log("data: ", data);
   if (data?.length) {
@@ -38,15 +36,15 @@ const Details = () => {
       },
     } = filteredData[0];
 
-    _filePath = answerFilesUrls[id];
+    _studentAnswer = answerFilesUrls[id];
     _markingGuide = markingGuide;
     _question = question;
     _onlineAnswers = onlineAnswers;
 
     if (gradingResponse?.length) {
-      const { score, explanation, feedback } = gradingResponse.map(
-        ({ value }) => JSON.parse(value)
-      )[id];
+      const { score, explanation, feedback } = gradingResponse
+        .filter((el) => el)
+        .map((response) => JSON.parse(response))[id];
       //! TO-DO: remove special characters(/n, *) and format appropriately
       _score = score;
       _explanation = explanation;
@@ -60,54 +58,65 @@ const Details = () => {
         Go back
       </Button>
 
-      <div className="w-full h-full flex gap-4 justify-between overflow-hidden">
-        <div
-          className={`${
-            clicked == -1 ? "w-2/12" : clicked == 0 ? "w-8/12" : "w-2/12"
-          } h-100 text-stone-500 border flex flex-col gap-4 p-4 overflow-y-scroll cursor-pointer`}
-          onClick={() => setClicked(0)}
-        >
+      <div className="flex flex-col items-end justify-between gap-2 text-end">
+        <div className="flex flex-col gap-0">
           <p className="text-xl">Question</p>
-          <pre>{_question}</pre>
-
-          {!!_filePath && <img src={_filePath} alt="student's answer" />}
+          <p
+            onClick={() => {
+              window.open(_question, "_blank", "noopener,noreferrer");
+            }}
+            className="text-cyan-500 cursor-pointer"
+          >
+            View Question
+          </p>
         </div>
 
-        <div
-          className={`${
-            clicked == -1 ? "w-5/12" : clicked == 1 ? "w-8/12" : "w-2/12"
-          } h-100 text-stone-500 border flex flex-col gap-4 p-4 bg-slate-100 overflow-y-scroll cursor-pointer`}
-          onClick={() => setClicked(1)}
-        >
+        <div className="flex flex-col gap-0">
           <p className="text-xl">Marking guide</p>
-          <pre>{_markingGuide}</pre>
+          <p
+            onClick={() => {
+              window.open(_markingGuide, "_blank", "noopener,noreferrer");
+            }}
+            className="text-cyan-500 cursor-pointer"
+          >
+            View marking guide
+          </p>
         </div>
 
-        <div
-          className={`${
-            clicked == -1 ? "w-5/12" : clicked == 2 ? "w-8/12" : "w-2/12"
-          } h-100 text-stone-500 border flex flex-col gap-4 p-4 overflow-y-scroll cursor-pointer`}
-          onClick={() => setClicked(2)}
-        >
-          <div>
-            <p className="text-xl">Score</p>
-            <p>{_score}</p>
-          </div>
+        <div className="flex flex-col gap-0">
+          <p className="text-xl">Student answer</p>
+          <p
+            onClick={() => {
+              window.open(_studentAnswer, "_blank", "noopener,noreferrer");
+            }}
+            className="text-cyan-500 cursor-pointer"
+          >
+            {`View student's answer`}
+          </p>
+        </div>
+      </div>
 
-          <div>
-            <p className="text-xl">Explanation</p>
-            <p>{_explanation}</p>
-          </div>
+      <div
+        className={`w-full min-h-full h-full flex gap-4 justify-between text-stone-500 border flex flex-col gap-4 p-4 overflow-y-scroll cursor-pointer`}
+      >
+        <div>
+          <p className="text-xl">Score</p>
+          <p>{_score}</p>
+        </div>
 
-          <div>
-            <p className="text-xl">Feedback</p>
-            <p>{_feedback}</p>
-          </div>
+        <div>
+          <p className="text-xl">Explanation</p>
+          <p>{_explanation}</p>
+        </div>
 
-          <div>
-            <p className="text-xl">Online Answers</p>
-            <pre>{_onlineAnswers}</pre>
-          </div>
+        <div>
+          <p className="text-xl">Feedback</p>
+          <p>{_feedback}</p>
+        </div>
+
+        <div>
+          <p className="text-xl">Online Answers</p>
+          <pre>{_onlineAnswers}</pre>
         </div>
       </div>
 
