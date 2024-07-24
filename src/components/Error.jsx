@@ -14,7 +14,7 @@ const Error = () => {
           window.location.reload();
         }}
       >
-        Go back home
+        Go back
       </Button>
     </div>
   );
