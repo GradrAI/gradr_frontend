@@ -60,7 +60,6 @@ const Details = () => {
 
       <div className="flex flex-col items-end justify-between gap-2 text-end">
         <div className="flex flex-col gap-0">
-          <p className="text-xl">Question</p>
           <p
             onClick={() => {
               window.open(_question, "_blank", "noopener,noreferrer");
@@ -72,7 +71,6 @@ const Details = () => {
         </div>
 
         <div className="flex flex-col gap-0">
-          <p className="text-xl">Marking guide</p>
           <p
             onClick={() => {
               window.open(_markingGuide, "_blank", "noopener,noreferrer");
@@ -84,7 +82,6 @@ const Details = () => {
         </div>
 
         <div className="flex flex-col gap-0">
-          <p className="text-xl">Student answer</p>
           <p
             onClick={() => {
               window.open(_studentAnswer, "_blank", "noopener,noreferrer");
