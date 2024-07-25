@@ -1,4 +1,4 @@
-import { useMutationState, useMutation } from "@tanstack/react-query";
+import { useMutationState, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
   TableRow,
@@ -13,27 +13,22 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 import { BASE_URL } from "../requests/constants";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+const callFn = async (code, sheetsObject) => {
+  return await axios.post(`${BASE_URL}/api/oauth2callback`, {
+    code,
+    sheetsObject,
+  });
+};
 
 const Results = () => {
   const nav = useNavigate();
   const code = localStorage.getItem("code");
-
-  const { isFetching, isLoading, isError, isSuccess, error, data, mutate } =
-    useMutation({
-      mutationKey: ["exportData"],
-      mutationFn: async ({ code, sheetsObject }) => {
-        try {
-          return await axios.post(`${BASE_URL}/api/oauth2callback`, {
-            code,
-            sheetsObject,
-          });
-        } catch (error) {
-          console.log(error);
-        }
-      },
-      // retry: 3,
-    });
+  const [clicked, setClicked] = useState(false);
+  const [sheetsObject, setSheetsObject] = useState([]);
+  const [sheetsUri, setSheetsUri] = useState("");
+  const [buttonText, setButtonText] = useState("Export to Google Sheets.");
 
   const gradeData = useMutationState({
     filters: "gradeData",
@@ -43,7 +38,14 @@ const Results = () => {
     },
   });
 
-  let buttonText = "Export to Google Sheets.";
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["exportData"],
+    queryFn: () => callFn(code, sheetsObject),
+    enabled: Boolean(
+      Boolean(code?.length) && Boolean(sheetsObject.length) && clicked
+    ),
+  });
+
   let gradingResponse_ = useMemo(() => {
     if (gradeData?.length) {
       const filteredGradeData = gradeData.filter((el) => el);
@@ -55,42 +57,36 @@ const Results = () => {
     }
   }, [gradeData]);
 
-  // let gradingResponse_ = [];
-  // console.log("gradeData: ", gradeData);
-  // if (gradeData?.length) {
-  //   const filteredGradeData = gradeData.filter((el) => el);
-  //   console.log("filteredGradeData: ", filteredGradeData);
-  //   const {
-  //     data: { gradingResponse }, // gradingResponse
-  //   } = filteredGradeData[0];
+  useEffect(() => {
+    if (data) {
+      toast.success("Successfully exported data");
+      console.log("data: ", data);
+      setSheetsUri(data?.data?.data?.spreadsheetUrl);
+    }
+  }, [data]);
 
-  //   gradingResponse_ = gradingResponse?.map(({ value }) => JSON.parse(value));
-  // }
+  useEffect(() => {
+    if (isLoading) setButtonText("Exporting...");
+    if (isError) {
+      console.log("error: ", error);
+      toast.error("An error occurred");
+      setButtonText("Retry");
+    }
+  }, [isLoading, isError, error]);
 
-  let sheetsUri = "";
-  if (isFetching || isLoading) buttonText = "Exporting...";
-  if (isError) {
-    console.log("error: ", error);
-    toast.error("An error occurred");
-    buttonText = "Retry";
-  }
-  if (isSuccess && data) {
-    toast.success("Successfully exported data");
-    console.log("data: ", data);
-    sheetsUri = data?.data?.data?.spreadsheetUrl;
-  }
-
-  const exportToGoogleSheets = () => {
-    if (code && gradingResponse_?.length) {
+  useEffect(() => {
+    if (gradingResponse_?.length) {
       const re = gradingResponse_.map(({ score }, id) => [
         `${id + 1}`,
         `${score}`,
       ]);
       const header = ["Student ID", "Grade"];
-      const sheetsObject = [header, ...re];
-      console.log("sheetsObject: ", sheetsObject);
-      mutate({ code, sheetsObject }); // mutation that makes call to endpoint that (1) creates new sheet and (2) appends values to the sheet
+      setSheetsObject([header, ...re]);
     }
+  }, [gradingResponse_]);
+
+  const exportToGoogleSheets = () => {
+    setClicked(true);
   };
 
   if (gradingResponse_[0]?.status == "rejected") {
