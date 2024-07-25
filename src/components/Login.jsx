@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Button, Form } from "semantic-ui-react";
 
@@ -7,27 +7,16 @@ import { BASE_URL } from "../requests/constants";
 import toast from "react-hot-toast";
 
 const Login = () => {
-  const [authUri, setAuthUri] = useState("");
+  const [clicked, setClicked] = useState(false);
 
-  const { isLoading, isError, isSuccess, error, data, mutate } = useMutation({
-    mutationKey: ["Data"],
-    mutationFn: async () => {
-      try {
-        const res = await axios.get(`${BASE_URL}/auth/google`);
-        return res;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    // retry: 3,
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["Data"],
+    queryFn: () => axios.get(`${BASE_URL}/auth/google`),
+    enabled: clicked,
   });
 
-  if (authUri) {
-    window.location.href = authUri;
-  }
-
   const handleSubmit = () => {
-    mutate();
+    setClicked(true);
   };
 
   useEffect(() => {
@@ -37,11 +26,10 @@ const Login = () => {
     if (isError) {
       toast.error(error);
     }
-    if (isSuccess && data) {
-      console.log("data: ", data);
-      setAuthUri(data?.data?.authorizationUrl);
+    if (data) {
+      window.location.href = data?.data?.authorizationUrl;
     }
-  }, [isSuccess, isError, error, data]);
+  }, [isLoading, isError, error, data]);
 
   return (
     <Form
