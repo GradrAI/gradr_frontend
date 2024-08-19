@@ -54,7 +54,7 @@ const Details = () => {
 
   return (
     <div className="w-100 h-dvh flex flex-col gap-4 p-8">
-      <Button primary onClick={() => nav("..")} className="w-[10%] self-start">
+      <Button primary onClick={() => nav("..")} className="self-start">
         Go back
       </Button>
 
@@ -91,6 +91,17 @@ const Details = () => {
             {`View student's answer`}
           </p>
         </div>
+
+        <div className="flex flex-col gap-0">
+          <p
+            onClick={() => {
+              window.open(_onlineAnswers, "_blank", "noopener,noreferrer");
+            }}
+            className="text-cyan-500 cursor-pointer"
+          >
+            {`View online answers to question`}
+          </p>
+        </div>
       </div>
 
       <div
@@ -110,14 +121,9 @@ const Details = () => {
           <p className="text-xl">Feedback</p>
           <p>{_feedback}</p>
         </div>
-
-        <div>
-          <p className="text-xl">Online Answers</p>
-          <pre>{_onlineAnswers}</pre>
-        </div>
       </div>
 
-      <Button primary onClick={() => nav("..")} className="w-[10%] self-end">
+      <Button primary onClick={() => nav("..")} className="self-end">
         Approve
       </Button>
     </div>
