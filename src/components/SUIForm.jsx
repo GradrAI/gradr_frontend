@@ -40,9 +40,7 @@ const SUIForm = () => {
   };
 
   const handleGrade = async () => {
-    toast.success("Performing grading. Be patient.", {
-      duration: 30 * 1000,
-    });
+    toast.success("Performing grading. Be patient.");
     const formData = new FormData();
     for (const [key, val] of Object.entries(form)) {
       formData.append(key, val);
