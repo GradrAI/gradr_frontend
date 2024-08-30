@@ -51,7 +51,7 @@ const Results = () => {
       const filteredGradeData = gradeData.filter((el) => el);
       const filteredGradingResponse =
         filteredGradeData[0]?.data?.gradingResponse?.filter((el) => el);
-      return filteredGradingResponse?.map((response) => JSON.parse(response));
+      return filteredGradingResponse;
     } else {
       return [];
     }
@@ -76,7 +76,7 @@ const Results = () => {
 
   useEffect(() => {
     if (gradingResponse_?.length) {
-      const re = gradingResponse_.map(({ score }, id) => [
+      const re = gradingResponse_.map(({ parsedResponse: { score } }, id) => [
         `${id + 1}`,
         `${score}`,
       ]);
@@ -135,10 +135,10 @@ const Results = () => {
         </TableHeader>
 
         <TableBody>
-          {gradingResponse_?.map((el, id) => (
+          {gradingResponse_?.map(({ parsedResponse }, id) => (
             <TableRow key={id}>
               <TableCell>{id + 1}</TableCell>
-              <TableCell>{el.score}</TableCell>
+              <TableCell>{parsedResponse.score}</TableCell>
               <TableCell>
                 <Button secondary onClick={() => nav(`${id}`)}>
                   Review
