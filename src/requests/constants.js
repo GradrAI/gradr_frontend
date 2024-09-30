@@ -59,19 +59,19 @@ export const users = [
 
 export const faqs = [
   {
-    heading: "Ut enim ad minima veniam, quis nostrum exercitationem ullam?",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
+    heading: "What type of exams can Gradr grade?",
+    text: "Gradr currently only grades paper-based tests. This is subject to change in the nearest future to allow assessment of other forms of examination.",
   },
   {
-    heading: "Ut enim ad minima veniam, quis nostrum exercitationem ullam?",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
+    heading: "Can Gradr assess scripts with illegible handwriting?",
+    text: "Yes. Gradr uses Google Gemini which has been trained with a large dataset and performs well even with illegible handwriting.",
   },
   {
-    heading: "Ut enim ad minima veniam, quis nostrum exercitationem ullam?",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
+    heading: "How reliable is Gradr?",
+    text: "Gradr works realiably well. We are constantly working to improve this.",
   },
   {
-    heading: "Ut enim ad minima veniam, quis nostrum exercitationem ullam?",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
+    heading: "How does Gradr measure accuracy?",
+    text: "We are undergoing the process of giving exact figures into this metric. This feature will be added soon.",
   },
 ];
