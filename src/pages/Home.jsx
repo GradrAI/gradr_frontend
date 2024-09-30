@@ -1,26 +1,38 @@
-import { createContext, useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import { Outlet } from "react-router-dom";
-
-export const ModalContext = createContext();
+import { useNavigate } from "react-router-dom";
+import { Button, Icon } from "semantic-ui-react";
 
 const Home = () => {
-  const [showModal, setShowModal] = useState(false);
+  const nav = useNavigate();
 
   return (
-    <ModalContext.Provider value={{ showModal, setShowModal }}>
-      <div className="w-100 h-screen flex">
-        <div className="w-2/12">
-          <Sidebar />
+    <div className="h-[90dvh] flex flex-col justify-center items-center gap-16">
+      <div className="py-10 px-14 flex flex-col justify-between items-center relative">
+        <p className="rounded-3xl py-4 px-8 bg-white border border-sky-600 text-sky-600 self-end z-0 absolute top-0 right-0">
+          Get more efficient
+        </p>
+        <div className="rounded-full flex justify-center items-center bg-gradient-to-tr from-sky-500 to-stone-50 border p-8 w-[20rem] h-[20rem] z-10">
+          <p className="text-white font-extrabold text-9xl not-italic">G</p>
         </div>
-
-        <div className="w-10/12 h-100 flex flex-col">
-          <Header />
-          <Outlet />
-        </div>
+        <p className="text-white rounded-3xl py-4 px-8 bg-gradient-to-l from-purple-300 to-neutral-300 border border-stone-100 self-end z-0 absolute bottom-14 -left-10">
+          Save Time
+        </p>
+        <p className="text-white rounded-3xl py-4 px-8 bg-sky-600 self-end z-0 absolute bottom-0 right-0">
+          Grade faster with Gradr
+        </p>
       </div>
-    </ModalContext.Provider>
+
+      <Button
+        inverted
+        primary
+        icon
+        labelPosition="right"
+        size="huge"
+        onClick={() => nav("login")}
+      >
+        Try it out
+        <Icon name="right arrow" />
+      </Button>
+    </div>
   );
 };
 
