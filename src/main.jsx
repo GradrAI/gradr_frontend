@@ -8,8 +8,11 @@ import "semantic-ui-css/semantic.min.css";
 import { Toaster } from "react-hot-toast";
 import { ErrorBoundary } from "react-error-boundary";
 import Error from "./components/Error.jsx";
+import axios from "axios";
+import { BASE_URL } from "./requests/constants.js";
 
 const queryClient = new QueryClient();
+axios.defaults.baseURL = BASE_URL;
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
