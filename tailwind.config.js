@@ -5,6 +5,8 @@ export default {
     fontFamily: {
       poppins: ["Poppins", "sans-serif"],
       fredoka: ["Fredoka", "sans-serif"],
+      opensans: ["Open Sans", "sans-serif"],
+      raleway: ["Raleway", "sans-serif"],
     },
     extend: {},
   },
