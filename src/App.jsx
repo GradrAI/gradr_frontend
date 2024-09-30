@@ -1,30 +1,32 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Home from "./pages/Home";
+import Layout from "./Layout";
 import Assessments from "./components/Assessments";
 import Results from "./components/Results";
-import Landing from "./components/Landing";
+import Home from "./pages/Home";
 import Details from "./components/Details";
 import Submissions from "./pages/Submissions";
 import Login from "./components/Login";
-import NewLanding from "./pages/NewLanding";
+import Landing from "./pages/Landing";
 
 function App() {
   return (
     <Routes>
-      <Route path="newlanding" element={<NewLanding />} />
-      <Route path="/" element={<Home />}>
+      <Route path="/">
         <Route index element={<Landing />} />
-        <Route path="login" element={<Login />} />
-        <Route path="assessments" element={<Assessments />} />
-        <Route path="results">
-          <Route index element={<Results />} />
-          <Route path=":id" element={<Details />} />
+        <Route path="app" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="login" element={<Login />} />
+          <Route path="assessments" element={<Assessments />} />
+          <Route path="results">
+            <Route index element={<Results />} />
+            <Route path=":id" element={<Details />} />
+          </Route>
+          <Route path="submissions" element={<Submissions />} />
         </Route>
-        <Route path="submissions" element={<Submissions />} />
       </Route>
     </Routes>
   );
 }
-//
+
 export default App;
