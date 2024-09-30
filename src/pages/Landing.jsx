@@ -76,26 +76,37 @@ const Landing = () => {
         </div>
 
         <div className="flex items-center justify-between gap-4">
-          <p className="m-0 text-blue-800 hover:text-blue-500 font-semibold hover:cursor-pointer">
+          <p className="m-0 text-blue-800 hover:text-blue-500 font-semibold cursor-not-allowed">
             Sign in
           </p>
-          <Button size="small" primary onClick={() => nav("/app")}>
+          <Button
+            size="small"
+            primary
+            disabled
+            // onClick={() => nav("/app")}
+            className=""
+          >
             Sign up
           </Button>
         </div>
       </header>
 
-      <div className="flex flex-col items-center justify-start gap-4 py-8 w-full h-[100dvh] bg-[#dafaf9] md:mb-60">
+      <div className="flex flex-col items-center justify-start gap-2 py-2 w-full h-[100dvh] bg-[#dafaf9] md:mb-60">
         <div className="flex items-center justify-center relative w-full pt-16">
           <h1 className="text-5xl md:text-7xl text-center text-blue-900 w-full md:w-[40%] z-9 leading-loose tracking-wide md:tracking-normal font-poppins">
             Break Free From Manual Grading
           </h1>
         </div>
-        <h2 className="text-2xl text-center text-blue-400 font-light drop-shadow-lg leading-normal p-4 w-full md:w-[35%]">
+        <h2 className="text-2xl text-center text-blue-400 font-normal drop-shadow-lg leading-normal p-2 w-full md:w-[35%] font-fredoka">
           Save hours of tedious grading time and focus more on what matters most
           - teaching!
         </h2>
-        <Button primary size="large" className="py-14">
+        <Button
+          primary
+          size="large"
+          className="font-raleway"
+          onClick={() => window.open("mailto:johnfiewor@gmail.com", "_blank")}
+        >
           Register for early access
         </Button>
         <div className="w-full">
@@ -187,7 +198,17 @@ const Landing = () => {
           Boost your productivity and improve the efficiency of your assessment
           process!
         </p>
-        <Button primary>Request for a Demo</Button>
+        <Button
+          primary
+          onClick={() =>
+            window.open(
+              "https://www.linkedin.com/in/john-fiewor-365484127/",
+              "_blank"
+            )
+          }
+        >
+          Request for a Demo
+        </Button>
       </div>
 
       <div className="flex justify-between p-2 md:px-12">
