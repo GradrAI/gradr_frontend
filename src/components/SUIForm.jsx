@@ -73,7 +73,7 @@ const SUIForm = () => {
   if (isSuccess) {
     toast.success("Grading succesful");
     setTimeout(() => {
-      nav("/results");
+      nav("/app/results");
     }, 500);
   }
 
