@@ -68,7 +68,7 @@ export const faqs = [
   },
   {
     heading: "How reliable is Gradr?",
-    text: "Gradr works realiably well. We are constantly working to improve this.",
+    text: "Gradr uses the provided resources and/or resources from the internet to assess student attempts at an examination. We are constantly working to improve its reliability.",
   },
   {
     heading: "How does Gradr measure accuracy?",
