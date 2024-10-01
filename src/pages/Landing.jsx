@@ -124,7 +124,7 @@ const Landing = () => {
       >
         <div className="flex flex-col gap-4 p-4 items-center md:items-start justify-around w-full md:w-[40%] h-full">
           <div className="md:flex items-start gap-2">
-            <img src={clock} alt="" className="hidden p-1" />
+            <img src={clock} alt="" className="hidden md:inline-block p-1" />
             <p className="md:text-2xl text-xl leading-relaxed">
               <span className="text-blue-800 font-semibold">Save time: </span>{" "}
               Gradr AI automates tedious grading tasks, freeing up several hours
@@ -134,7 +134,7 @@ const Landing = () => {
           </div>
 
           <div className="md:flex items-start gap-2">
-            <img src={chart} alt="" className="hidden p-1" />
+            <img src={chart} alt="" className="hidden md:inline-block p-1" />
             <p className="md:text-2xl text-xl leading-relaxed">
               <span className="text-blue-800 font-semibold">
                 Enhance efficiency:{" "}
@@ -145,7 +145,7 @@ const Landing = () => {
           </div>
 
           <div className="md:flex items-start gap-2">
-            <img src={notes} alt="" className="hidden p-1" />
+            <img src={notes} alt="" className="hidden md:inline-block p-1" />
             <p className="md:text-2xl text-xl leading-relaxed">
               <span className="text-blue-800 font-semibold">
                 Enhance learning outcomes:{" "}
