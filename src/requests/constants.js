@@ -60,11 +60,11 @@ export const users = [
 export const faqs = [
   {
     heading: "What type of exams can Gradr grade?",
-    text: "Gradr currently only grades paper-based tests. This is subject to change in the nearest future to allow assessment of other forms of examination.",
+    text: "Gradr currently only grades paper-based exams. This is subject to change soon to allow assessment of other forms of examination.",
   },
   {
     heading: "Can Gradr assess scripts with illegible handwriting?",
-    text: "Yes. Gradr uses Google Gemini which has been trained with a large dataset and performs well even with illegible handwriting.",
+    text: "Yes. Gradr uses state-of-the-art AI models which have been trained with large datasets and performs well even with illegible handwriting.",
   },
   {
     heading: "How reliable is Gradr?",

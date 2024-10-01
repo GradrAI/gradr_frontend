@@ -91,15 +91,15 @@ const Landing = () => {
         </div>
       </header>
 
-      <div className="flex flex-col items-center justify-start gap-2 py-2 w-full h-[100dvh] bg-[#dafaf9]">
+      <div className="flex flex-col items-center md:justify-start gap-10 p-6 md:gap-2 py-2 w-full h-[100dvh] bg-[#dafaf9] relative">
         <div className="flex items-center justify-center relative w-full pt-16">
-          <h1 className="text-5xl md:text-7xl text-center text-blue-900 w-full md:w-[40%] z-9 leading-loose tracking-wide md:tracking-normal font-poppins">
+          <h1 className="text-5xl md:text-7xl text-center text-blue-900 w-full md:w-[50%] z-9 leading-normal tracking-wide md:tracking-normal font-poppins">
             Break Free From Manual Grading
           </h1>
         </div>
         <h2 className="text-2xl text-center text-blue-400 font-normal drop-shadow-lg leading-normal p-2 w-full md:w-[35%] font-fredoka">
           Save hours of tedious grading time and focus more on what matters most
-          - teaching!
+          - fostering innovation!.
         </h2>
         <Button
           primary
@@ -122,20 +122,20 @@ const Landing = () => {
         className="flex md:flex-row items-center justify-between gap-12 py-6 md:py-16 px-8 md:px-24 my-0 md:my-8 w-full h-dvh text-justify"
         ref={featuresRef}
       >
-        <div className="flex flex-col gap-8 items-center md:items-start justify-around w-full md:w-[40%]">
-          <div className="hidden md:flex items-start gap-2">
-            <img src={clock} alt="" className="p-1" />
-            <p className="text-2xl leading-normal md:leading-relaxed">
+        <div className="flex flex-col gap-4 p-4 items-center md:items-start justify-around w-full md:w-[40%] h-full">
+          <div className="md:flex items-start gap-2">
+            <img src={clock} alt="" className="hidden p-1" />
+            <p className="md:text-2xl text-xl leading-relaxed">
               <span className="text-blue-800 font-semibold">Save time: </span>{" "}
               Gradr AI automates tedious grading tasks, freeing up several hours
               for educators and allowing them to focus on what matters most -
-              teaching, mentoring, and inspiring innovation.
+              teaching, mentoring, and fostering innovation.
             </p>
           </div>
 
-          <div className="hidden md:flex items-start gap-2">
-            <img src={chart} alt="" className="p-1" />
-            <p className="text-2xl leading-normal md:leading-relaxed">
+          <div className="md:flex items-start gap-2">
+            <img src={chart} alt="" className="hidden p-1" />
+            <p className="md:text-2xl text-xl leading-relaxed">
               <span className="text-blue-800 font-semibold">
                 Enhance efficiency:{" "}
               </span>
@@ -144,9 +144,9 @@ const Landing = () => {
             </p>
           </div>
 
-          <div className="hidden md:flex items-start gap-2">
-            <img src={notes} alt="" className="p-1" />
-            <p className="text-2xl leading-normal md:leading-relaxed">
+          <div className="md:flex items-start gap-2">
+            <img src={notes} alt="" className="hidden p-1" />
+            <p className="md:text-2xl text-xl leading-relaxed">
               <span className="text-blue-800 font-semibold">
                 Enhance learning outcomes:{" "}
               </span>
@@ -211,7 +211,7 @@ const Landing = () => {
         </Button>
       </div>
 
-      <div className="flex justify-between p-2 md:px-12">
+      <div className="flex justify-between py-4 px-6 md:px-12">
         <img src={logo} alt="gradr logo" />
       </div>
 
