@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Button, Form } from "semantic-ui-react";
+import toast from "react-hot-toast";
 
 import { BASE_URL } from "../requests/constants";
-import toast from "react-hot-toast";
 
 const Login = () => {
   const [clicked, setClicked] = useState(false);
 
   const { isLoading, isError, error, data } = useQuery({
     queryKey: ["Data"],
-    queryFn: () => axios.get(`${BASE_URL}/auth/google`),
+    queryFn: () => axios.get(`${BASE_URL}/api/auth/google`),
     enabled: clicked,
   });
 
