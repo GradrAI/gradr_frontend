@@ -91,7 +91,7 @@ const Landing = () => {
         </div>
       </header>
 
-      <div className="flex flex-col items-center justify-start gap-2 py-2 w-full h-[100dvh] bg-[#dafaf9] md:mb-60">
+      <div className="flex flex-col items-center justify-start gap-2 py-2 w-full h-[100dvh] bg-[#dafaf9]">
         <div className="flex items-center justify-center relative w-full pt-16">
           <h1 className="text-5xl md:text-7xl text-center text-blue-900 w-full md:w-[40%] z-9 leading-loose tracking-wide md:tracking-normal font-poppins">
             Break Free From Manual Grading
