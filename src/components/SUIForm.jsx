@@ -5,14 +5,10 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const BASE_URL =
-  !process.env.NODE_ENV || process.env.NODE_ENV === "development"
-    ? "http://localhost:4000"
-    : "https://gradr-backend.onrender.com";
+import { BASE_URL } from "../requests/constants";
 
 const SUIForm = () => {
   const nav = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     marks: 0,
     dependencyLevel: 0,
@@ -20,6 +16,7 @@ const SUIForm = () => {
     file1: undefined,
     file2: undefined,
   });
+
   const { isFetching, isLoading, isError, isSuccess, error, mutate } =
     useMutation({
       mutationKey: ["gradeData"],
@@ -43,7 +40,6 @@ const SUIForm = () => {
   };
 
   const handleGrade = async () => {
-    setLoading(true);
     toast.success("Performing grading. Be patient.");
     const formData = new FormData();
     for (const [key, val] of Object.entries(form)) {
@@ -71,15 +67,13 @@ const SUIForm = () => {
   ];
 
   if (isError) {
-    setLoading(false);
     toast.error(error?.message);
   }
 
   if (isSuccess) {
-    setLoading(false);
     toast.success("Grading succesful");
     setTimeout(() => {
-      nav("/results");
+      nav("/app/results");
     }, 500);
   }
 
@@ -156,7 +150,7 @@ const SUIForm = () => {
       </div>
 
       <Button primary type="submit" onClick={handleGrade}>
-        {isFetching || isLoading || loading ? "Grading..." : "Grade"}
+        {isFetching || isLoading ? "Grading..." : "Grade"}
       </Button>
     </Form>
   );

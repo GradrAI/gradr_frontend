@@ -11,7 +11,7 @@ import {
   Icon,
   Table,
 } from "semantic-ui-react";
-import { ModalContext } from "../pages/Home";
+import { ModalContext } from "../Layout";
 
 const SUITable = () => {
   const { setShowModal } = useContext(ModalContext);
@@ -33,7 +33,7 @@ const SUITable = () => {
         <TableRow>
           <TableCell>Test 101</TableCell>
           <TableCell>05 April 2024</TableCell>
-          <TableCell>1</TableCell>
+          <TableCell>2</TableCell>
           <TableCell>-</TableCell>
           <TableCell>10 April 2024</TableCell>
           <TableCell>Ungraded</TableCell>
