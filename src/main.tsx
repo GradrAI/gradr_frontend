@@ -13,12 +13,16 @@ import { BASE_URL } from "./requests/constants";
 
 const queryClient = new QueryClient();
 axios.defaults.baseURL = BASE_URL;
+axios.defaults.baseURL = BASE_URL;
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Toaster toastOptions={{ duration: 4000 }} />
+        <ErrorBoundary fallback={<Error />}>
+          <App />
+        </ErrorBoundary>
         <ErrorBoundary fallback={<Error />}>
           <App />
         </ErrorBoundary>
