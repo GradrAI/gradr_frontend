@@ -16,13 +16,18 @@ const Assessments = () => {
   const { data, mutate } = useMutation({
     mutationKey: ["profileData"],
     mutationFn: async (code) => {
-      const res = await axios.get(`/getGoogleUser?code=${code}`);
+      const res = await axios.get(`/api/getGoogleUser?code=${code}`);
       const {
         data: { data },
       } = res;
       if (data) {
+        const { token, user } = data;
+        // save token to be reused in all axios requests
+        axios.defaults.headers.common["Authorization"] = token;
+        // save user token in localStorage
+        localStorage.setItem("userToken", token);
         // save user data in localStorage
-        localStorage.setItem("user: ", JSON.stringify(data));
+        localStorage.setItem("user", JSON.stringify(user));
       }
       return res;
     },
@@ -53,20 +58,7 @@ const Assessments = () => {
     <div className="w-100 p-4 flex flex-col justify-between gap-2 border-l-stone-950">
       <h1 className="text-3xl">Assessments</h1>
 
-      <div className="w-100">
-        {!showModal ? (
-          <div className="flex flex-col gap-6 justify-between items-start">
-            <input
-              placeholder="search"
-              className="rounded w-[10rem] py-4 px-6 border-slate-500 bg-slate-200"
-              name=""
-            />
-            <SUITable />
-          </div>
-        ) : (
-          <SUIForm />
-        )}
-      </div>
+      <div className="w-100"></div>
     </div>
   );
 };
