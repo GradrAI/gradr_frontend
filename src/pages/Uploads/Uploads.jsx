@@ -15,10 +15,10 @@ const Uploads = () => {
     }
   }, [user]);
 
-  const { data } = useQuery({
-    queryKey: ["uploads"],
+  const { data, isLoading, isSuccess, isError } = useQuery({
+    queryKey: ["exams"],
     queryFn: async () => {
-      const res = await axios.get(`/exams/${userId}`);
+      const res = await axios.get(`/exams/users/${userId}/exams`);
       return res;
     },
     enabled: Boolean(userId.length),
@@ -34,7 +34,41 @@ const Uploads = () => {
         Upload new file(s)
       </Button>
       {/* //! TO-DO: display all files uploaded by the user here */}
-      <div></div>
+      <div>
+        <h1 className="font-bold text-3xl">Uploads</h1>
+        <div className="flex gap-4 flex-wrap">
+          {data?.data?.map(({ _id, examName, guide, question }) => (
+            <div
+              key={_id}
+              className="w-full md:w-1/4 flex flex-col gap-4 items-start justify-between p-4 border border-solid rounded-md"
+            >
+              <p className="font-semibold text-2xl text-slate-500">
+                {examName}
+              </p>
+              {Boolean(guide?.length) && (
+                <a
+                  target="_blank"
+                  href={guide}
+                  rel="noopener noreferrer"
+                  className="text-blue-500 cursor-pointer"
+                >
+                  View marking guide
+                </a>
+              )}
+              {Boolean(question?.length) && (
+                <a
+                  target="_blank"
+                  href={question}
+                  rel="noopener noreferrer"
+                  className="text-blue-500 cursor-pointer"
+                >
+                  View question
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
