@@ -1,6 +1,6 @@
 import { z } from "zod";
 import axios from "axios";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { UploadData } from "@/types/UploadData";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import initialUserState from "@/data/initialUserState";
+import notifications from "@/requests/notifications";
 
 const formSchema = z.object({
   file: z.instanceof(FileList),
@@ -25,6 +27,16 @@ const formSchema = z.object({
 
 const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
   const nav = useNavigate();
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    let parsedUser = initialUserState;
+    const user = localStorage.getItem("user");
+    if (user) parsedUser = JSON.parse(user);
+    if (parsedUser && parsedUser._id) {
+      setUserId(parsedUser._id);
+    }
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,12 +45,16 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
     },
   });
 
-  const { data, mutate } = useMutation({
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["exams"],
+    queryFn: async () => await axios.get(`/exams/users/${userId}/exams`),
+    enabled: Boolean(userId.length),
+  });
+
+  const { isPending, mutate } = useMutation({
     mutationKey: ["gradeData"],
-    mutationFn: async (uploadData: any) => {
-      const res = await axios.post(`/api/upload`, uploadData);
-      return res;
-    },
+    mutationFn: async (uploadData: any) =>
+      await axios.post(`/upload`, uploadData),
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -46,6 +62,7 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
     if (!data || !data?.file?.length) return;
 
     const formData = new FormData();
+
     for (const [key, val] of Object.entries(uploadData)) {
       formData.append(key, val);
     }
@@ -53,21 +70,19 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
     for (const [key, val] of Object.entries(file)) {
       formData.append("file", val);
     }
-    mutate(formData);
+    mutate(formData, {
+      onSuccess: (data, variables, context) => {
+        console.log("data: ", data);
+        toast.success(notifications.UPLOAD.SUCCESS);
+      },
+      onError: (error, variables, context) => {
+        console.log("error", error);
+        toast.error(notifications.UPLOAD.FAILURE);
+      },
+    });
   }
 
   const fileRef = form.register("file");
-
-  useEffect(() => {
-    if (data) {
-      const { status } = data;
-      if (status === 200) {
-        toast.success("Upload successfull!");
-      } else {
-        toast.error("Upload failed");
-      }
-    }
-  }, [data]);
 
   return (
     <Form {...form}>
@@ -94,9 +109,11 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
         />
 
         <div className="flex gap-4 items-center justify-between">
-          <Button type="submit">Submit</Button>
           <Button variant="secondary" onClick={() => nav("..")}>
             Back
+          </Button>
+          <Button type="submit" disabled={isError || !data?.data?.length}>
+            {`Upload${isPending ? "ing..." : ""}`}
           </Button>
         </div>
       </form>
