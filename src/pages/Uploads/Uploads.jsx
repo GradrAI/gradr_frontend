@@ -27,7 +27,7 @@ const Uploads = () => {
   if (isLoading) {
     return (
       <div className="w-full p-8 flex items-start">
-        //! TO-DO: replace with skeleton loader
+        {/* //! TO-DO: replace with skeleton loader */}
         <p className="text-3xl">Fetching uploads...</p>
       </div>
     );
@@ -43,11 +43,13 @@ const Uploads = () => {
 
   return (
     <div className="p-4 flex flex-col gap-4">
-      <Button className="w-[150px] self-end p-4" onClick={() => nav("new")}>
-        Upload new file(s)
-      </Button>
       <div className="">
-        <h1 className="font-bold text-3xl">Uploads</h1>
+        <div className="w-full p-4 flex flex-wrap items-center justify-between">
+          <h1 className="font-bold text-3xl m-0">Uploads</h1>
+          <Button className="w-[150px] self-end" onClick={() => nav("new")}>
+            Upload new file(s)
+          </Button>
+        </div>
         <div className="flex gap-4 flex-wrap">
           {data?.data?.map(({ _id, examName, guide, question, answers }) => (
             <div
