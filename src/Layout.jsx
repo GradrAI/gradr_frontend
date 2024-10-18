@@ -11,11 +11,11 @@ const Layout = () => {
   return (
     <ModalContext.Provider value={{ showModal, setShowModal }}>
       <div className="w-100 h-screen flex">
-        <div className="w-2/12">
+        <div className="md:w-2/12">
           <Sidebar />
         </div>
 
-        <div className="w-10/12 h-100 flex flex-col">
+        <div className="w-full md:w-10/12 h-100 flex flex-col">
           <Header />
           <Outlet />
         </div>

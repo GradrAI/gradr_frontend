@@ -12,11 +12,10 @@ import {
 } from "semantic-ui-react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { BASE_URL } from "../requests/constants";
 import { useEffect, useMemo, useState } from "react";
 
 const callFn = async (code, sheetsObject) => {
-  return await axios.post(`${BASE_URL}/api/oauth2callback`, {
+  return await axios.post(`/oauth2callback`, {
     code,
     sheetsObject,
   });

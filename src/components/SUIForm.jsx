@@ -21,7 +21,7 @@ const SUIForm = () => {
     useMutation({
       mutationKey: ["gradeData"],
       mutationFn: async (form) => {
-        const res = await axios.post(`${BASE_URL}/api/upload/file`, form);
+        const res = await axios.post(`/upload/file`, form);
         console.log("res: ", res);
         return res;
       },

@@ -17,7 +17,7 @@ const Sidebar = () => {
   const currPath = pathname.split("/").at(-1);
 
   return (
-    <div className="w-full h-dvh py-2 px-6 bg-slate-100 flex flex-col justify-between shadow-zinc-800 border-r border-r-purple-500">
+    <div className="hidden md:flex md:w-full h-dvh py-2 px-6 bg-slate-100 flex-col justify-between shadow-zinc-800 border-r border-r-purple-500">
       <div className="flex flex-col gap-4 items-start justify-around">
         <img
           src={logo}

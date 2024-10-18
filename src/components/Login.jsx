@@ -11,7 +11,7 @@ const Login = () => {
 
   const { isLoading, isError, error, data } = useQuery({
     queryKey: ["Data"],
-    queryFn: () => axios.get(`${BASE_URL}/api/auth/google`),
+    queryFn: () => axios.get(`/auth/google`),
     enabled: clicked,
   });
 

@@ -10,8 +10,8 @@ import {
 import { FAQ } from "../types/faqs";
 
 export const BASE_URL = import.meta.env.DEV
-  ? "http://localhost:4040"
-  : "https://gradr-backend.onrender.com";
+  ? "http://localhost:4040/api"
+  : "https://gradr-backend.onrender.com/api";
 
 export const faqs: FAQ[] = [
   {
