@@ -7,4 +7,5 @@ export type Exam = {
   students: [string];
   createdAt: string;
   updatedAt: string;
+  grade: string;
 };
