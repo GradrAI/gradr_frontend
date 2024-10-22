@@ -4,6 +4,7 @@ export type Exam = {
   examName: string;
   guide: string;
   question: string;
+  students: [string];
   createdAt: string;
   updatedAt: string;
 };
