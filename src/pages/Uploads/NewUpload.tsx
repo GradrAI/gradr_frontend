@@ -7,6 +7,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import UploadForm from "@/components/UploadForm";
 import { useEffect, useState } from "react";
 import { UploadData } from "@/types/UploadData";
@@ -15,6 +24,7 @@ import axios from "axios";
 import initialUserState from "@/data/initialUserState";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
+import notifications from "@/requests/notifications";
 
 const NewUpload = () => {
   const queryClient = useQueryClient();
@@ -38,8 +48,8 @@ const NewUpload = () => {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setUploadData({ ...uploadData, examName: value });
+    const { name, value } = e.target;
+    setUploadData({ ...uploadData, [name]: value });
   };
 
   const handleSelectExam = (selection: string) => {
@@ -75,11 +85,15 @@ const NewUpload = () => {
 
   const handleAddExam = () => {
     if (!userId?.length) {
-      toast.error("Unable to add exam");
+      toast.error(notifications.EXAM.FAILURE);
       return;
     }
     mutate(
-      { user: userId, examName: uploadData.examName },
+      {
+        user: userId,
+        examName: uploadData.examName,
+        maxScoreAttainable: uploadData.maxScoreAttainable,
+      },
       {
         onSuccess: (data, variables, context) => {
           const { status, statusText } = data;
@@ -99,38 +113,20 @@ const NewUpload = () => {
   return (
     <div className="p-8 flex flex-col gap-8 justify-between items-start w-full md:w-2/4">
       <h1>Upload resources.</h1>
-      {addNew ? (
-        <div className="w-full flex flex-wrap gap-2 items-center justify-between">
-          <Input
-            name="examName"
-            placeholder="Exam name (e.g. CSC 101)"
-            className="w-3/4 inline-block"
-            value={uploadData.examName}
-            onChange={handleChange}
-          />
-          <Button
-            variant="outline"
-            onClick={handleAddExam}
-            disabled={isPending}
-          >
-            {`Add${isPending ? "ing..." : ""}`}
-          </Button>
-        </div>
-      ) : (
-        <Select onValueChange={handleSelectExam} name="exam" required>
-          <SelectTrigger className="">
-            <SelectValue placeholder="Select exam" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {data?.data?.map(({ examName }: { examName: string }) => (
-                <SelectItem value={examName}>{examName}</SelectItem>
-              ))}
-              <SelectItem value="addNew">Add new</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      )}
+
+      <Select onValueChange={handleSelectExam} name="exam" required>
+        <SelectTrigger className="">
+          <SelectValue placeholder="Select exam" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {data?.data?.map(({ examName }: { examName: string }) => (
+              <SelectItem value={examName}>{examName}</SelectItem>
+            ))}
+            <SelectItem value="addNew">Add new</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
 
       <Select
         onValueChange={handleSelectFile}
@@ -151,6 +147,41 @@ const NewUpload = () => {
       </Select>
 
       <UploadForm uploadData={uploadData} />
+
+      <Dialog open={addNew} onOpenChange={setAddNew}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add exam</DialogTitle>
+            <DialogDescription>
+              Input the name of the exam and the maximum attaintable score for
+              that exam.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="w-full flex flex-wrap gap-2 items-center justify-between">
+            <Input
+              name="examName"
+              placeholder="Exam name (e.g. CSC 101)"
+              className="w-3/4 inline-block"
+              value={uploadData.examName}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="maxScoreAttainable"
+              placeholder="Maximum score attainable (e.g 60)"
+              className="w-3/4 inline-block"
+              value={uploadData.maxScoreAttainable}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <DialogFooter>
+            <Button onClick={handleAddExam} disabled={isPending}>
+              {`Add${isPending ? "ing..." : ""}`}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
