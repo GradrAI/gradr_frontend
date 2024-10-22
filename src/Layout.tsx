@@ -10,14 +10,14 @@ const Layout = () => {
   const [showModal, setShowModal] = useState(false);
   const [userId, setUserId] = useState("");
 
-  const user = localStorage.getItem("user");
-  let parsedUser = initialUserState;
-  if (user) parsedUser = JSON.parse(user);
   useEffect(() => {
+    const user = localStorage.getItem("user");
+    let parsedUser = initialUserState;
+    if (user) parsedUser = JSON.parse(user);
     if (parsedUser && parsedUser._id) {
       setUserId(parsedUser._id);
     }
-  }, [parsedUser]);
+  }, []);
 
   return (
     <ModalContext.Provider value={{ showModal, setShowModal }}>

@@ -4,12 +4,12 @@ import initialUserState from "@/data/initialUserState";
 const Header = () => {
   const [currentUser, setCurrentUser] = useState({});
 
-  const user = localStorage.getItem("user");
-  let parsedUser = initialUserState;
-  if (user) parsedUser = JSON.parse(user);
   useEffect(() => {
+    const user = localStorage.getItem("user");
+    let parsedUser = initialUserState;
+    if (user) parsedUser = JSON.parse(user);
     if (parsedUser) setCurrentUser(parsedUser);
-  }, [parsedUser]);
+  }, []);
 
   return (
     <div className="bg-violet-50 w-full h-[10dvh] p-6 border-b-neutral-600 flex justify-end items-center">
