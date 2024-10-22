@@ -1,6 +1,6 @@
 export type UploadData = {
   user: string;
   examName: string;
-  fileType: string;
+  fileType: "guide" | "question" | "answers";
   file: File;
 };
