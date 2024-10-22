@@ -37,7 +37,7 @@ export const columns: ColumnDef<Partial<Exam>>[] = [
   //     <DataTableColumnHeader column={column} title="Status" />
   //   ),
   //   cell: ({ row }) => {
-  //     return <p className="text-red-500">Ungraded</p>;
+  //     return <p className="text-red-500">Ungraded</p>; //! TO-DO: calculate overall grade status of an exam based on grade value of each individual student(?)
   //   },
   // },
   {

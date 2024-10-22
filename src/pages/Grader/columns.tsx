@@ -43,16 +43,13 @@ export const columns: ColumnDef<Partial<Exam>>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
-    cell: ({ row }) => {
-      console.log("row: ", row);
-      return (
-        <p
-          className={`${row.original?.grade ? "text-blue-500" : "text-red-500"}`}
-        >
-          {row.original?.grade ? "Graded" : "Ungraded"}
-        </p>
-      ); //! TO-DO: change the status to "graded" if row data
-    },
+    cell: ({ row }) => (
+      <p
+        className={`${row.original?.grade ? "text-blue-500" : "text-red-500"}`}
+      >
+        {row.original?.grade ? "Graded" : "Ungraded"}
+      </p>
+    ),
   },
   {
     id: "createdAt",
@@ -66,5 +63,12 @@ export const columns: ColumnDef<Partial<Exam>>[] = [
       ).toLocaleDateString("en-US");
       return <div className="font-medium">{formattedDate}</div>;
     },
+  },
+  {
+    id: "url",
+    accessorKey: "answer",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="URL" />
+    ),
   },
 ];
