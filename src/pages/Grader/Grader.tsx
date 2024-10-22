@@ -71,7 +71,7 @@ const Grader = () => {
               </SelectContent>
             </Select>
 
-            <Button>Export marks</Button>
+            <Button disabled>Export marks</Button>
           </div>
 
           {Boolean(tableData?.length) && (

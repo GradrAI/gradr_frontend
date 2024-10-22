@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import { ModalContext } from "../Layout";
+import { ModalContext } from "../../Layout";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { DataTable } from "./data-table";
+import { DataTable } from "../../components/data-table";
 import { columns } from "./columns";
 
 const Assessments = () => {

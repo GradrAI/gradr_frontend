@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTableColumnHeader } from "./DataTableColumnHeader";
 import { Exam } from "@/types/Exam";
+import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 
 export const columns: ColumnDef<Partial<Exam>>[] = [
   {
@@ -25,6 +25,13 @@ export const columns: ColumnDef<Partial<Exam>>[] = [
     ),
   },
   {
+    id: "id",
+    accessorKey: "_id",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="ID" />
+    ),
+  },
+  {
     accessorKey: "examName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Exam Name" />
@@ -37,7 +44,14 @@ export const columns: ColumnDef<Partial<Exam>>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      return <p className="text-red-500">Ungraded</p>;
+      console.log("row: ", row);
+      return (
+        <p
+          className={`${row.original?.grade ? "text-blue-500" : "text-red-500"}`}
+        >
+          {row.original?.grade ? "Graded" : "Ungraded"}
+        </p>
+      ); //! TO-DO: change the status to "graded" if row data
     },
   },
   {
@@ -53,27 +67,4 @@ export const columns: ColumnDef<Partial<Exam>>[] = [
       return <div className="font-medium">{formattedDate}</div>;
     },
   },
-  //! TO-DO: think about actions to be added here
-  //   {
-  //     id: "actions",
-  //     header: "Actions",
-  //     cell: ({ row }) => {
-  //       const data = row.original;
-  //       console.log("row data: ", data);
-
-  //       return (
-  //         <DropdownMenu>
-  //           <DropdownMenuTrigger asChild>
-  //             <Button variant="ghost" className="h-8 w-8 p-0">
-  //               <span className="sr-only">Open menu</span>
-  //               <MoreHorizontal className="h-4 w-4" />
-  //             </Button>
-  //           </DropdownMenuTrigger>
-  //           <DropdownMenuContent align="end">
-  //             {/* <DropdownMenuItem>View customer</DropdownMenuItem> */}
-  //           </DropdownMenuContent>
-  //         </DropdownMenu>
-  //       );
-  //     },
-  //   },
 ];

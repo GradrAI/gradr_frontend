@@ -1,14 +1,14 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./Layout";
-import Assessments from "./components/Assessments";
+import Assessments from "./pages/Assessments/Assessments";
 import Results from "./components/Results";
 import Home from "./pages/Home";
 import Details from "./components/Details";
 import Uploads from "./pages/Uploads/Uploads";
 import Login from "./components/Login";
 import Landing from "./pages/Landing";
-import Grader from "./pages/Grader";
+import Grader from "./pages/Grader/Grader";
 import NewUpload from "./pages/Uploads/NewUpload";
 
 function App() {
