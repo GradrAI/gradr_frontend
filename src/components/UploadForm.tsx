@@ -99,7 +99,7 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
                   placeholder="Select file"
                   type="file"
                   {...fileRef}
-                  multiple={uploadData?.fileType === "answers"} // only answer mutiple file selection for upload of student answers
+                  multiple={uploadData?.fileType === "answers"} // only allow mutiple file selection when uploading student answers
                 />
               </FormControl>
               <FormDescription>Select files.</FormDescription>

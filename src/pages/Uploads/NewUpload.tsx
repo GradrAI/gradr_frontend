@@ -22,7 +22,7 @@ const NewUpload = () => {
   const [uploadData, setUploadData] = useState<Partial<UploadData>>({
     user: "",
     examName: "",
-    fileType: "",
+    fileType: undefined,
   });
   const [addNew, setAddNew] = useState(false);
   const [userId, setUserId] = useState("");
@@ -50,7 +50,7 @@ const NewUpload = () => {
     setUploadData({ ...uploadData, examName: selection });
   };
 
-  const handleSelectFile = (selection: string) => {
+  const handleSelectFile = (selection: "guide" | "question" | "answers") => {
     setUploadData({ ...uploadData, fileType: selection });
   };
 
@@ -60,10 +60,7 @@ const NewUpload = () => {
 
   const { data, isLoading, isSuccess, isError } = useQuery({
     queryKey: ["exams"],
-    queryFn: async () => {
-      const res = await axios.get(`/exams/users/${userId}/exams`);
-      return res;
-    },
+    queryFn: async () => await axios.get(`/exams/users/${userId}/exams`),
     enabled: Boolean(userId.length),
   });
 
