@@ -7,16 +7,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import initialUserState from "@/data/initialUserState";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
+import { Exam } from "@/types/Exam";
+import { Student } from "@/types/Student";
+import { Result } from "@/types/Result";
 
 const Grader = () => {
+  const queryClient = new QueryClient();
+
   const [currentUser, setCurrentUser] = useState(initialUserState);
   const [selectedExam, setSelectedExam] = useState("");
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState<Student[] | []>([]);
+  const [selectedRows, setSelectedRows] = useState<Exam[] | []>([]);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -39,12 +45,19 @@ const Grader = () => {
 
   const { data, isLoading, isSuccess, isError } = useQuery({
     queryKey: ["students"],
-    queryFn: async () => await axios.get(`/students?exam=${selectedExam}`),
+    queryFn: async () =>
+      await axios.get<Student[]>(`/students?exam=${selectedExam}`),
     enabled: Boolean(selectedExam.length),
+  });
+
+  const { isPending, mutate } = useMutation({
+    mutationKey: ["results"],
+    mutationFn: async (data) => await axios.post<Result[]>(`/results`, data),
   });
 
   const handleSelect = (selection: string) => {
     setSelectedExam(selection);
+    queryClient.invalidateQueries({ queryKey: ["students"] });
   };
 
   useEffect(() => {
@@ -53,9 +66,18 @@ const Grader = () => {
     }
   }, [isSuccess, data]);
 
+  const handleGrade = () => {
+    if (!Boolean(selectedRows.length)) return;
+    mutate(selectedRows);
+  };
+
   return (
     <div className="w-100 p-4 flex flex-col justify-between gap-2">
       <h1 className="text-3xl">Grader</h1>
+
+      {examIsLoading && <p>Fetching exams...</p>}
+
+      {examIsError && <p>An error occurred.</p>}
 
       {Boolean(examData?.data?.length) && (
         <>
@@ -75,7 +97,21 @@ const Grader = () => {
           </div>
 
           {Boolean(tableData?.length) && (
-            <DataTable columns={columns} data={tableData} />
+            <>
+              <DataTable<any, any>
+                columns={columns}
+                data={tableData}
+                setSelectedRows={setSelectedRows}
+              />
+
+              <Button
+                className="w-[180px]"
+                disabled={!Boolean(selectedRows.length)}
+                onClick={handleGrade}
+              >
+                Grade
+              </Button>
+            </>
           )}
         </>
       )}
