@@ -15,15 +15,14 @@ const Header = () => {
     <div className="bg-violet-50 w-full h-[10dvh] p-6 border-b-neutral-600 flex justify-end items-center">
       <div className="flex items-center gap-2 p-4 justify-between">
         <span className="rounded-full width-[2rem] bg-neutral-800" />
-
-        {!currentUser && (
+        {!!currentUser && (
           <div className="flex items-center justify-between gap-4">
             <img
               src={currentUser?.picture}
               alt="profile"
               className="w-[35px] rounded-full"
             />
-            <div className="flex flex-col items-end justify-between">
+            <div className="flex flex-wrap flex-col items-end justify-between">
               <p className="font-semibold">{`${currentUser?.first_name} ${currentUser?.last_name}`}</p>
             </div>
           </div>
