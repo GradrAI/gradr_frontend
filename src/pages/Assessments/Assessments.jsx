@@ -59,7 +59,7 @@ const Assessments = () => {
     isError: examIsError,
   } = useQuery({
     queryKey: ["exams"],
-    queryFn: async () => await axios.get(`/exams/users/${userId}/exams`),
+    queryFn: async () => await axios.get(`/exams/users?userId=${userId}`),
     enabled: Boolean(userId.length),
   });
 

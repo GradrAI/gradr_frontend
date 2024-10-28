@@ -20,7 +20,7 @@ const Uploads = () => {
   const { data, isLoading, isSuccess, isError } = useQuery({
     queryKey: ["exams"],
     queryFn: async () =>
-      await axios.get(`/exams/users/${currentUser._id}/exams`),
+      await axios.get(`/exams/users?userId=${currentUser._id}`),
     enabled: Boolean(currentUser?._id?.length),
   });
 
