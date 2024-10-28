@@ -3,7 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Exam } from "@/types/Exam";
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 
-export const columns: ColumnDef<Partial<Exam>>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -32,22 +32,23 @@ export const columns: ColumnDef<Partial<Exam>>[] = [
     ),
   },
   {
-    accessorKey: "examName",
+    id: "examName",
+    accessorKey: "exam.name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Exam Name" />
     ),
   },
   {
     id: "status",
-    accessorKey: "status",
+    accessorKey: "exam.result.score",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => (
       <p
-        className={`${row.original?.grade ? "text-blue-500" : "text-red-500"}`}
+        className={`${row.original?.exam?.result?.score ? "text-blue-500" : "text-red-500"}`}
       >
-        {row.original?.grade ? "Graded" : "Ungraded"}
+        {row?.original?.exam?.result?.score ? "Graded" : "Ungraded"}
       </p>
     ),
   },
@@ -69,6 +70,13 @@ export const columns: ColumnDef<Partial<Exam>>[] = [
     accessorKey: "answer",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="URL" />
+    ),
+  },
+  {
+    id: "fileName",
+    accessorKey: "fileName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="File Name" />
     ),
   },
 ];
