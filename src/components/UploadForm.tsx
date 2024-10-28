@@ -47,7 +47,7 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["exams"],
-    queryFn: async () => await axios.get(`/exams/users/${userId}/exams`),
+    queryFn: async () => await axios.get(`/exams/users?userId=${userId}`),
     enabled: Boolean(userId.length),
   });
 
@@ -92,7 +92,6 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
           name="file"
           render={({ field }) => (
             <FormItem>
-              {/* <FormLabel>Files</FormLabel> */}
               <FormControl>
                 <Input
                   id="file"
