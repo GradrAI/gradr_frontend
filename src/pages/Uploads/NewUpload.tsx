@@ -30,7 +30,7 @@ const NewUpload = () => {
   const queryClient = useQueryClient();
 
   const [uploadData, setUploadData] = useState<Partial<UploadData>>({
-    user: "",
+    lecturerId: "",
     examName: "",
     fileType: undefined,
   });
@@ -43,7 +43,7 @@ const NewUpload = () => {
     if (user) parsedUser = JSON.parse(user);
     if (parsedUser && parsedUser._id) {
       setUserId(parsedUser._id);
-      setUploadData({ ...uploadData, user: parsedUser._id });
+      setUploadData({ ...uploadData, lecturerId: parsedUser._id });
     }
   }, []);
 
@@ -70,7 +70,7 @@ const NewUpload = () => {
 
   const { data, isLoading, isSuccess, isError } = useQuery({
     queryKey: ["exams"],
-    queryFn: async () => await axios.get(`/exams/users/${userId}/exams`),
+    queryFn: async () => await axios.get(`/exams/users?userId=${userId}`),
     enabled: Boolean(userId.length),
   });
 
@@ -90,7 +90,7 @@ const NewUpload = () => {
     }
     mutate(
       {
-        user: userId,
+        lecturerId: userId,
         examName: uploadData.examName,
         maxScoreAttainable: uploadData.maxScoreAttainable,
       },
