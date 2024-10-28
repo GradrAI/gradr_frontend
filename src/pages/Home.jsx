@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const nav = useNavigate();
 
+  const handleLogin = () => {
+    const user = localStorage.getItem("user");
+    if (!user) nav("login");
+    else nav("assessments");
+  };
+
   return (
     <div className="h-[90dvh] flex flex-col justify-center items-center gap-16">
       <div className="py-10 px-14 flex flex-col justify-between items-center relative">
@@ -21,11 +27,7 @@ const Home = () => {
         </p>
       </div>
 
-      <Button
-        variant=""
-        onClick={() => nav("login")}
-        className="py-6 px-10 text-xl"
-      >
+      <Button variant="" onClick={handleLogin} className="py-6 px-10 text-xl">
         Try it out
       </Button>
     </div>
