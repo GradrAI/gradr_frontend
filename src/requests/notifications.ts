@@ -6,6 +6,10 @@ const notifications = {
   EXAM: {
     FAILURE: "Unable to add exam",
   },
+  GRADE: {
+    SUCCESS: "Grading successful",
+    FAILURE: "Grading failed",
+  },
 };
 
 export default notifications;
