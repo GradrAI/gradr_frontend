@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   ColumnDef,
@@ -32,16 +32,28 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  setSelectedRows?: any;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  setSelectedRows,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    url: false,
+    fileName: false,
+  });
   const [rowSelection, setRowSelection] = useState({});
+
+  useEffect(() => {
+    const selections = table.getFilteredSelectedRowModel().rows;
+    if (Boolean(selections?.length)) {
+      setSelectedRows(selections.map(({ original }) => original));
+    }
+  }, [rowSelection]);
 
   const table = useReactTable({
     data,
