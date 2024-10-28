@@ -15,14 +15,29 @@ import { Button } from "@/components/ui/button";
 import { Exam } from "@/types/Exam";
 import { Student } from "@/types/Student";
 import { Result } from "@/types/Result";
+import toast from "react-hot-toast";
+import notifications from "@/requests/notifications";
+
+type Result = {
+  _id: string;
+  exam: string;
+  studentId: string;
+  score: string;
+  explanation: string;
+  feedback: string;
+  lecturerId: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 const Grader = () => {
   const queryClient = new QueryClient();
 
   const [currentUser, setCurrentUser] = useState(initialUserState);
   const [selectedExam, setSelectedExam] = useState("");
-  const [tableData, setTableData] = useState<Student[] | []>([]);
+  const [tableData, setTableData] = useState<any[]>([]);
   const [selectedRows, setSelectedRows] = useState<Exam[] | []>([]);
+  const [resultParams, setResultParams] = useState<Partial<Result>[]>([]);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -39,11 +54,11 @@ const Grader = () => {
   } = useQuery({
     queryKey: ["exams"],
     queryFn: async () =>
-      await axios.get(`/exams/users/${currentUser._id}/exams`),
+      await axios.get(`/exams/users?userId=${currentUser._id}`),
     enabled: Boolean(currentUser?._id?.length),
   });
 
-  const { data, isLoading, isSuccess, isError } = useQuery({
+  const { data, isLoading, isSuccess, isError, refetch } = useQuery({
     queryKey: ["students"],
     queryFn: async () =>
       await axios.get<Student[]>(`/students?exam=${selectedExam}`),
@@ -61,24 +76,40 @@ const Grader = () => {
   };
 
   useEffect(() => {
+    refetch();
+  }, [selectedExam]);
+
+  useEffect(() => {
     if (data?.data?.length) {
-      setTableData(data.data);
+      const _tableData = data.data.map(({ _id, createdAt, exams }) => ({
+        _id,
+        createdAt,
+        exam: exams[0],
+      }));
+      setTableData(_tableData);
     }
   }, [isSuccess, data]);
 
   const handleGrade = () => {
     if (!Boolean(selectedRows.length)) return;
-    mutate(selectedRows);
+    mutate(selectedRows, {
+      onSuccess: (data, variables, context) => {
+        console.log("data: ", data);
+        toast.success(notifications.GRADE.SUCCESS);
+        queryClient.invalidateQueries({ queryKey: ["students"] });
+      },
+      onError: (error, variables, context) => {
+        console.log("error", error);
+        toast.error(notifications.GRADE.FAILURE);
+      },
+    });
   };
 
   return (
     <div className="w-100 p-4 flex flex-col justify-between gap-2">
       <h1 className="text-3xl">Grader</h1>
-
       {examIsLoading && <p>Fetching exams...</p>}
-
       {examIsError && <p>An error occurred.</p>}
-
       {Boolean(examData?.data?.length) && (
         <>
           <div className="w-full flex flex-wrap items-center justify-between">
@@ -87,9 +118,13 @@ const Grader = () => {
                 <SelectValue placeholder="Select exam" />
               </SelectTrigger>
               <SelectContent>
-                {examData?.data?.map(({ examName }: { examName: string }) => (
-                  <SelectItem value={examName}>{examName}</SelectItem>
-                ))}
+                {examData?.data?.map(
+                  ({ examName, _id }: { examName: string; _id: string }) => (
+                    <div key={_id}>
+                      <SelectItem value={examName}>{examName}</SelectItem>
+                    </div>
+                  )
+                )}
               </SelectContent>
             </Select>
 
@@ -106,10 +141,10 @@ const Grader = () => {
 
               <Button
                 className="w-[180px]"
-                disabled={!Boolean(selectedRows.length)}
+                disabled={!Boolean(selectedRows.length) || isPending}
                 onClick={handleGrade}
               >
-                Grade
+                {`Grad${isPending ? "ing..." : "e"}`}
               </Button>
             </>
           )}
