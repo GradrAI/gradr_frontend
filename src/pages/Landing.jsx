@@ -99,17 +99,22 @@ const Landing = () => {
         </div>
         <h2 className="text-2xl text-center text-blue-400 font-normal drop-shadow-lg leading-normal p-2 w-full md:w-[35%] font-fredoka">
           Save hours of tedious grading time and focus more on what matters most
-          - fostering innovation!.
+          - fostering innovation!
         </h2>
         <Button
           primary
           size="large"
           className="font-raleway"
-          onClick={() => window.open("mailto:johnfiewor@gmail.com", "_blank")}
+          onClick={() =>
+            window.open(
+              "mailto:contact@gradrai.com?subject=Register for early access&body=Hello there, I would like to request for early access to gradrai",
+              "_blank"
+            )
+          }
         >
           Register for early access
         </Button>
-        <div className="w-full">
+        <div className="w-full mb-20">
           <img
             src={dashboardDesign}
             alt="Dashboard Design"
@@ -119,7 +124,7 @@ const Landing = () => {
       </div>
 
       <div
-        className="flex md:flex-row items-center justify-between gap-12 py-6 md:py-16 px-8 md:px-24 my-0 md:my-8 w-full h-dvh text-justify"
+        className="flex md:flex-row items-center justify-between gap-12 py-6 md:py-20 px-8 md:px-24 my-0 md:my-8 w-full h-dvh text-justify"
         ref={featuresRef}
       >
         <div className="flex flex-col gap-4 p-4 items-center md:items-start justify-around w-full md:w-[40%] h-full">
@@ -200,12 +205,13 @@ const Landing = () => {
         </p>
         <Button
           primary
-          onClick={() =>
+          onClick={() => {
             window.open(
-              "https://www.linkedin.com/in/john-fiewor-365484127/",
-              "_blank"
-            )
-          }
+              "mailto:contact@gradrai.com?subject=Demo Request&body=Hello there, I would like to request for a demo of gradrai",
+              "_blank",
+              "noopener,noreferrer"
+            );
+          }}
         >
           Request for a Demo
         </Button>
@@ -231,7 +237,11 @@ const Landing = () => {
             color="blue"
             className="cursor-pointer hover:text-slate-500"
             onClick={() => {
-              window.open("mailto:johnfiewor@gmail.com", "_blank");
+              window.open(
+                "mailto:contact@gradrai.com?subject=Inquiry&body=Hello there, I would like to make an inquiry",
+                "_blank",
+                "noopener,noreferrer"
+              );
             }}
           />
           <Icon
@@ -242,7 +252,8 @@ const Landing = () => {
             onClick={() =>
               window.open(
                 "https://www.linkedin.com/in/john-fiewor-365484127/",
-                "_blank"
+                "_blank",
+                "noopener,noreferrer"
               )
             }
           />
