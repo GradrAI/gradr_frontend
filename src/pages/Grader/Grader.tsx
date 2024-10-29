@@ -37,7 +37,6 @@ const Grader = () => {
   const [selectedExam, setSelectedExam] = useState("");
   const [tableData, setTableData] = useState<any[]>([]);
   const [selectedRows, setSelectedRows] = useState<Exam[] | []>([]);
-  const [resultParams, setResultParams] = useState<Partial<Result>[]>([]);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
