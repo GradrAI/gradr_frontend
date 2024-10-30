@@ -18,18 +18,6 @@ import { Result } from "@/types/Result";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
 
-type Result = {
-  _id: string;
-  exam: string;
-  studentId: string;
-  score: string;
-  explanation: string;
-  feedback: string;
-  lecturerId: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 const postResults = async (data: Exam[]) =>
   await axios.post<Result[]>(`/results`, data);
 

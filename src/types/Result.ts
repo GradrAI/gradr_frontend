@@ -3,7 +3,8 @@ import { MongoDBDefault } from "./MongoDBDefault";
 export type Result = MongoDBDefault & {
   exam: string;
   studentId: string;
-  grade?: String;
-  feedback: String;
-  user: String;
+  score: string;
+  explanation: string;
+  feedback: string;
+  lecturerId: string;
 };
