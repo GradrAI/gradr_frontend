@@ -64,7 +64,7 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
     const formData = new FormData();
 
     for (const [key, val] of Object.entries(uploadData)) {
-      formData.append(key, val);
+      if (typeof val === "string") formData.append(key, val);
     }
     const { file } = data;
     for (const [key, val] of Object.entries(file)) {
