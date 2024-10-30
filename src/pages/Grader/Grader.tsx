@@ -30,13 +30,16 @@ type Result = {
   updatedAt: Date;
 };
 
+const postResults = async (data: Exam[]) =>
+  await axios.post<Result[]>(`/results`, data);
+
 const Grader = () => {
   const queryClient = new QueryClient();
 
   const [currentUser, setCurrentUser] = useState(initialUserState);
   const [selectedExam, setSelectedExam] = useState("");
   const [tableData, setTableData] = useState<any[]>([]);
-  const [selectedRows, setSelectedRows] = useState<Exam[] | []>([]);
+  const [selectedRows, setSelectedRows] = useState<Exam[]>([]);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -66,7 +69,7 @@ const Grader = () => {
 
   const { isPending, mutate } = useMutation({
     mutationKey: ["results"],
-    mutationFn: async (data) => await axios.post<Result[]>(`/results`, data),
+    mutationFn: postResults,
   });
 
   const handleSelect = (selection: string) => {
