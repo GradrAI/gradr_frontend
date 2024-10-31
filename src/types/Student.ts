@@ -14,6 +14,7 @@ export type Student = MongoDBDefault & {
         explanation: string;
         feedback: string;
       };
+      _id: string;
     },
   ];
 };
