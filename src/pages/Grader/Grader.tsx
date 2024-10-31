@@ -23,11 +23,25 @@ const postResults = async (data: Exam[]) =>
 
 const Grader = () => {
   const queryClient = new QueryClient();
+  const code = localStorage.getItem("code");
 
   const [currentUser, setCurrentUser] = useState(initialUserState);
   const [selectedExam, setSelectedExam] = useState("");
   const [tableData, setTableData] = useState<any[]>([]);
   const [selectedRows, setSelectedRows] = useState<Exam[]>([]);
+  const [clicked, setClicked] = useState(false);
+  const [sheetsObject, setSheetsObject] = useState<string[][]>([[""]]);
+  const [sheetsUri, setSheetsUri] = useState("");
+  const [exportButtonText, setExportButtonText] = useState(
+    "Export to Google Sheets"
+  );
+
+  const createSheets = async () => {
+    return await axios.post(`/oauth2callback`, {
+      code,
+      sheetsObject,
+    });
+  };
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -60,10 +74,43 @@ const Grader = () => {
     mutationFn: postResults,
   });
 
+  const {
+    isLoading: exportIsLoading,
+    isError: exportIsError,
+    error: exportError,
+    data: exportData,
+  } = useQuery({
+    queryKey: ["exportData"],
+    queryFn: createSheets,
+    enabled: Boolean(
+      Boolean(code?.length) && Boolean(sheetsObject.length) && clicked
+    ),
+  });
+
   const handleSelect = (selection: string) => {
     setSelectedExam(selection);
     queryClient.invalidateQueries({ queryKey: ["students"] });
   };
+
+  const handleExport = () => {
+    setClicked(true);
+  };
+
+  useEffect(() => {
+    if (exportData) {
+      toast.success("Successfully exported data");
+      setSheetsUri(exportData?.data?.data?.spreadsheetUrl);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (exportIsLoading) setExportButtonText("Exporting...");
+    if (exportIsError) {
+      console.log("error: ", exportError);
+      toast.error("An error occurred");
+      setExportButtonText("Retry");
+    }
+  }, [exportIsLoading, exportIsError, exportError]);
 
   useEffect(() => {
     refetch();
@@ -71,12 +118,24 @@ const Grader = () => {
 
   useEffect(() => {
     if (data?.data?.length) {
-      const _tableData = data.data.map(({ _id, createdAt, exams }) => ({
-        _id,
-        createdAt,
-        exam: exams[0],
-      }));
+      const _tableData = data.data.map(({ _id, createdAt, exams }) => {
+        return {
+          _id,
+          createdAt,
+          exam: exams[0],
+        };
+      });
       setTableData(_tableData);
+
+      const filteredExams = data.data.map(
+        ({ exams }) => exams.filter(({ name }) => name === selectedExam)[0]
+      );
+      const header = ["Student ID", "Grade"];
+      const sheetsData = [header];
+      filteredExams.map(({ _id, result: { score } }) => {
+        sheetsData.push([`${_id}`, `${score}`]);
+      });
+      setSheetsObject(sheetsData);
     }
   }, [isSuccess, data]);
 
@@ -118,7 +177,19 @@ const Grader = () => {
               </SelectContent>
             </Select>
 
-            <Button disabled>Export marks</Button>
+            {sheetsUri?.length ? (
+              <p
+                className="text-blue-500 cursor-pointer"
+                onClick={() => {
+                  setClicked(false);
+                  window.open(sheetsUri, "_blank", "noopener,noreferrer");
+                }}
+              >
+                View Sheets
+              </p>
+            ) : (
+              <Button onClick={handleExport}>{exportButtonText}</Button>
+            )}
           </div>
 
           {Boolean(tableData?.length) && (
