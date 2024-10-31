@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { ModalContext } from "../../Layout";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { DataTable } from "../../components/data-table";
 import { columns } from "./columns";
 
 const Assessments = () => {
-  const { showModal } = useContext(ModalContext);
+  const nav = useNavigate();
   const [searchParams] = useSearchParams();
 
   const [userId, setUserId] = useState("");
@@ -44,12 +44,17 @@ const Assessments = () => {
 
   useEffect(() => {
     // when code is available, call mutation
-    if (code) mutate(code);
+    if (code) {
+      mutate(code);
+    }
   }, [code]);
 
   useEffect(() => {
     const code = searchParams.get("code");
-    if (code) localStorage.setItem("code", code);
+    if (code) {
+      localStorage.setItem("code", code);
+      nav("/app/assessments", { replace: true });
+    }
   }, [searchParams]);
 
   const {
