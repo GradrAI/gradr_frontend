@@ -107,7 +107,7 @@ const Landing = () => {
           className="font-raleway"
           onClick={() =>
             window.open(
-              "mailto:contact@gradrai.com?subject=Register for early access&body=Hello there, I would like to request for early access to gradrai",
+              "mailto:support@gradrai.com?subject=Register for early access&body=Hello there, I would like to request for early access to gradrai",
               "_blank"
             )
           }
@@ -207,7 +207,7 @@ const Landing = () => {
           primary
           onClick={() => {
             window.open(
-              "mailto:contact@gradrai.com?subject=Demo Request&body=Hello there, I would like to request for a demo of gradrai",
+              "mailto:support@gradrai.com?subject=Demo Request&body=Hello there, I would like to request for a demo of gradrai",
               "_blank",
               "noopener,noreferrer"
             );
@@ -238,7 +238,7 @@ const Landing = () => {
             className="cursor-pointer hover:text-slate-500"
             onClick={() => {
               window.open(
-                "mailto:contact@gradrai.com?subject=Inquiry&body=Hello there, I would like to make an inquiry",
+                "mailto:support@gradrai.com?subject=Inquiry&body=Hello there, I would like to make an inquiry",
                 "_blank",
                 "noopener,noreferrer"
               );
