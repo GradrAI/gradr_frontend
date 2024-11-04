@@ -10,6 +10,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import Error from "./components/Error.jsx";
 import axios from "axios";
 import { BASE_URL } from "./requests/constants";
+import { Analytics } from "@vercel/analytics/react";
 
 const queryClient = new QueryClient();
 axios.defaults.baseURL = BASE_URL;
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <Toaster />
         <ErrorBoundary fallback={<Error />}>
           <App />
+          <Analytics />
         </ErrorBoundary>
       </BrowserRouter>
     </QueryClientProvider>
