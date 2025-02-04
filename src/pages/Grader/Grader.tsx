@@ -130,12 +130,15 @@ const Grader = () => {
       const filteredExams = data.data.map(
         ({ exams }) => exams.filter(({ name }) => name === selectedExam)[0]
       );
-      const header = ["Student ID", "Grade"];
-      const sheetsData = [header];
-      filteredExams.map(({ _id, result: { score } }) => {
-        sheetsData.push([`${_id}`, `${score}`]);
-      });
-      setSheetsObject(sheetsData);
+      if (filteredExams?.length && filteredExams[0]?.result?.score) {
+        const header = ["Student ID", "Grade"];
+        const sheetsData = [header];
+        console.log("filteredExams: ", filteredExams);
+        filteredExams?.map(({ _id, result }) => {
+          sheetsData.push([`${_id}`, `${result?.score}`]);
+        });
+        setSheetsObject(sheetsData);
+      }
     }
   }, [isSuccess, data]);
 
