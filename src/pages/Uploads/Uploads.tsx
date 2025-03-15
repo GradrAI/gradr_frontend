@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import initialUserState from "@/data/initialUserState";
+import { ErrorResponse } from "@/types/ErrorResponse";
 import { Exam } from "@/types/Exam";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +18,7 @@ const Uploads = () => {
     if (parsedUser) setCurrentUser(parsedUser);
   }, []);
 
-  const { data, isLoading, isSuccess, isError } = useQuery({
+  const { data, isLoading, isSuccess, isError, error } = useQuery({
     queryKey: ["exams"],
     queryFn: async () =>
       await axios.get(`/exams/users?userId=${currentUser._id}`),
@@ -36,7 +37,10 @@ const Uploads = () => {
   if (isError) {
     return (
       <div className="w-full p-8 flex items-start">
-        <p className="text-3xl">An error occurred</p>
+        <p className="text-3xl">
+          {(error as AxiosError<ErrorResponse>)?.response?.data?.error ||
+            "An error occurred"}
+        </p>
       </div>
     );
   }

@@ -17,11 +17,10 @@ import { Student } from "@/types/Student";
 import { Result } from "@/types/Result";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
+import { ErrorResponse } from "@/types/ErrorResponse";
 
 const postResults = async (data: Exam[]) =>
   await axios.post<Result[]>(`/results`, data);
-
-type ExamError = { error: string };
 
 const Grader = () => {
   const queryClient = new QueryClient();
@@ -160,16 +159,29 @@ const Grader = () => {
     });
   };
 
+  if (examIsLoading) {
+    return (
+      <div className="w-full p-8 flex items-start">
+        {/* //! TO-DO: replace with skeleton loader */}
+        <p className="text-3xl">Fetching uploads...</p>
+      </div>
+    );
+  }
+
+  if (examIsError) {
+    console.log("examError: ", examError);
+    return (
+      <div className="w-full p-8 flex items-start">
+        <p className="text-3xl">
+          {(examError as AxiosError<ErrorResponse>)?.response?.data?.error ||
+            "An error occurred"}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-100 p-4 flex flex-col justify-between gap-2">
-      <h1 className="text-3xl">Grader</h1>
-      {examIsLoading && <p>Fetching exams...</p>}
-      {examIsError && (
-        <p>
-          {(examError as AxiosError<ExamError>)?.response?.data?.error ||
-            "An error occurred."}
-        </p>
-      )}
       {Boolean(examData?.data?.length) && (
         <>
           <div className="w-full flex flex-wrap items-center justify-between">
