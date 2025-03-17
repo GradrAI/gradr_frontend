@@ -159,29 +159,15 @@ const Grader = () => {
     });
   };
 
-  if (examIsLoading) {
-    return (
-      <div className="w-full p-8 flex items-start">
-        {/* //! TO-DO: replace with skeleton loader */}
-        <p className="text-3xl">Fetching uploads...</p>
-      </div>
-    );
-  }
-
-  if (examIsError) {
-    console.log("examError: ", examError);
-    return (
-      <div className="w-full p-8 flex items-start">
-        <p className="text-3xl">
+  return (
+    <div className="w-full p-4 flex flex-col justify-between gap-2">
+      {examIsLoading && <p className="text-2xl">Fetching uploads...</p>}
+      {examIsError && (
+        <p className="text-2xl text-red-500">
           {(examError as AxiosError<ErrorResponse>)?.response?.data?.error ||
             "An error occurred"}
         </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-100 p-4 flex flex-col justify-between gap-2">
+      )}
       {Boolean(examData?.data?.length) && (
         <>
           <div className="w-full flex flex-wrap items-center justify-between">
