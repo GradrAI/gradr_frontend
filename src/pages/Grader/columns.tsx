@@ -100,12 +100,18 @@ export const columns: ColumnDef<any>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              disabled={!row.original.exam?.result?.score}
+            >
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            {/* disable if file is ungraded */}
+
             <DropdownMenuItem
               onClick={() => {
                 window.location.href = `${encodeURI(`/app/grader/details?exam=${name}&studentId=${_id}`)}`;
