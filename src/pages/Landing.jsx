@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Icon } from "semantic-ui-react";
+import { Icon } from "semantic-ui-react";
 import {
   dashboardDesign,
   logo,
@@ -14,6 +14,7 @@ import {
 import { faqs } from "../requests/constants";
 import CustomDropdown from "../components/CustomDropdown";
 import "./customMask.css";
+import { Button } from "@/components/ui/button";
 
 const Landing = () => {
   const nav = useNavigate();
@@ -25,12 +26,12 @@ const Landing = () => {
 
   return (
     <div className="font-sans">
-      <header className="w-full flex items-center justify-between py-4 px-4 md:px-12 bg-[#dafaf9]">
+      <header className="w-full flex items-center justify-between py-4 px-4 md:px-12 bg-blue-800">
         <img src={logo} alt="gradr logo" />
 
         <div className="hidden md:flex items-center justify-between gap-2 w-1/4">
           <p
-            className="m-0 text-blue-800 font-semibold cursor-pointer hover:text-blue-600"
+            className="m-0 text-white font-semibold cursor-pointer font-fredoka"
             onClick={() =>
               featuresRef.current.scrollIntoView({
                 behaviour: "smooth",
@@ -41,7 +42,7 @@ const Landing = () => {
             Features
           </p>
           <p
-            className="m-0 text-blue-800 font-semibold cursor-pointer hover:text-blue-600"
+            className="m-0 text-white font-semibold cursor-pointer font-fredoka"
             onClick={() =>
               gradingRef.current.scrollIntoView({
                 behaviour: "smooth",
@@ -52,7 +53,7 @@ const Landing = () => {
             Grading
           </p>
           <p
-            className="m-0 text-blue-800 font-semibold cursor-pointer hover:text-blue-600"
+            className="m-0 text-white font-semibold cursor-pointer font-fredoka"
             onClick={() =>
               faqsRef.current.scrollIntoView({
                 behaviour: "smooth",
@@ -63,7 +64,7 @@ const Landing = () => {
             FAQs
           </p>
           <p
-            className="m-0 text-blue-800 font-semibold cursor-pointer hover:text-blue-600"
+            className="m-0 text-white font-semibold cursor-pointer font-fredoka"
             onClick={() =>
               contactRef.current.scrollIntoView({
                 behaviour: "smooth",
@@ -76,35 +77,32 @@ const Landing = () => {
         </div>
 
         <div className="flex items-center justify-between gap-4">
-          <p className="m-0 text-blue-800 hover:text-blue-500 font-semibold cursor-not-allowed">
+          <p className="m-0 text-white font-semibold cursor-not-allowed">
             Sign in
           </p>
           <Button
-            size="small"
-            primary
             disabled
             // onClick={() => nav("/app")}
-            className=""
+            className="text-white"
           >
             Sign up
           </Button>
         </div>
       </header>
 
-      <div className="flex flex-col items-center md:justify-start gap-10 p-6 md:gap-2 py-2 w-full h-[100dvh] bg-[#dafaf9] relative">
+      <div className="flex flex-col items-center md:justify-start gap-10 p-6 md:gap-2 py-2 w-full h-[100dvh] bg-blue-600 relative">
         <div className="flex items-center justify-center relative w-full pt-16">
-          <h1 className="text-5xl md:text-7xl text-center text-blue-900 w-full md:w-[50%] z-9 leading-normal tracking-wide md:tracking-normal font-poppins">
+          <h1 className="text-5xl md:text-7xl text-center text-white w-full md:w-[50%] z-9 leading-normal tracking-wide md:tracking-normal font-poppins">
             Break Free From Manual Grading
           </h1>
         </div>
-        <h2 className="text-2xl text-center text-blue-400 font-normal drop-shadow-lg leading-normal p-2 w-full md:w-[35%] font-fredoka">
+        <h2 className="text-2xl text-center text-white font-normal drop-shadow-lg leading-normal p-2 w-full md:w-[45%] font-fredoka">
           Save hours of tedious grading time and focus more on what matters most
           - fostering innovation!
         </h2>
         <Button
           primary
-          size="large"
-          className="font-raleway"
+          className="font-raleway bg-pink-500 hover:bg-pink-600 text-white"
           onClick={() =>
             window.open(
               "mailto:support@gradrai.com?subject=Register for early access&body=Hello there, I would like to request for early access to gradrai",
@@ -204,7 +202,7 @@ const Landing = () => {
           process!
         </p>
         <Button
-          primary
+          className="font-raleway bg-pink-500 hover:bg-pink-600 text-white"
           onClick={() => {
             window.open(
               "mailto:support@gradrai.com?subject=Demo Request&body=Hello there, I would like to request for a demo of gradrai",

@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 export default {
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{html,js,ts,jsx,tsx}"],
@@ -8,6 +9,7 @@ export default {
       fredoka: ["Fredoka", "sans-serif"],
       opensans: ["Open Sans", "sans-serif"],
       raleway: ["Raleway", "sans-serif"],
+      cabin: ["Cabin", "sans-serif"],
     },
     extend: {
       borderRadius: {
