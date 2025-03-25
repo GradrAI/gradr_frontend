@@ -5,8 +5,6 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-import { BASE_URL } from "../requests/constants";
-
 const SUIForm = () => {
   const nav = useNavigate();
   const [form, setForm] = useState({
@@ -40,7 +38,7 @@ const SUIForm = () => {
   };
 
   const handleGrade = async () => {
-    toast.success("Performing grading. Be patient.");
+    toast.info("Performing grading. Be patient.");
     const formData = new FormData();
     for (const [key, val] of Object.entries(form)) {
       formData.append(key, val);

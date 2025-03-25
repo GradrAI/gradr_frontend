@@ -1,35 +1,36 @@
 import { Button } from "@/components/ui/button";
-import initialUserState from "@/data/initialUserState";
+import useStore from "@/state";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { Exam } from "@/types/Exam";
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Uploads = () => {
   const nav = useNavigate();
-  const [currentUser, setCurrentUser] = useState(initialUserState);
-
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-    let parsedUser = initialUserState;
-    if (user) parsedUser = JSON.parse(user);
-    if (parsedUser) setCurrentUser(parsedUser);
-  }, []);
+  const { user } = useStore();
 
   const { data, isLoading, isSuccess, isError, error } = useQuery({
     queryKey: ["exams"],
-    queryFn: async () =>
-      await axios.get(`/exams/users?userId=${currentUser._id}`),
-    enabled: Boolean(currentUser?._id?.length),
+    queryFn: async () => await axios.get(`/exams/users?userId=${user?._id}`),
+    enabled: Boolean(user?._id?.length),
   });
 
+  const handleClick = () => {
+    // check if user is tied to an organization
+    if (!user?.organization) {
+      toast.error("You need to be part of an organization to upload files");
+      return;
+    }
+    nav("new");
+  };
+
   return (
-    <div className="p-4 flex flex-col gap-4">
+    <div className="p-4 flex flex-col gap-4 ">
       <div className="w-full flex flex-wrap items-center justify-between gap-4">
         <h1 className="font-bold text-3xl m-0">Uploads</h1>
-        <Button className="w-[150px] self-end" onClick={() => nav("new")}>
+        <Button className="w-[150px] self-end" onClick={handleClick}>
           Upload new file(s)
         </Button>
       </div>
@@ -45,7 +46,7 @@ const Uploads = () => {
           ({ _id, examName, guide, question, students }: Exam) => (
             <div
               key={_id}
-              className="w-full md:w-1/4 flex flex-col gap-4 items-start justify-between p-4 border border-solid rounded-md"
+              className="w-full md:w-1/4 flex flex-col gap-4 items-start justify-between p-4 border border-solid rounded-md bg-white shadow-md"
             >
               <p className="font-semibold text-2xl text-slate-500">
                 {examName}

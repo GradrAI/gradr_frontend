@@ -25,9 +25,11 @@ import initialUserState from "@/data/initialUserState";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
+import useStore from "@/state";
 
 const NewUpload = () => {
   const queryClient = useQueryClient();
+  const { user } = useStore();
 
   const [uploadData, setUploadData] = useState<Partial<UploadData>>({
     lecturerId: "",
@@ -35,17 +37,12 @@ const NewUpload = () => {
     fileType: undefined,
   });
   const [addNew, setAddNew] = useState(false);
-  const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    let parsedUser = initialUserState;
-    const user = localStorage.getItem("user");
-    if (user) parsedUser = JSON.parse(user);
-    if (parsedUser && parsedUser._id) {
-      setUserId(parsedUser._id);
-      setUploadData({ ...uploadData, lecturerId: parsedUser._id });
+    if (user?._id) {
+      setUploadData({ ...uploadData, lecturerId: user._id });
     }
-  }, []);
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -70,8 +67,8 @@ const NewUpload = () => {
 
   const { data, isLoading, isSuccess, isError } = useQuery({
     queryKey: ["exams"],
-    queryFn: async () => await axios.get(`/exams/users?userId=${userId}`),
-    enabled: Boolean(userId.length),
+    queryFn: async () => await axios.get(`/exams/users?userId=${user?._id}`),
+    enabled: Boolean(user?._id?.length),
   });
 
   const { isPending, mutate } = useMutation({
@@ -84,13 +81,13 @@ const NewUpload = () => {
   }, [data]);
 
   const handleAddExam = () => {
-    if (!userId?.length) {
+    if (!user?._id?.length) {
       toast.error(notifications.EXAM.FAILURE);
       return;
     }
     mutate(
       {
-        lecturerId: userId,
+        lecturerId: user?._id,
         examName: uploadData.examName,
         maxScoreAttainable: uploadData.maxScoreAttainable,
       },

@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import initialUserState from "@/data/initialUserState";
 import notifications from "@/requests/notifications";
+import useStore from "@/state";
 
 const formSchema = z.object({
   file: z.instanceof(FileList),
@@ -27,16 +28,7 @@ const formSchema = z.object({
 
 const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
   const nav = useNavigate();
-  const [userId, setUserId] = useState("");
-
-  useEffect(() => {
-    let parsedUser = initialUserState;
-    const user = localStorage.getItem("user");
-    if (user) parsedUser = JSON.parse(user);
-    if (parsedUser && parsedUser._id) {
-      setUserId(parsedUser._id);
-    }
-  }, []);
+  const { user } = useStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,8 +39,8 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["exams"],
-    queryFn: async () => await axios.get(`/exams/users?userId=${userId}`),
-    enabled: Boolean(userId.length),
+    queryFn: async () => await axios.get(`/exams/users?userId=${user?._id}`),
+    enabled: Boolean(user?._id?.length),
   });
 
   const { isPending, mutate } = useMutation({

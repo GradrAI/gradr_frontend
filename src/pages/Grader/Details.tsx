@@ -63,7 +63,7 @@ const Details = () => {
           onClick={() => {
             window.open(localData.question, "_blank", "noopener,noreferrer");
           }}
-          className={`p-2 border rounded-xl m-0 ${!Boolean(localData.question.length) ? "text-slate-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
+          className={`p-2 border rounded-xl m-0 ${!Boolean(localData.question.length) ? "text-cyan-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
         >
           Question
         </p>
@@ -76,7 +76,7 @@ const Details = () => {
               "noopener,noreferrer"
             );
           }}
-          className={`p-2 border rounded-xl m-0 ${!Boolean(localData.markingGuide.length) ? "text-slate-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
+          className={`p-2 border rounded-xl m-0 ${!Boolean(localData.markingGuide.length) ? "text-cyan-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
         >
           Marking Guide
         </p>
@@ -89,7 +89,7 @@ const Details = () => {
               "noopener,noreferrer"
             );
           }}
-          className={`p-2 border rounded-xl m-0 ${!Boolean(localData.studentAnswerUrl.length) ? "text-slate-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
+          className={`p-2 border rounded-xl m-0 ${!Boolean(localData.studentAnswerUrl.length) ? "text-cyan-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
         >
           {`Student's Answer`}
         </p>
@@ -102,7 +102,7 @@ const Details = () => {
               "noopener,noreferrer"
             );
           }}
-          className={`p-2 border rounded-xl m-0 ${!Boolean(localData.onlineAnswers.length) ? "text-slate-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
+          className={`p-2 border rounded-xl m-0 ${!Boolean(localData.onlineAnswers.length) ? "text-cyan-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
         >
           {`Online Answers to question`}
         </p>
@@ -111,13 +111,13 @@ const Details = () => {
           onClick={() => {
             window.open(localData.report, "_blank", "noopener,noreferrer");
           }}
-          className={`p-2 border rounded-xl m-0 ${!Boolean(localData.report.length) ? "text-slate-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
+          className={`p-2 border rounded-xl m-0 ${!Boolean(localData.report.length) ? "text-cyan-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
         >
           Student report
         </p>
       </div>
 
-      <div className="w-full h-full flex flex-col gap-8 justify-start text-stone-500 border rounded-xl p-6 overflow-y-scroll cursor-pointer">
+      <div className="w-full h-full flex flex-col gap-8 justify-start text-black border rounded-xl p-6 cursor-pointer">
         <div className="flex flex-col justify-start">
           <p className="text-xl m-0 font-bold">Score</p>
           <p>{localData.score}</p>

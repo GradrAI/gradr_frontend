@@ -13,17 +13,16 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useEffect, useMemo, useState } from "react";
+import useStore from "@/state";
 
-const callFn = async (code, sheetsObject) => {
-  return await axios.post(`/oauth2callback`, {
+const callFn = async (code, sheetsObject) =>
+  await axios.post(`/oauth2callback`, {
     code,
     sheetsObject,
   });
-};
-
 const Results = () => {
   const nav = useNavigate();
-  const code = localStorage.getItem("code");
+  const { code } = useStore();
   const [clicked, setClicked] = useState(false);
   const [sheetsObject, setSheetsObject] = useState([]);
   const [sheetsUri, setSheetsUri] = useState("");

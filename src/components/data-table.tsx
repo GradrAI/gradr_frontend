@@ -47,6 +47,10 @@ export function DataTable<TData, TValue>({
     fileName: false,
   });
   const [rowSelection, setRowSelection] = useState({});
+  const [pagination, setPagination] = useState({
+    pageIndex: 0, //initial page index
+    pageSize: 5, //default page size
+  });
 
   useEffect(() => {
     const selections = table.getFilteredSelectedRowModel().rows;
@@ -71,6 +75,7 @@ export function DataTable<TData, TValue>({
       columnFilters,
       columnVisibility,
       rowSelection,
+      pagination,
     },
   });
 
@@ -85,7 +90,7 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn("examName")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm bg-white"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -114,7 +119,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border bg-white p-2">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -164,6 +169,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           variant="outline"

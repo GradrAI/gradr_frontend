@@ -15,23 +15,47 @@ import { faqs } from "../requests/constants";
 import CustomDropdown from "../components/CustomDropdown";
 import "./customMask.css";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import useStore from "@/state";
 
 const Landing = () => {
   const nav = useNavigate();
+  const { user, setAccountType } = useStore();
 
   const featuresRef = useRef(null);
   const faqsRef = useRef(null);
   const gradingRef = useRef(null);
   const contactRef = useRef(null);
 
+  const handleSignIn = () => {
+    if (user) nav("/app/assessments");
+    else {
+      setAccountType("individual");
+      nav("app");
+    }
+  };
+
   return (
     <div className="font-sans">
-      <header className="w-full flex items-center justify-between py-4 px-4 md:px-12 bg-blue-800">
+      <header className="w-full flex items-center justify-between py-4 px-4 md:px-12 bg-gray-800">
         <img src={logo} alt="gradr logo" />
 
         <div className="hidden md:flex items-center justify-between gap-2 w-1/4">
           <p
-            className="m-0 text-white font-semibold cursor-pointer font-fredoka"
+            className="m-0 text-white hover:text-pink-500 font-normal cursor-pointer font-fredoka"
             onClick={() =>
               featuresRef.current.scrollIntoView({
                 behaviour: "smooth",
@@ -42,7 +66,7 @@ const Landing = () => {
             Features
           </p>
           <p
-            className="m-0 text-white font-semibold cursor-pointer font-fredoka"
+            className="m-0 text-white hover:text-pink-500 font-normal cursor-pointer font-fredoka"
             onClick={() =>
               gradingRef.current.scrollIntoView({
                 behaviour: "smooth",
@@ -53,7 +77,7 @@ const Landing = () => {
             Grading
           </p>
           <p
-            className="m-0 text-white font-semibold cursor-pointer font-fredoka"
+            className="m-0 text-white hover:text-pink-500 font-normal cursor-pointer font-fredoka"
             onClick={() =>
               faqsRef.current.scrollIntoView({
                 behaviour: "smooth",
@@ -64,7 +88,7 @@ const Landing = () => {
             FAQs
           </p>
           <p
-            className="m-0 text-white font-semibold cursor-pointer font-fredoka"
+            className="m-0 text-white hover:text-pink-500 font-normal cursor-pointer font-fredoka"
             onClick={() =>
               contactRef.current.scrollIntoView({
                 behaviour: "smooth",
@@ -77,32 +101,53 @@ const Landing = () => {
         </div>
 
         <div className="flex items-center justify-between gap-4">
-          <p className="m-0 text-white font-semibold cursor-not-allowed">
+          <p
+            className="m-0 text-white hover:text-pink-500 font-semibold cursor-pointer"
+            onClick={handleSignIn}
+          >
             Sign in
           </p>
-          <Button
-            disabled
-            // onClick={() => nav("/app")}
-            className="text-white"
-          >
-            Sign up
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="text-white hover:text-white bg-pink-500 hover:bg-pink-600 border-none"
+              >
+                Sign Up
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="">
+              <DropdownMenuItem
+                onClick={() => {
+                  setAccountType("individual");
+                  nav("/app");
+                }}
+              >
+                As Individual
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setAccountType("organization");
+                  nav("app");
+                }}
+              >
+                As Organization
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
-      <div className="flex flex-col items-center md:justify-start gap-10 p-6 md:gap-2 py-2 w-full h-[100dvh] bg-blue-600 relative">
-        <div className="flex items-center justify-center relative w-full pt-16">
-          <h1 className="text-5xl md:text-7xl text-center text-white w-full md:w-[50%] z-9 leading-normal tracking-wide md:tracking-normal font-poppins">
-            Break Free From Manual Grading
-          </h1>
-        </div>
-        <h2 className="text-2xl text-center text-white font-normal drop-shadow-lg leading-normal p-2 w-full md:w-[45%] font-fredoka">
+      <div className="flex flex-col items-center md:justify-start gap-10 p-4 md:p-6 md:gap-2 py-2 w-full h-[100dvh] bg-blue-600 relative">
+        <h1 className="text-5xl md:text-7xl text-center m-0 text-white w-full md:w-[50%] md:py-8 z-9 leading-normal md:tracking-wide tracking-normal font-poppins">
+          Break Free From Manual Grading!
+        </h1>
+        <h2 className="text-2xl text-center text-white font-normal drop-shadow-lg leading-normal m-0 p-2 w-full md:w-[45%] font-fredoka">
           Save hours of tedious grading time and focus more on what matters most
-          - fostering innovation!
+          - fostering innovation.
         </h2>
         <Button
-          primary
-          className="font-raleway bg-pink-500 hover:bg-pink-600 text-white"
+          className="py-6 px-4 text-lg font-raleway bg-pink-500 hover:bg-pink-600 text-white shadow-[4px_4px_8px_rgba(0,0,0,0.3)] duration-300 hover:shadow-[6px_6px_12px_rgba(0,0,0,0.4)]"
           onClick={() =>
             window.open(
               "mailto:support@gradrai.com?subject=Register for early access&body=Hello there, I would like to request for early access to gradrai",
@@ -112,7 +157,7 @@ const Landing = () => {
         >
           Register for early access
         </Button>
-        <div className="w-full mb-20">
+        <div className="w-full">
           <img
             src={dashboardDesign}
             alt="Dashboard Design"
@@ -122,39 +167,58 @@ const Landing = () => {
       </div>
 
       <div
-        className="flex md:flex-row items-center justify-between gap-12 py-6 md:py-20 px-8 md:px-24 my-0 md:my-8 w-full h-dvh text-justify"
+        className="relative flex md:flex-row items-center justify-between gap-12 py-6 md:py-20 px-8 md:px-24 my-0 md:my-8 w-full h-dvh text-justify overflow-hidden"
         ref={featuresRef}
       >
-        <div className="flex flex-col gap-4 p-4 items-center md:items-start justify-around w-full md:w-[40%] h-full">
-          <div className="md:flex items-start gap-2">
-            <img src={clock} alt="" className="hidden md:inline-block p-1" />
-            <p className="md:text-2xl text-xl leading-relaxed">
-              <span className="text-blue-800 font-semibold">Save time: </span>{" "}
-              Gradr AI automates tedious grading tasks, freeing up several hours
-              for educators and allowing them to focus on what matters most -
-              teaching, mentoring, and fostering innovation.
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute top-10 left-1/3 w-[400px] h-[400px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-30 rounded-full blur-[100px] animate-spin-slow"></div>
+          <div className="absolute bottom-10 right-1/4 w-[300px] h-[300px] bg-gradient-to-r from-cyan-500 to-blue-600 opacity-40 rounded-full blur-[80px] animate-pulse"></div>
+        </div>
+
+        <div className="flex flex-col gap-6 p-4 items-center md:items-start justify-around w-full md:w-[50%] h-full">
+          <div className="md:flex items-start gap-3">
+            <img
+              src={clock}
+              alt=""
+              className="hidden md:inline-block p-1 w-10"
+            />
+            <p className="md:text-2xl text-xl leading-relaxed text-gray-800">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text font-bold">
+                Save time:
+              </span>{" "}
+              GradrAI automates tedious grading tasks, freeing up several hours
+              for educators and allowing them to focus on what matters
+              most—teaching, mentoring, and fostering innovation.
             </p>
           </div>
 
-          <div className="md:flex items-start gap-2">
-            <img src={chart} alt="" className="hidden md:inline-block p-1" />
-            <p className="md:text-2xl text-xl leading-relaxed">
-              <span className="text-blue-800 font-semibold">
-                Enhance efficiency:{" "}
-              </span>
-              Gradr AI uses state-of-the-art Artificial Intelligence to ensure
-              maximum and measurable accuracy devoid of all biases.
+          <div className="md:flex items-start gap-3">
+            <img
+              src={chart}
+              alt=""
+              className="hidden md:inline-block p-1 w-10"
+            />
+            <p className="md:text-2xl text-xl leading-relaxed text-gray-800">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text font-bold">
+                Enhance efficiency:
+              </span>{" "}
+              GradrAI uses state-of-the-art Artificial Intelligence technology
+              to ensure maximum and measurable accuracy devoid of all biases.
             </p>
           </div>
 
-          <div className="md:flex items-start gap-2">
-            <img src={notes} alt="" className="hidden md:inline-block p-1" />
-            <p className="md:text-2xl text-xl leading-relaxed">
-              <span className="text-blue-800 font-semibold">
-                Enhance learning outcomes:{" "}
-              </span>
+          <div className="md:flex items-start gap-3">
+            <img
+              src={notes}
+              alt=""
+              className="hidden md:inline-block p-1 w-10"
+            />
+            <p className="md:text-2xl text-xl leading-relaxed text-gray-800">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text font-bold">
+                Enhance learning outcomes:
+              </span>{" "}
               Students are provided with insights into their performance via
-              detailed reports higlighting their strengths and weaknesses.
+              detailed reports highlighting their strengths and weaknesses.
             </p>
           </div>
         </div>
@@ -162,7 +226,7 @@ const Landing = () => {
         <img
           src={marking}
           alt="interface for upload of marking guide"
-          className="hidden md:inline-block p-2 bg-slate-200 h-[90%]"
+          className="hidden md:inline-block p-2 h-[90%] rounded-lg shadow-xl bg-white/80 backdrop-blur-lg cursor-pointer hover:scale-110 duration-300 ease-in-out"
         />
       </div>
 
@@ -202,7 +266,7 @@ const Landing = () => {
           process!
         </p>
         <Button
-          className="font-raleway bg-pink-500 hover:bg-pink-600 text-white"
+          className="py-6 px-4 text-lg  font-raleway bg-pink-500 hover:bg-pink-600 text-white shadow-[4px_4px_8px_rgba(0,0,0,0.3)] duration-300 hover:shadow-[6px_6px_12px_rgba(0,0,0,0.4)]"
           onClick={() => {
             window.open(
               "mailto:support@gradrai.com?subject=Demo Request&body=Hello there, I would like to request for a demo of gradrai",
@@ -215,20 +279,18 @@ const Landing = () => {
         </Button>
       </div>
 
-      <div className="flex justify-between py-4 px-6 md:px-12">
-        <img src={logo} alt="gradr logo" />
-      </div>
-
       <footer
-        className="w-full flex items-center justify-between p-4 md:pt-12 md:px-12"
+        className="w-full flex items-baseline justify-between p-4"
         ref={contactRef}
       >
-        <div className="hidden md:flex flex-wrap items-center justify-start gap-2 w-full">
+        <img src={logo} alt="gradr logo" className="" />
+
+        <div className="hidden md:flex flex-wrap items-center justify-start gap-2 w-max -my-2 text-xs">
           <p className="m-0">&copy; Copyright {new Date().getFullYear()}.</p>
           <p>All rights reserved.</p>
         </div>
 
-        <div className="flex items-center justify-end w-full my-4 gap-8">
+        <div className="flex items-center justify-end w-max gap-8">
           <Icon
             name="mail"
             size="large"
@@ -249,7 +311,7 @@ const Landing = () => {
             className="cursor-pointer hover:text-slate-500"
             onClick={() =>
               window.open(
-                "https://www.linkedin.com/in/john-fiewor-365484127/",
+                "https://www.linkedin.com/company/gradrai/",
                 "_blank",
                 "noopener,noreferrer"
               )

@@ -7,6 +7,7 @@ export type User = {
   password: string | null;
   provider: string;
   picture: string;
+  organization?: string;
   createdAt: Date | null;
   updatedAt: Date | null;
   __v: number | null;

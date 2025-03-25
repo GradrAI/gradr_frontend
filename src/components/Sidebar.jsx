@@ -8,6 +8,7 @@ import {
   personalcardBlue,
   report,
   faq,
+  setting,
 } from "../assets";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
@@ -17,16 +18,16 @@ const Sidebar = () => {
   const currPath = pathname.split("/").at(-1);
 
   return (
-    <div className="hidden md:flex md:w-full h-dvh py-2 px-6 bg-slate-100 flex-col justify-between shadow-zinc-800 border-r border-r-purple-500">
-      <div className="h-2/4 flex flex-col gap-4 items-start justify-around">
+    <div className="hidden md:flex md:w-full h-dvh py-2 px-6 bg-slate-800 flex-col justify-between shadow-zinc-800 border-r border-r-purple-500">
+      <div className="h-3/5 flex flex-col gap-4 items-start justify-between">
         <img
           src={logo}
           alt="logo"
-          className="cursor-pointer w-3/4"
+          className="cursor-pointer w-3/4 py-4"
           onClick={() => nav("/app")}
         />
 
-        <div className="text-zinc-500 flex flex-col items-start justify-start gap-4">
+        <div className="flex flex-col items-start justify-start gap-4">
           <div className="flex justify-start gap-4 items-center py-4">
             <img
               src={`${currPath === "assessments" ? folderBlue : folder}`}
@@ -36,7 +37,7 @@ const Sidebar = () => {
             />
             <NavLink
               className={({ isActive }) =>
-                `cursor-pointer  ${isActive ? "" : "text-black"}`
+                `cursor-pointer  ${isActive ? "" : "text-white"}`
               }
               to="/app/assessments"
             >
@@ -53,7 +54,7 @@ const Sidebar = () => {
             />
             <NavLink
               className={({ isActive }) =>
-                `cursor-pointer  ${isActive ? "" : "text-black"}`
+                `cursor-pointer  ${isActive ? "" : "text-white"}`
               }
               to="/app/grader"
             >
@@ -72,11 +73,28 @@ const Sidebar = () => {
             />
             <NavLink
               className={({ isActive }) =>
-                `cursor-pointer  ${isActive ? "" : "text-black"}`
+                `cursor-pointer  ${isActive ? "" : "text-white"}`
               }
               to="/app/uploads"
             >
               Uploads
+            </NavLink>
+          </div>
+
+          <div className="flex justify-start gap-4 items-center py-4">
+            <img
+              src={`${currPath === "settings" ? setting : setting}`}
+              alt="icon"
+              className={`cursor-pointer`}
+              onClick={() => nav("/app/settings")}
+            />
+            <NavLink
+              className={({ isActive }) =>
+                `cursor-pointer  ${isActive ? "" : "text-white"}`
+              }
+              to="/app/settings"
+            >
+              Settings
             </NavLink>
           </div>
         </div>

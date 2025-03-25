@@ -11,6 +11,7 @@ import Error from "./components/Error.jsx";
 import axios from "axios";
 import { BASE_URL } from "./requests/constants";
 import { Analytics } from "@vercel/analytics/react";
+// import { Toaster } from "@/components/ui/toaster";
 
 const queryClient = new QueryClient();
 axios.defaults.baseURL = BASE_URL;
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <ErrorBoundary fallback={<Error />}>
           <App />
           <Analytics />
+          {/* <Toaster /> */}
         </ErrorBoundary>
       </BrowserRouter>
     </QueryClientProvider>

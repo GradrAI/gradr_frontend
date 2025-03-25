@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import initialUserState from "@/data/initialUserState";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
@@ -18,15 +17,15 @@ import { Result } from "@/types/Result";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
 import { ErrorResponse } from "@/types/ErrorResponse";
+import useStore from "@/state";
 
 const postResults = async (data: Exam[]) =>
   await axios.post<Result[]>(`/results`, data);
 
 const Grader = () => {
   const queryClient = new QueryClient();
-  const code = localStorage.getItem("code");
+  const { user, code } = useStore();
 
-  const [currentUser, setCurrentUser] = useState(initialUserState);
   const [selectedExam, setSelectedExam] = useState("");
   const [tableData, setTableData] = useState<any[]>([]);
   const [selectedRows, setSelectedRows] = useState<Exam[]>([]);
@@ -37,19 +36,11 @@ const Grader = () => {
     "Export to Google Sheets"
   );
 
-  const createSheets = async () => {
-    return await axios.post(`/oauth2callback`, {
+  const createSheets = async () =>
+    await axios.post(`/oauth2callback`, {
       code,
       sheetsObject,
     });
-  };
-
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-    let parsedUser = initialUserState;
-    if (user) parsedUser = JSON.parse(user);
-    if (parsedUser) setCurrentUser(parsedUser);
-  }, []);
 
   const {
     data: examData,
@@ -59,9 +50,8 @@ const Grader = () => {
     error: examError,
   } = useQuery({
     queryKey: ["exams"],
-    queryFn: async () =>
-      await axios.get(`/exams/users?userId=${currentUser._id}`),
-    enabled: Boolean(currentUser?._id?.length),
+    queryFn: async () => await axios.get(`/exams/users?userId=${user?._id}`),
+    enabled: Boolean(user?._id?.length),
   });
 
   const { data, isLoading, isSuccess, isError, refetch } = useQuery({
@@ -172,7 +162,7 @@ const Grader = () => {
         <>
           <div className="w-full flex flex-wrap items-center justify-between">
             <Select onValueChange={handleSelect}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-[200px] bg-white">
                 <SelectValue placeholder="Select exam" />
               </SelectTrigger>
               <SelectContent>
