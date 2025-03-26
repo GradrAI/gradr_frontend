@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 import {
@@ -34,11 +34,16 @@ import useStore from "@/state";
 const Landing = () => {
   const nav = useNavigate();
   const { user, setAccountType } = useStore();
+  const [openIndex, setOpenIndex] = useState(null);
 
   const featuresRef = useRef(null);
   const faqsRef = useRef(null);
   const gradingRef = useRef(null);
   const contactRef = useRef(null);
+
+  const toggleDropdown = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   const handleSignIn = () => {
     if (user) nav("/app/assessments");
@@ -138,7 +143,7 @@ const Landing = () => {
         </div>
       </header>
 
-      <div className="flex flex-col items-center md:justify-start gap-10 p-4 md:p-6 md:gap-2 py-2 w-full h-[100dvh] bg-blue-600 relative">
+      <div className="flex flex-col items-center md:justify-start gap-10 p-4 md:p-6 md:gap-2 py-2 w-full h-[100dvh] bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600 relative">
         <h1 className="text-5xl md:text-7xl text-center m-0 text-white w-full md:w-[50%] md:py-8 z-9 leading-normal md:tracking-wide tracking-normal font-poppins">
           Break Free From Manual Grading!
         </h1>
@@ -217,8 +222,8 @@ const Landing = () => {
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text font-bold">
                 Enhance learning outcomes:
               </span>{" "}
-              Students are provided with insights into their performance via
-              detailed reports highlighting their strengths and weaknesses.
+              Students are given insights into their performance in examinations
+              via detailed reports highlighting their strengths and weaknesses.
             </p>
           </div>
         </div>
@@ -231,7 +236,7 @@ const Landing = () => {
       </div>
 
       <div
-        className="relative bg-blue-600 flex flex-col items-center justify-around gap-4 py-4 px-12 min-h-screen max-h-screen"
+        className="relative bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600 flex flex-col items-center justify-around gap-4 py-4 px-12 min-h-screen max-h-screen"
         ref={faqsRef}
       >
         <img src={lingkaran} alt="" className="absolute -top-20 left-0" />
@@ -243,12 +248,18 @@ const Landing = () => {
             Frequently Asked Questions
           </p>
           <p className="font-semibold text-xl text-slate-200">
-            Everything you need to know about Gradr
+            Everything you need to know about GradrAI
           </p>
         </div>
         <div className="flex flex-col gap-6 w-full md:w-2/4">
           {faqs.map(({ heading, text }, id) => (
-            <CustomDropdown key={id} heading={heading} text={text} />
+            <CustomDropdown
+              key={id}
+              heading={heading}
+              text={text}
+              isOpen={openIndex === id}
+              onToggle={() => toggleDropdown(id)}
+            />
           ))}
         </div>
         <img src={updown} alt="" className="absolute -bottom-20 -right-10" />
