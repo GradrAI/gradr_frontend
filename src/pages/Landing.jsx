@@ -236,7 +236,7 @@ const Landing = () => {
       </div>
 
       <div
-        className="relative bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600 flex flex-col items-center justify-around gap-4 py-4 px-12 min-h-screen max-h-screen"
+        className="relative bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600 flex flex-col items-center justify-around gap-4 py-4 px-12 min-h-screen"
         ref={faqsRef}
       >
         <img src={lingkaran} alt="" className="absolute -top-20 left-0" />
