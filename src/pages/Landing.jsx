@@ -143,8 +143,8 @@ const Landing = () => {
         </div>
       </header>
 
-      <div className="flex flex-col items-center md:justify-start gap-10 p-4 md:p-6 md:gap-2 py-2 w-full h-[100dvh] bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600 relative">
-        <h1 className="text-5xl md:text-7xl text-center m-0 text-white w-full md:w-[50%] md:py-8 z-9 leading-normal md:tracking-wide tracking-normal font-poppins">
+      <div className="flex flex-col items-center md:justify-start justify-evenly gap-10 p-4 md:p-6 md:gap-2 py-2 w-full h-[100dvh] bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600 relative">
+        <h1 className="text-5xl md:text-7xl text-center m-0 text-white w-full md:w-[50%] py-8 z-9 leading-normal md:tracking-wide tracking-normal font-poppins">
           Break Free From Manual Grading!
         </h1>
         <h2 className="text-2xl text-center text-white font-normal drop-shadow-lg leading-normal m-0 p-2 w-full md:w-[45%] font-fredoka">
@@ -152,7 +152,7 @@ const Landing = () => {
           - fostering innovation.
         </h2>
         <Button
-          className="py-6 px-4 text-lg font-raleway bg-pink-500 hover:bg-pink-600 text-white shadow-[4px_4px_8px_rgba(0,0,0,0.3)] duration-300 hover:shadow-[6px_6px_12px_rgba(0,0,0,0.4)]"
+          className="py-8 px-6 md:py-6 md:px-4 text-xl md:text-lg font-raleway bg-pink-500 hover:bg-pink-600 text-white shadow-[4px_4px_8px_rgba(0,0,0,0.3)] duration-300 hover:shadow-[6px_6px_12px_rgba(0,0,0,0.4)]"
           onClick={() =>
             window.open(
               "mailto:support@gradrai.com?subject=Register for early access&body=Hello there, I would like to request for early access to gradrai",
