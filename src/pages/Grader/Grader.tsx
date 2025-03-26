@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
@@ -18,13 +19,15 @@ import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import useStore from "@/state";
+import { useNavigate } from "react-router-dom";
 
 const postResults = async (data: Exam[]) =>
   await axios.post<Result[]>(`/results`, data);
 
 const Grader = () => {
+  const nav = useNavigate();
   const queryClient = new QueryClient();
-  const { user, code } = useStore();
+  const { user, code, token } = useStore();
 
   const [selectedExam, setSelectedExam] = useState("");
   const [tableData, setTableData] = useState<any[]>([]);
@@ -36,15 +39,10 @@ const Grader = () => {
     "Export to Google Sheets"
   );
 
-  const createSheets = async () =>
-    await axios.post(`/oauth2callback`, {
-      code,
-      sheetsObject,
-    });
-
   const {
     data: examData,
     isLoading: examIsLoading,
+    isPending: examIsPending,
     isSuccess: examIsSuccess,
     isError: examIsError,
     error: examError,
@@ -54,14 +52,14 @@ const Grader = () => {
     enabled: Boolean(user?._id?.length),
   });
 
-  const { data, isLoading, isSuccess, isError, refetch } = useQuery({
+  const { data, isLoading, isPending, isSuccess, isError, refetch } = useQuery({
     queryKey: ["students"],
     queryFn: async () =>
       await axios.get<Student[]>(`/students?exam=${selectedExam}`),
     enabled: Boolean(selectedExam.length),
   });
 
-  const { isPending, mutate } = useMutation({
+  const { isPending: gradeIsPending, mutate } = useMutation({
     mutationKey: ["results"],
     mutationFn: postResults,
   });
@@ -73,10 +71,19 @@ const Grader = () => {
     data: exportData,
   } = useQuery({
     queryKey: ["exportData"],
-    queryFn: createSheets,
-    enabled: Boolean(
-      Boolean(code?.length) && Boolean(sheetsObject.length) && clicked
-    ),
+    queryFn: async () =>
+      await axios.post(
+        `/oauth2callback`,
+        {
+          code,
+          sheetsObject,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      ),
+    enabled: Boolean(sheetsObject.length) && clicked && Boolean(token?.length),
+    retry: false,
   });
 
   const handleSelect = (selection: string) => {
@@ -93,13 +100,20 @@ const Grader = () => {
       toast.success("Successfully exported data");
       setSheetsUri(exportData?.data?.data?.spreadsheetUrl);
     }
-  }, [data]);
+  }, [exportData]);
 
   useEffect(() => {
     if (exportIsLoading) setExportButtonText("Exporting...");
     if (exportIsError) {
-      console.log("error: ", exportError);
-      toast.error("An error occurred");
+      if ((exportError as AxiosError<ErrorResponse>)?.response?.data?.message) {
+        const message = (exportError as AxiosError<ErrorResponse>)?.response
+          ?.data?.message;
+
+        toast.error(message || "An error occurred");
+        if (message === "Unauthorized") nav("/app");
+      } else {
+        toast.error(exportError?.message || "An error occurred");
+      }
       setExportButtonText("Retry");
     }
   }, [exportIsLoading, exportIsError, exportError]);
@@ -151,7 +165,12 @@ const Grader = () => {
 
   return (
     <div className="w-full p-4 flex flex-col justify-between gap-2">
-      {examIsLoading && <p className="text-2xl">Fetching uploads...</p>}
+      {(examIsLoading || examIsPending) && (
+        <div className="md:w-[200px] w-full flex items-baseline justify-between gap-4">
+          <p className="text-2xl m-0">Fetching exams</p>
+          <div className="h-5 w-5 border-2 rounded-full border-solid border-black border-e-transparent animate-spin transition-all ease-in-out"></div>
+        </div>
+      )}
       {examIsError && (
         <p className="text-2xl text-red-500">
           {(examError as AxiosError<ErrorResponse>)?.response?.data?.error ||
@@ -187,26 +206,45 @@ const Grader = () => {
                 View Sheets
               </p>
             ) : (
-              <Button onClick={handleExport}>{exportButtonText}</Button>
+              <Button
+                onClick={handleExport}
+                disabled={!Boolean(selectedExam?.length)}
+              >
+                {exportButtonText}
+              </Button>
             )}
           </div>
 
-          {Boolean(tableData?.length) && (
-            <>
-              <DataTable<any, any>
-                columns={columns}
-                data={tableData}
-                setSelectedRows={setSelectedRows}
-              />
+          {isLoading || isPending ? (
+            <div className="flex flex-col space-y-3">
+              <div className="flex flex-wrap gap-4 justify-between items-center">
+                <Skeleton className="w-[200px] h-[50px] rounded-md" />
+                <Skeleton className="w-[100px] h-[50px] rounded-md" />
+              </div>
+              <Skeleton className="w-full h-[300px] rounded-md" />
+            </div>
+          ) : (
+            Boolean(tableData?.length) && (
+              <>
+                <DataTable<any, any>
+                  columns={columns}
+                  data={tableData}
+                  setSelectedRows={setSelectedRows}
+                />
 
-              <Button
-                className="w-[180px]"
-                disabled={!Boolean(selectedRows.length) || isPending}
-                onClick={handleGrade}
-              >
-                {`Grad${isPending ? "ing..." : "e"}`}
-              </Button>
-            </>
+                <Button
+                  className="w-[180px]"
+                  disabled={!Boolean(selectedRows.length) || gradeIsPending}
+                  onClick={handleGrade}
+                >
+                  {gradeIsPending ? (
+                    <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
+                  ) : (
+                    "Grade"
+                  )}
+                </Button>
+              </>
+            )
           )}
         </>
       )}

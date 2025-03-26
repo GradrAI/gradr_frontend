@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { ModalContext } from "../../Layout";
+import { ErrorResponse } from "@/types/ErrorResponse";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { DataTable } from "../../components/data-table";
 import { columns } from "./columns";
 import useStore from "@/state";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Assessments = () => {
   const nav = useNavigate();
@@ -17,7 +18,8 @@ const Assessments = () => {
   // mutation to get user data
   const { data, mutate, isError, error } = useMutation({
     mutationKey: ["profileData"],
-    mutationFn: async (code) => {
+    mutationFn: async (code: string) => {
+      // this endpoint uses the code (gotten after a user has signed-in with google) to retrieve tokens(contains access_token, refresh_token etc)
       const res = await axios.get(`/getGoogleUser?code=${code}`);
       const {
         data: { data },
@@ -39,11 +41,10 @@ const Assessments = () => {
   }, [code]);
 
   useEffect(() => {
-    console.log("data: ", data);
     if (isError) {
-      console.log("error?.response: ", error?.response);
-      if (error?.response?.data?.success === false) {
-        console.log("error?.response?.data: ", error?.response?.data);
+      if (
+        (error as AxiosError<ErrorResponse>)?.response?.data?.success === false
+      ) {
         // get refresh token and try again
         if (user?.refresh_token) {
           console.log("user?.refresh_token: ", user?.refresh_token);
@@ -64,8 +65,10 @@ const Assessments = () => {
   const {
     data: examData,
     isLoading: examIsLoading,
+    isPending: examIsPending,
     isSuccess: examIsSuccess,
     isError: examIsError,
+    error: examError,
   } = useQuery({
     queryKey: ["exams"],
     queryFn: async () => await axios.get(`/exams/users?userId=${user?._id}`),
@@ -76,7 +79,24 @@ const Assessments = () => {
     <div className="w-100 p-4 flex flex-col justify-between gap-2">
       <h1 className="text-3xl">Assessments</h1>
 
-      {Boolean(examData?.data?.length) && (
+      {(examIsLoading || examIsPending) && (
+        <div className="flex flex-col space-y-3">
+          <div className="flex flex-wrap gap-4 justify-between items-center">
+            <Skeleton className="w-[200px] h-[50px] rounded-md" />
+            <Skeleton className="w-[100px] h-[50px] rounded-md" />
+          </div>
+          <Skeleton className="w-full h-[300px] rounded-md" />
+        </div>
+      )}
+
+      {examIsError && (
+        <p className="text-2xl text-red-500">
+          {(examError as AxiosError<ErrorResponse>)?.response?.data?.error ||
+            "An error occurred"}
+        </p>
+      )}
+
+      {examIsSuccess && Boolean(examData?.data?.length) && (
         <DataTable columns={columns} data={examData.data} />
       )}
     </div>

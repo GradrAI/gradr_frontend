@@ -34,7 +34,12 @@ const Uploads = () => {
           Upload new file(s)
         </Button>
       </div>
-      {isLoading && <p className="text-2xl">Fetching uploads...</p>}
+      {isLoading && (
+        <div className="md:w-[200px] w-full flex items-baseline justify-between gap-4">
+          <p className="text-2xl m-0">Fetching uploads</p>
+          <div className="h-5 w-5 border-2 rounded-full border-solid border-black border-e-transparent animate-spin transition-all ease-in-out"></div>
+        </div>
+      )}
       {isError && (
         <p className="text-2xl text-red-500">
           {(error as AxiosError<ErrorResponse>)?.response?.data?.error ||

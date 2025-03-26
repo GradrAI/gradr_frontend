@@ -10,5 +10,6 @@ export type User = {
   organization?: string;
   createdAt: Date | null;
   updatedAt: Date | null;
+  refresh_token: string;
   __v: number | null;
 };

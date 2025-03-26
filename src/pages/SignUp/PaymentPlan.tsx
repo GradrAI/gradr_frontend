@@ -105,7 +105,6 @@ const PaymentPlan = () => {
       </div>
 
       <Button className="w-[200px]" onClick={handleSubmit}>
-        {/* if loading, show spinner (created using css and animate-rotate) */}
         {isPending ? (
           <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
         ) : (

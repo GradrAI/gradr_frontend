@@ -1,1 +1,5 @@
-export type ErrorResponse = { error: string };
+export type ErrorResponse = {
+  success: boolean;
+  error: string;
+  message?: string;
+};
