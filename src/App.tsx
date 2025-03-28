@@ -1,5 +1,6 @@
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Layout from "./Layout";
+
 import Assessments from "./pages/Assessments/Assessments";
 import Home from "./pages/Home";
 import Uploads from "./pages/Uploads/Uploads";
@@ -9,11 +10,15 @@ import NewUpload from "./pages/Uploads/NewUpload";
 import Details from "./pages/Grader/Details";
 import Settings from "./pages/Settings";
 import SignUp from "./pages/SignUp/SignUp";
-
-import "./App.css";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Content from "./pages/Content";
 import PaymentPlan from "./pages/SignUp/PaymentPlan";
 import KYC from "./pages/SignUp/KYC";
+import StudentUpload from "./pages/Uploads/StudentUpload";
+import NotFound from "./pages/NotFound";
+import TermsOfService from "./pages/TermsOfService";
+
+import "./App.css";
 
 function App() {
   const nav = useNavigate();
@@ -25,7 +30,10 @@ function App() {
   return (
     <Routes>
       <Route path="/">
+        <Route path="privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="terms-of-service" element={<TermsOfService />} />
         <Route index element={<Landing />} />
+        <Route path="link/:uniqueCode" element={<StudentUpload />} />
         <Route path="sign-up" element={<SignUp />}>
           <Route index element={<KYC />} />
           <Route path="paymentPlan" element={<PaymentPlan />} />
@@ -47,8 +55,7 @@ function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
       </Route>
-      {/* add not_found route */}
-      <Route path="*" element={<h1>Not Found</h1>} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
