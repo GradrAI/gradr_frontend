@@ -42,7 +42,7 @@ const formSchema = z.object({
     ),
 });
 
-const postResults = async (data: any[]) =>
+const postResults = async (data: Exam[]) =>
   await axios.post<Result[]>(`/results`, data);
 
 const StudentUpload = () => {
@@ -91,7 +91,6 @@ const StudentUpload = () => {
   // for file upload
   const {
     data: uploadData_,
-    isLoading: uploadIsLoading,
     isPending: uploadIsPending,
     isSuccess: uploadIsSuccess,
     isError: uploadIsError,
@@ -189,7 +188,7 @@ const StudentUpload = () => {
 
   //   respond to uploadData
   useEffect(() => {
-    if (uploadIsLoading || uploadIsPending) toast.success("Uploading file");
+    if (uploadIsPending) toast.success("Uploading file");
     if (uploadIsError)
       toast.error(uploadError?.message || "File upload failed");
     if (uploadIsSuccess && uploadData_?.data.status === 200 && user?._id) {
@@ -237,7 +236,6 @@ const StudentUpload = () => {
     }
   }, [
     uploadData_,
-    uploadIsLoading,
     uploadIsPending,
     uploadIsSuccess,
     uploadIsError,
