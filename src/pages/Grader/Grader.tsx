@@ -150,17 +150,21 @@ const Grader = () => {
 
   const handleGrade = () => {
     if (!Boolean(selectedRows.length)) return;
-    mutate(selectedRows, {
-      onSuccess: (data, variables, context) => {
-        console.log("data: ", data);
-        toast.success(notifications.GRADE.SUCCESS);
-        queryClient.invalidateQueries({ queryKey: ["students"] });
-      },
-      onError: (error, variables, context) => {
-        console.log("error", error);
-        toast.error(notifications.GRADE.FAILURE);
-      },
-    });
+
+    mutate(
+      { resultData: selectedRows, examData: {} }, //! TO-DO: pass examData: { maxScoreAttainable, guide, question } to reduce work done at the backend
+      {
+        onSuccess: (data: any, variables: any, context: any) => {
+          console.log("data: ", data);
+          toast.success(notifications.GRADE.SUCCESS);
+          queryClient.invalidateQueries({ queryKey: ["students"] });
+        },
+        onError: (error: any, variables: any, context: any) => {
+          console.log("error", error);
+          toast.error(notifications.GRADE.FAILURE);
+        },
+      }
+    );
   };
 
   return (

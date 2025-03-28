@@ -12,6 +12,8 @@ interface State {
   saveUserToken: (token: string) => void;
   code: string;
   setCode: (code: string) => void;
+  uniqueExamCode: string;
+  setUniqueExamCode: (uniqueExamCode: string) => void;
 }
 
 const useStore = create<State>()(
@@ -29,6 +31,8 @@ const useStore = create<State>()(
           }),
         code: "",
         setCode: (code) => set({ code }),
+        uniqueExamCode: "",
+        setUniqueExamCode: (uniqueExamCode) => set({ uniqueExamCode }),
       }),
       {
         name: "storage",

@@ -16,14 +16,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { UploadData } from "@/types/UploadData";
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import initialUserState from "@/data/initialUserState";
 import notifications from "@/requests/notifications";
 import useStore from "@/state";
+import { ACCEPTED_FILE_TYPES, MAX_FILE_SIZE } from "@/requests/constants";
 
 const formSchema = z.object({
-  file: z.instanceof(FileList),
+  file: z
+    .instanceof(FileList)
+    .refine((files) => files.length > 0, "The file is required.")
+    .refine((files: FileList) => {
+      return Array.from(files).every((file) => file.size <= MAX_FILE_SIZE);
+    }, `File size must be less than ${MAX_FILE_SIZE}MB`)
+    .refine(
+      (files: FileList) => {
+        return Array.from(files).every((file) =>
+          ACCEPTED_FILE_TYPES.includes(file.type)
+        );
+      },
+      `File must be one of ${ACCEPTED_FILE_TYPES.join(", ")}`
+    ),
 });
 
 const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
@@ -50,8 +62,7 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    if (!uploadData) return;
-    if (!data || !data?.file?.length) return;
+    if (!uploadData || !data?.file?.length) return;
 
     const formData = new FormData();
 
@@ -63,11 +74,11 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
       formData.append("file", val);
     }
     mutate(formData, {
-      onSuccess: (data, variables, context) => {
+      onSuccess: (data: any, variables: any, context: any) => {
         console.log("data: ", data);
         toast.success(notifications.UPLOAD.SUCCESS);
       },
-      onError: (error, variables, context) => {
+      onError: (error: any, variables: any, context: any) => {
         console.log("error", error);
         toast.error(notifications.UPLOAD.FAILURE);
       },
@@ -84,6 +95,7 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
           name="file"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Enter your file here</FormLabel>
               <FormControl>
                 <Input
                   id="file"
@@ -93,7 +105,9 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
                   multiple={uploadData?.fileType === "answers"} // only allow mutiple file selection when uploading student answers
                 />
               </FormControl>
-              <FormDescription>Select files.</FormDescription>
+              <FormDescription>
+                Files must be PDF and of size less than 50MB.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

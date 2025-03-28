@@ -11,7 +11,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 const Assessments = () => {
   const nav = useNavigate();
   const [searchParams] = useSearchParams();
-  const { accountType, user, saveUserToken, saveUser, setCode } = useStore();
+  const {
+    accountType,
+    user,
+    saveUserToken,
+    saveUser,
+    setCode,
+    uniqueExamCode,
+  } = useStore();
 
   const code = searchParams.get("code");
 
@@ -57,6 +64,7 @@ const Assessments = () => {
     const code = searchParams.get("code");
     if (code) setCode(code);
 
+    if (accountType === "student") nav(`/link/${uniqueExamCode}`);
     if (accountType === "organization") nav("/sign-up");
     if (accountType === "individual")
       nav("/app/assessments", { replace: true });

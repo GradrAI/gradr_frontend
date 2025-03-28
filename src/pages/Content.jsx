@@ -20,7 +20,8 @@ const Content = () => {
 
   useEffect(() => {
     if (isLoading) toast.success("Signing you in...");
-    if (isError) toast.error(error);
+    if (isError)
+      toast.error(error?.message || "An error occurred. Please retry");
     if (data) window.location.href = data?.data?.authorizationUrl;
   }, [isLoading, isError, error, data]);
 

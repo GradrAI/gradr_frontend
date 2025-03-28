@@ -10,8 +10,8 @@ import {
 import { FAQ } from "../types/faqs";
 
 export const BASE_URL = import.meta.env.DEV
-  ? "http://localhost:4040/api"
-  : "https://gradr-backend.onrender.com/api";
+  ? import.meta.env.VITE_BACKEND_URL_DEV
+  : import.meta.env.VITE_BACKEND_URL_PROD;
 
 export const faqs: FAQ[] = [
   {
@@ -31,3 +31,6 @@ export const faqs: FAQ[] = [
     text: "We are undergoing the process of giving exact figures into this metric. This feature will be added soon.",
   },
 ];
+
+export const ACCEPTED_FILE_TYPES = ["application/pdf"];
+export const MAX_FILE_SIZE = 50 * 1024 * 1024;

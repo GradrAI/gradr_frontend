@@ -21,7 +21,6 @@ import { useEffect, useState } from "react";
 import { UploadData } from "@/types/UploadData";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import initialUserState from "@/data/initialUserState";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
@@ -92,7 +91,11 @@ const NewUpload = () => {
         maxScoreAttainable: uploadData.maxScoreAttainable,
       },
       {
-        onSuccess: (data, variables, context) => {
+        onSuccess: (
+          data: { status: any; statusText: any },
+          variables: any,
+          context: any
+        ) => {
           const { status, statusText } = data;
           if (status === 201) {
             toast.success("Added exam successfully");
@@ -100,7 +103,7 @@ const NewUpload = () => {
             setAddNew(false);
           }
         },
-        onError: (error, variables, context) => {
+        onError: (error: any, variables: any, context: any) => {
           console.log("error", error);
         },
       }
