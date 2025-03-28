@@ -11,6 +11,7 @@ const initialUserState: User = {
   picture: "",
   createdAt: null,
   updatedAt: null,
+  refresh_token: "",
   __v: 0,
 };
 
