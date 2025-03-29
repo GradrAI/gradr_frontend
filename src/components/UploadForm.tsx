@@ -103,6 +103,7 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
                   type="file"
                   {...fileRef}
                   multiple={uploadData?.fileType === "answers"} // only allow mutiple file selection when uploading student answers
+                  className="bg-white"
                 />
               </FormControl>
               <FormDescription>
