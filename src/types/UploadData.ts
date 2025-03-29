@@ -4,4 +4,5 @@ export type UploadData = {
   fileType: "guide" | "question" | "answers";
   file: File;
   maxScoreAttainable: number;
+  studentId?: string | null;
 };
