@@ -298,7 +298,13 @@ const Landing = () => {
 
         <div className="hidden md:flex flex-wrap items-center justify-start gap-2 w-max -my-2 text-xs">
           <p className="m-0">&copy; Copyright {new Date().getFullYear()}.</p>
-          <p>All rights reserved.</p>
+          <p className="m-0">All rights reserved.</p>
+          <p
+            onClick={() => nav("privacy-policy")}
+            className="cursor-pointer text-blue-400 hover:text-blue-500"
+          >
+            Privacy Policy
+          </p>
         </div>
 
         <div className="flex items-center justify-end w-max gap-8">
