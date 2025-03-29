@@ -21,7 +21,7 @@ import { ErrorResponse } from "@/types/ErrorResponse";
 import useStore from "@/state";
 import { useNavigate } from "react-router-dom";
 
-const postResults = async (data: Exam[]) =>
+const postResults = async (data: any[]) =>
   await axios.post<Result[]>(`/results`, data);
 
 const Grader = () => {
@@ -31,7 +31,7 @@ const Grader = () => {
 
   const [selectedExam, setSelectedExam] = useState("");
   const [tableData, setTableData] = useState<any[]>([]);
-  const [selectedRows, setSelectedRows] = useState<Exam[]>([]);
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [clicked, setClicked] = useState(false);
   const [sheetsObject, setSheetsObject] = useState<string[][]>([[""]]);
   const [sheetsUri, setSheetsUri] = useState("");

@@ -42,7 +42,7 @@ const formSchema = z.object({
     ),
 });
 
-const postResults = async (data: Exam[]) =>
+const postResults = async (data: any[]) =>
   await axios.post<Result[]>(`/results`, data);
 
 const StudentUpload = () => {
