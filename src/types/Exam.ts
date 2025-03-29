@@ -8,4 +8,5 @@ export type Exam = MongoDBDefault & {
   question: string;
   students: [string];
   grade: string;
+  resultDat?: any;
 };
