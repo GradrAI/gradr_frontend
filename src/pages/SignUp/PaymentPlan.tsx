@@ -50,10 +50,7 @@ const PaymentPlan = () => {
     }
     if (isError) {
       console.log("error: ", error);
-      toast.error(
-        (error as AxiosResponse<ErrorResponse>)?.data?.message ||
-          "An error occurred"
-      );
+      toast.error("An error occurred");
     }
   }, [isSuccess, data, isError, error]);
   return (
