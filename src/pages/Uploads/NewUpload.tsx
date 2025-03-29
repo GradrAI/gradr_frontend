@@ -34,6 +34,7 @@ const NewUpload = () => {
     lecturerId: "",
     examName: "",
     fileType: undefined,
+    studentId: null,
   });
   const [addNew, setAddNew] = useState(false);
 
@@ -115,7 +116,7 @@ const NewUpload = () => {
       <h1>Upload resources.</h1>
 
       <Select onValueChange={handleSelectExam} name="exam" required>
-        <SelectTrigger className="">
+        <SelectTrigger className="bg-white">
           <SelectValue placeholder="Select exam" />
         </SelectTrigger>
         <SelectContent>
@@ -134,7 +135,7 @@ const NewUpload = () => {
         required
         disabled={isError || !data}
       >
-        <SelectTrigger className="">
+        <SelectTrigger className="bg-white">
           <SelectValue placeholder="Select file type" />
         </SelectTrigger>
         <SelectContent>
