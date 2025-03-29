@@ -54,6 +54,7 @@ const StudentUpload = () => {
   const [uploadData, setUploadData] = useState<Partial<UploadData> | null>(
     null
   );
+  const [triggerGrade, setTriggerGrade] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -111,15 +112,28 @@ const StudentUpload = () => {
   } = useQuery({
     queryKey: ["examStudent"],
     queryFn: async () =>
-      await axios.get(`exams/${examData?._id}/students/${user?._id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
+      await axios.get(
+        `exams/${examData?._id}/students/${user?._id}`,
+        // await axios.get(`exams/${examData?._id}/students/${user?._id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      ),
+    // enabled: Boolean(examData?._id) && Boolean("67e54455d62930854580582c"),
     enabled: Boolean(examData?._id) && Boolean(user?._id),
+    select: (data) => data.data,
     retry: false,
   });
 
   // for grading
-  const { isPending: resultsIsPending, mutate: resultsMutate } = useMutation({
+  const {
+    isSuccess: resultsIsSuccess,
+    isPending: resultsIsPending,
+    data: resultsData,
+    isError: resultsIsError,
+    error: resultsError,
+    mutate: resultsMutate,
+  } = useMutation({
     mutationKey: ["results"],
     mutationFn: postResults,
   });
@@ -175,13 +189,15 @@ const StudentUpload = () => {
         toast.error(examError?.message || "Unable to retrieve exam info");
       }
     }
-    if (examIsLoading) toast.success("Retrieving exam info");
+    if (examIsLoading) {
+    } //toast.success("Retrieving exam info");
     if (examIsSuccess && examData) {
       setUploadData({
         examName: examData.examName,
         lecturerId: examData.lecturerId,
         fileType: "answers",
         maxScoreAttainable: examData.maxScoreAttainable,
+        studentId: user?._id,
       });
     }
   }, [examIsSuccess, examData, examIsError, examError, examIsLoading]);
@@ -191,24 +207,42 @@ const StudentUpload = () => {
     if (uploadIsPending) toast.success("Uploading file");
     if (uploadIsError)
       toast.error(uploadError?.message || "File upload failed");
-    if (uploadIsSuccess && uploadData_?.data.status === 200 && user?._id) {
-      console.log("uploadData_: ", uploadData_);
+    if (uploadIsSuccess) setTriggerGrade(true);
+  }, [
+    uploadData_,
+    uploadIsPending,
+    uploadIsSuccess,
+    uploadIsError,
+    uploadError,
+    user,
+  ]);
+
+  // handle grade
+  useEffect(() => {
+    let fileData = {};
+    // get url after file upload success
+    if (uploadData_?.data?.status === 200) {
       const {
         data: {
-          response: {
-            url: [{ fileName, url }],
-          },
+          response: { urls },
         },
       } = uploadData_;
+      fileData = urls[0];
+    }
 
-      //   call mutation that performs grading
+    // or get url if student has uploaded a file previously
+    if (examStudentData?.data?.file?.url) fileData = examStudentData.data.file;
+
+    if (fileData && user?._id && triggerGrade) {
+      //call mutation that performs grading
       const gradeArray: any[] = [
         {
           _id: user._id,
+          examName: examData?.examName,
           exam: {
-            file: {
-              url,
-            },
+            file: fileData,
+            lecturerId: examData?.lecturerId,
+            name: examData?.examName,
           },
         },
       ];
@@ -234,22 +268,14 @@ const StudentUpload = () => {
         }
       );
     }
-  }, [
-    uploadData_,
-    uploadIsPending,
-    uploadIsSuccess,
-    uploadIsError,
-    uploadError,
-    user,
-  ]);
+  }, [uploadData_, examStudentData, user, triggerGrade]);
 
   //   respond to retrieving user's data
   useEffect(() => {
-    if (examStudentIsLoading) toast.success("Fetching previous data");
+    if (examStudentIsLoading) {
+    } //toast.success("Fetching previous data");
     if (examStudentIsError)
       toast.error(examStudentError?.message || "Unable to fetch previous data");
-    if (examStudentIsSuccess && examStudentIsSuccess)
-      console.log("examStudentData: ", examStudentData);
   }, [
     examStudentData,
     examStudentIsLoading,
@@ -257,6 +283,22 @@ const StudentUpload = () => {
     examStudentIsSuccess,
     examStudentError,
   ]);
+
+  useEffect(() => {
+    if (resultsIsSuccess && resultsData?.data) {
+      resultsData?.data?.map((d: any) => {
+        if (d.name == examData?.examName) {
+          console.log("current exam: ", d);
+        }
+      });
+    }
+    if (resultsIsError) {
+      console.log("resultsError: ", resultsError);
+      toast.error(
+        resultsError?.error?.message || "An error occurred while grading"
+      );
+    }
+  }, [resultsIsSuccess, resultsData, resultsIsError, resultsError]);
 
   const fileRef = form.register("file");
 
@@ -266,7 +308,10 @@ const StudentUpload = () => {
         <h1 onClick={() => nav("/")}>GradrAI for students</h1>
         {user && <p>{`${user.first_name} ${user.last_name}`}</p>}
       </header>
-      <div className="w-2/4 p-6 flex flex-col gap-4">
+      <div className="md:w-2/4 p-6 flex flex-col gap-4">
+        <h2>
+          Grade <span className="text-green-500">{examData?.examName}</span>
+        </h2>
         {!user ? (
           <>
             <p>Sign in to get started and get your grade for this course.</p>
@@ -280,6 +325,39 @@ const StudentUpload = () => {
             </Button>
             {/* redirect back to this page */}
           </>
+        ) : examStudentData?.data?.result ? (
+          <div className="flex flex-col">
+            <p>Score: {examStudentData?.data?.result?.score}</p>
+            <p>Explanation: {examStudentData?.data?.result?.explanation}</p>
+            <p>Feedback: {examStudentData?.data?.result?.feedback}</p>
+          </div>
+        ) : examStudentData?.data?.file?.url ? (
+          <div className="flex flex-col items-start gap-4">
+            <p>Found previous upload for this exam</p>
+            <p
+              className="cursor-pointer text-blue-500 hover:text-blue-600"
+              onClick={() => {
+                window.open(
+                  `${examStudentData.data.file.url}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+              }}
+            >
+              {examStudentData?.data?.file?.name}
+            </p>
+            <div className="flex gap-4">
+              <Button
+                onClick={() => setTriggerGrade(true)}
+                disabled={examStudentIsLoading || resultsIsPending} //disables while fetching previous student record for this exam and while grading
+              >
+                Grade
+              </Button>
+              <Button variant="secondary" disabled>
+                Re-upload
+              </Button>
+            </div>
+          </div>
         ) : (
           <>
             <Form {...form}>

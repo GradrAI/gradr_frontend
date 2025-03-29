@@ -38,7 +38,7 @@ const Grader = () => {
   const [exportButtonText, setExportButtonText] = useState(
     "Export to Google Sheets"
   );
-
+  console.log("selectedRows: ", selectedRows);
   const {
     data: examData,
     isLoading: examIsLoading,
