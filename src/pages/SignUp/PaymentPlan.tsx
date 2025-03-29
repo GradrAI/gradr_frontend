@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { User } from "@/types/User";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useStore from "@/state";
+import { ErrorResponse } from "@/types/ErrorResponse";
 
 type OrganizationData = {
   name: string;
@@ -23,11 +24,11 @@ const PaymentPlan = () => {
   // const { toast } = useToast()
   const [selected, setSelected] = useState("free");
 
-  const { isPending, isError, error, data, mutate } = useMutation({
+  const { isSuccess, isPending, isError, error, data, mutate } = useMutation({
     mutationKey: ["organization"],
     mutationFn: async (data: OrganizationData) => {
       if (token)
-        await axios.post("/organizations", data, {
+        return await axios.post("/organizations", data, {
           headers: { Authorization: `Bearer ${token}` },
         });
     },
@@ -41,17 +42,20 @@ const PaymentPlan = () => {
   };
 
   useEffect(() => {
-    if (data) {
+    console.log("data: ", data);
+    if (isSuccess && data) {
       console.log("data: ", data);
       toast.success("Organization created successfully");
       nav("/app/settings");
     }
     if (isError) {
       console.log("error: ", error);
+      toast.error(
+        (error as AxiosResponse<ErrorResponse>)?.data?.message ||
+          "An error occurred"
+      );
     }
-  }, [data]);
-  // 67de840483ff9348dfc91a6d
-  // 67e15ef8c10740678917874a
+  }, [isSuccess, data, isError, error]);
   return (
     <div className="w-full flex flex-col gap-8">
       <div className="w-full flex flex-wrap flex-col md:flex-row justify-between gap-2">
