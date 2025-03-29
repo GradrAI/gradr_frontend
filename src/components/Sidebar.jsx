@@ -1,3 +1,4 @@
+import useStore from "@/state";
 import {
   logo,
   folder,
@@ -15,6 +16,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 const Sidebar = () => {
   const nav = useNavigate();
   const { pathname } = useLocation();
+  const { saveUser } = useStore();
   const currPath = pathname.split("/").at(-1);
 
   return (
@@ -101,6 +103,16 @@ const Sidebar = () => {
       </div>
 
       <div className="flex flex-col">
+        <p
+          className="cursor-pointer text-white"
+          onClick={() => {
+            saveUser({});
+            window.location.reload();
+          }}
+        >
+          Log out
+        </p>
+
         <div className="w-full p-2 flex gap-2 items-center justify-start">
           <img src={report} alt="icon" className="cursor-pointer" />
           <NavLink
