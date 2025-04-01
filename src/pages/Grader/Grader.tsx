@@ -21,7 +21,7 @@ import { ErrorResponse } from "@/types/ErrorResponse";
 import useStore from "@/state";
 import { useNavigate } from "react-router-dom";
 
-const postResults = async (data: any[]) =>
+const postResults = async (data: any) =>
   await axios.post<Result[]>(`/results`, data);
 
 const Grader = () => {
@@ -112,7 +112,7 @@ const Grader = () => {
         toast.error(message || "An error occurred");
         if (message === "Unauthorized") nav("/app");
       } else {
-        toast.error(exportError?.message || "An error occurred");
+        toast.error("An error occurred");
       }
       setExportButtonText("Retry");
     }
@@ -176,10 +176,7 @@ const Grader = () => {
         </div>
       )}
       {examIsError && (
-        <p className="text-2xl text-red-500">
-          {(examError as AxiosError<ErrorResponse>)?.response?.data?.error ||
-            "An error occurred"}
-        </p>
+        <p className="text-2xl text-red-500">An error occurred</p>
       )}
       {Boolean(examData?.data?.length) && (
         <>
