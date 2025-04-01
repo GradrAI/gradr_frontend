@@ -294,9 +294,7 @@ const StudentUpload = () => {
     }
     if (resultsIsError) {
       console.log("resultsError: ", resultsError);
-      toast.error(
-        resultsError?.error?.message || "An error occurred while grading"
-      );
+      toast.error("An error occurred while grading");
     }
   }, [resultsIsSuccess, resultsData, resultsIsError, resultsError]);
 
