@@ -30,7 +30,7 @@ const Content = () => {
   };
 
   return (
-    <div className="w-2/4 h-full flex flex-col items-start justify-evenly gap-6 p-8">
+    <div className="w-full h-full flex flex-col items-start justify-evenly gap-6 p-8">
       {accountType?.toLocaleLowerCase() === "organization" && (
         <div className="flex flex-col gap-4">
           <h1 className="font-2xl">Welcome to Gradr for Organizations!</h1>

@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 const Home = () => {
   return (
     <div className="w-full h-[90dvh] flex justify-center items-center gap-4">
-      <div className="w-2/4 flex flex-col justify-center items-center relative">
+      <div className="w-2/4 hidden md:flex flex-col justify-center items-center relative">
         <p className="rounded-3xl py-4 px-8 bg-white border border-sky-600 text-sky-600 self-end z-0 absolute top-0 right-20">
           Get more efficient
         </p>
@@ -18,7 +18,9 @@ const Home = () => {
         </p>
       </div>
 
-      <Outlet />
+      <div className="w-dvh h-dvh md:w-2/4">
+        <Outlet />
+      </div>
     </div>
   );
 };
