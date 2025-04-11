@@ -14,6 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import parsePhoneNumber from "libphonenumber-js";
+import useStore from "@/state";
+import { OrganizationData } from "@/types/OrganizationData";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -32,8 +34,9 @@ const formSchema = z.object({
 
 const KYC = () => {
   const nav = useNavigate();
+  const { appendOrganizationData } = useStore();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<OrganizationData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -43,9 +46,9 @@ const KYC = () => {
     },
   });
 
-  const onsubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    nav("paymentPlan", { state: values });
+  const onsubmit = (values: OrganizationData) => {
+    appendOrganizationData(values);
+    nav("payment-plan");
   };
 
   return (

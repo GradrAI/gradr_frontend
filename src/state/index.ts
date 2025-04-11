@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
 import { User } from "@/types/User";
+import { PaymentPlan } from "@/types/PaymentPlan";
+import { OrganizationData } from "@/types/OrganizationData";
 
 interface State {
   accountType: string;
@@ -14,6 +16,10 @@ interface State {
   setCode: (code: string) => void;
   uniqueExamCode: string;
   setUniqueExamCode: (uniqueExamCode: string) => void;
+  selectedPaymentPlan: PaymentPlan | null;
+  setSelectedPaymentPlan: (plan: PaymentPlan | null) => void;
+  organizationData: OrganizationData;
+  appendOrganizationData: (data: OrganizationData) => void;
 }
 
 const useStore = create<State>()(
@@ -33,6 +39,13 @@ const useStore = create<State>()(
         setCode: (code) => set({ code }),
         uniqueExamCode: "",
         setUniqueExamCode: (uniqueExamCode) => set({ uniqueExamCode }),
+        selectedPaymentPlan: null,
+        setSelectedPaymentPlan: (plan) => set({ selectedPaymentPlan: plan }),
+        organizationData: {} as OrganizationData,
+        appendOrganizationData: (data) =>
+          set((state) => ({
+            organizationData: { ...state.organizationData, ...data },
+          })),
       }),
       {
         name: "storage",

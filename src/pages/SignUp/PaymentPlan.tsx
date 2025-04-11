@@ -1,30 +1,35 @@
-import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
-import { User } from "@/types/User";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useStore from "@/state";
-import { ErrorResponse } from "@/types/ErrorResponse";
-
-type OrganizationData = {
-  name: string;
-  physicalAddress: string;
-  email: string;
-  phoneNumber: string;
-  paymentPlan: string;
-};
+import PaystackPop from "@paystack/inline-js";
+import type { PaymentPlan } from "@/types/PaymentPlan";
+import { OrganizationData } from "@/types/OrganizationData";
 
 const PaymentPlan = () => {
   const nav = useNavigate();
   const { state } = useLocation();
-  const { user, token } = useStore();
-  // const { toast } = useToast()
-  const [selected, setSelected] = useState("free");
+  const { user, token, selectedPaymentPlan, setSelectedPaymentPlan } =
+    useStore();
 
-  const { isSuccess, isPending, isError, error, data, mutate } = useMutation({
+  const { data: paymentPlanData } = useQuery({
+    queryKey: ["paymentPlan"],
+    queryFn: async () => await axios.get(`/paymentPlans`),
+    retry: false,
+    select: (data) => data.data,
+  });
+
+  const {
+    isSuccess,
+    isPending,
+    isError,
+    error,
+    data,
+    mutate: organizationMutate,
+  } = useMutation({
     mutationKey: ["organization"],
     mutationFn: async (data: OrganizationData) => {
       if (token)
@@ -34,75 +39,71 @@ const PaymentPlan = () => {
     },
   });
 
+  const { mutate: paymentMutate } = useMutation({
+    mutationKey: ["payment"],
+    mutationFn: async (data: { email: string; amount: string }) =>
+      await axios.post("/payment", data),
+  });
+
   const handleSubmit = () => {
-    mutate({
-      ...state,
-      paymentPlan: "67de82fe371d472a0931f518",
-    });
+    if (selectedPaymentPlan?.name?.toLocaleLowerCase() === "custom") {
+      window.open(
+        "mailto:support@gradrai.com?subject=Request for custom plan&body=Hello there, I would like to request for a custom plan on your platform",
+        "_blank",
+        "noopener,noreferrer"
+      );
+      return;
+    }
+
+    if (!user?.email || !selectedPaymentPlan) {
+      toast.error("Missing required information");
+      return;
+    }
+
+    paymentMutate(
+      {
+        email: user.email,
+        amount: selectedPaymentPlan.amount,
+      },
+      {
+        onSuccess: (data: any, variables: any, context: any) => {
+          if (data?.data?.data) {
+            const popup = new PaystackPop();
+            const { access_code, authorization_url, reference } =
+              data.data.data;
+            popup.resumeTransaction(access_code);
+          }
+        },
+      }
+    );
   };
 
-  useEffect(() => {
-    console.log("data: ", data);
-    if (isSuccess && data) {
-      console.log("data: ", data);
-      toast.success("Organization created successfully");
-      nav("/app/settings");
-    }
-    if (isError) {
-      console.log("error: ", error);
-      toast.error("An error occurred");
-    }
-  }, [isSuccess, data, isError, error]);
   return (
     <div className="w-full flex flex-col gap-8">
       <div className="w-full flex flex-wrap flex-col md:flex-row justify-between gap-2">
-        <div
-          className="p-6 w-[200px] border-2 flex flex-col justify-between items-start cursor-pointer shadow-lg hover:scale-110"
-          onClick={() => setSelected("free")}
-        >
-          <Input
-            type="radio"
-            name="free"
-            checked={selected === "free"}
-            className="w-[10px] self-end"
-            readOnly
-          />
-          <p className="text-xl font-semibold">Free</p>
-          <p>Grade up to 100 users</p>
-          <p>Generate unlimited reports</p>
-        </div>
-
-        <div
-          className="p-6 min-w-[200px] border-2 flex flex-col justify-between items-start cursor-pointer shadow-lg hover:scale-110"
-          onClick={() => setSelected("enterprise")}
-        >
-          <Input
-            type="radio"
-            name="enterprise"
-            checked={selected === "enterprise"}
-            className="w-[10px] self-end"
-            readOnly
-          />
-          <p className="text-xl font-semibold">Enterprise</p>
-          <p>Grade up to 1000 users</p>
-          <p>Add unlimited users</p>
-        </div>
-
-        <div
-          className="p-6 min-w-[200px] border-2 flex flex-col justify-between items-start cursor-pointer shadow-lg hover:scale-110"
-          onClick={() => setSelected("custom")}
-        >
-          <Input
-            type="radio"
-            name="custom"
-            checked={selected === "custom"}
-            className="w-[10px] self-end"
-            readOnly
-          />
-          <p className="text-xl font-semibold">Custom</p>
-          <p>Grade up to 1000 users</p>
-          <p>Add unlimited users</p>
-        </div>
+        {paymentPlanData?.data?.map((plan: PaymentPlan) => (
+          <div
+            className="p-6 bg-white w-[300px] border-2 rounded-xl flex flex-col justify-between items-start cursor-pointer shadow-lg hover:scale-110"
+            onClick={() => setSelectedPaymentPlan(plan)}
+            key={plan._id}
+          >
+            <div className="flex justify-between items-start w-full">
+              <p className="text-xl font-semibold m-0">{plan.name}</p>
+              <Input
+                type="radio"
+                name={plan.name}
+                checked={selectedPaymentPlan?.name === plan.name}
+                className="w-[10px] self-end"
+                readOnly
+              />
+            </div>
+            <div className="flex gap-2">
+              <p>{plan.currency}</p>
+              <p>{plan.amount}</p>
+            </div>
+            <p>{plan.description}</p>
+          </div>
+        ))}
       </div>
 
       <Button className="w-[200px]" onClick={handleSubmit}>

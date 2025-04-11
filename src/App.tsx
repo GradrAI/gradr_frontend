@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 import TermsOfService from "./pages/TermsOfService";
 
 import "./App.css";
+import PostPayment from "./pages/SignUp/PostPayment";
 
 function App() {
   const nav = useNavigate();
@@ -36,7 +37,8 @@ function App() {
         <Route path="link/:uniqueCode" element={<StudentUpload />} />
         <Route path="sign-up" element={<SignUp />}>
           <Route index element={<KYC />} />
-          <Route path="paymentPlan" element={<PaymentPlan />} />
+          <Route path="payment-plan" element={<PaymentPlan />} />
+          <Route path="post-payment" element={<PostPayment />} />
         </Route>
         <Route path="app" element={<Layout />}>
           <Route element={<Home />}>
