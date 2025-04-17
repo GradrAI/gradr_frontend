@@ -63,9 +63,13 @@ const Assessments = () => {
   useEffect(() => {
     const code = searchParams.get("code");
     if (code) setCode(code);
-
+    console.log("user data: ", data);
     if (accountType === "student") nav(`/link/${uniqueExamCode}`);
-    if (accountType === "organization") nav("/sign-up");
+    if (accountType === "organization") {
+      // if user already belongs to an organization, nav to dashboard
+      if (user?.organization) nav("/app/assessments", { replace: true });
+      else nav("/sign-up");
+    }
     if (accountType === "individual")
       nav("/app/assessments", { replace: true });
   }, [searchParams, accountType]);
