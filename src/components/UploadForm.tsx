@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
 import useStore from "@/state";
 import { ACCEPTED_FILE_TYPES, MAX_FILE_SIZE } from "@/requests/constants";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   file: z
@@ -77,6 +78,7 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
       onSuccess: (data: any, variables: any, context: any) => {
         console.log("data: ", data);
         toast.success(notifications.UPLOAD.SUCCESS);
+        form.reset();
       },
       onError: (error: any, variables: any, context: any) => {
         console.log("error", error);
@@ -118,8 +120,15 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
           <Button variant="secondary" onClick={() => nav("..")}>
             Back
           </Button>
-          <Button type="submit" disabled={isError || !data?.data?.length}>
-            {`Upload${isPending ? "ing..." : ""}`}
+          <Button
+            type="submit"
+            disabled={isError || isPending || !data?.data?.length}
+          >
+            {isPending ? (
+              <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
+            ) : (
+              "Upload"
+            )}
           </Button>
         </div>
       </form>
