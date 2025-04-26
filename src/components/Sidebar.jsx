@@ -21,7 +21,7 @@ const Sidebar = () => {
 
   return (
     <div className="hidden md:flex md:w-full h-dvh py-2 px-6 bg-slate-800 flex-col justify-between shadow-zinc-800 border-r border-r-purple-500">
-      <div className="h-3/5 flex flex-col gap-4 items-start justify-between">
+      <div className="h-3/5 flex flex-col gap-8 items-start justify-start">
         <img
           src={logo}
           alt="logo"
