@@ -20,15 +20,27 @@ import UploadForm from "@/components/UploadForm";
 import { useEffect, useState } from "react";
 import { UploadData } from "@/types/UploadData";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
 import useStore from "@/state";
 
+type ExamData = {
+  examName: string;
+  students: [];
+  maxScoreAttainable: number;
+  lecturerId: string;
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};
+
 const NewUpload = () => {
   const queryClient = useQueryClient();
   const { user } = useStore();
+  const [exams, setExams] = useState<ExamData[]>([]);
 
   const [uploadData, setUploadData] = useState<Partial<UploadData>>({
     lecturerId: "",
@@ -77,6 +89,7 @@ const NewUpload = () => {
   });
 
   useEffect(() => {
+    if (isSuccess && data) setExams(data.data);
     if (!data) console.log("No exam record for current user");
   }, [data]);
 
@@ -93,15 +106,16 @@ const NewUpload = () => {
       },
       {
         onSuccess: (
-          data: { status: any; statusText: any },
+          data: AxiosResponse<ExamData>,
           variables: any,
           context: any
         ) => {
-          const { status, statusText } = data;
-          if (status === 201) {
+          if (data?.status === 201) {
             toast.success("Added exam successfully");
             queryClient.invalidateQueries({ queryKey: ["exams"] });
+            setExams((prev) => [...prev, data.data]);
             setAddNew(false);
+            handleSelectExam(data.data.examName);
           }
         },
         onError: (error: any, variables: any, context: any) => {
@@ -115,14 +129,21 @@ const NewUpload = () => {
     <div className="p-8 flex flex-col gap-8 justify-between items-start w-full md:w-2/4">
       <h1>Upload resources.</h1>
 
-      <Select onValueChange={handleSelectExam} name="exam" required>
+      <Select
+        onValueChange={handleSelectExam}
+        name="exam"
+        required
+        value={uploadData.examName}
+      >
         <SelectTrigger className="bg-white">
           <SelectValue placeholder="Select exam" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {data?.data?.map(({ examName }: { examName: string }) => (
-              <SelectItem value={examName}>{examName}</SelectItem>
+            {exams?.map(({ examName, _id }: ExamData) => (
+              <SelectItem key={_id} value={examName}>
+                {examName}
+              </SelectItem>
             ))}
             <SelectItem value="addNew">Add new</SelectItem>
           </SelectGroup>
@@ -178,7 +199,11 @@ const NewUpload = () => {
           </div>
           <DialogFooter>
             <Button onClick={handleAddExam} disabled={isPending}>
-              {`Add${isPending ? "ing..." : ""}`}
+              {isPending ? (
+                <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
+              ) : (
+                "Add"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
