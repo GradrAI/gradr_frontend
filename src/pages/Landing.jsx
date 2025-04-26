@@ -46,7 +46,7 @@ const Landing = () => {
   };
 
   const handleSignIn = () => {
-    if (user) nav("/app/assessments");
+    if (user && Object.keys(user)?.length) nav("/app/assessments");
     else {
       setAccountType("individual");
       nav("app");
