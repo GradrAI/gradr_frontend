@@ -16,7 +16,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 const Sidebar = () => {
   const nav = useNavigate();
   const { pathname } = useLocation();
-  const { saveUser } = useStore();
+  const { user, saveUser } = useStore();
   const currPath = pathname.split("/").at(-1);
 
   return (
@@ -26,7 +26,10 @@ const Sidebar = () => {
           src={logo}
           alt="logo"
           className="cursor-pointer w-3/4 py-4"
-          onClick={() => nav("/app")}
+          onClick={() => {
+            if (user && Object.keys(user)?.length) return;
+            else nav("/app");
+          }}
         />
 
         <div className="flex flex-col items-start justify-start gap-4">

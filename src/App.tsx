@@ -17,16 +17,20 @@ import KYC from "./pages/SignUp/KYC";
 import StudentUpload from "./pages/Uploads/StudentUpload";
 import NotFound from "./pages/NotFound";
 import TermsOfService from "./pages/TermsOfService";
-
-import "./App.css";
 import PostPayment from "./pages/SignUp/PostPayment";
+import useStore from "./state";
+import "./App.css";
+import { useEffect } from "react";
 
 function App() {
   const nav = useNavigate();
   const { pathname } = useLocation();
+  const { user } = useStore();
 
-  if (pathname === "/app" && localStorage?.getItem("user"))
-    nav("/app/assessments");
+  useEffect(() => {
+    if (pathname === "/app/" && user && Object.keys(user)?.length)
+      nav("/app/assessments");
+  }, [user]);
 
   return (
     <Routes>
