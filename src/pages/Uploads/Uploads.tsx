@@ -24,6 +24,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { CheckCircle, EllipsisVertical, Paperclip } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Uploads = () => {
   const nav = useNavigate();
@@ -94,9 +95,10 @@ const Uploads = () => {
         </Button>
       </div>
       {isLoading && (
-        <div className="md:w-[200px] w-full flex items-baseline justify-between gap-4">
-          <p className="text-2xl m-0">Fetching uploads</p>
-          <div className="h-5 w-5 border-2 rounded-full border-solid border-black border-e-transparent animate-spin transition-all ease-in-out"></div>
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-2">
+          <Skeleton className="w-[250px] h-[200px] rounded-lg" />
+          <Skeleton className="w-[250px] h-[200px] rounded-lg" />
+          <Skeleton className="w-[250px] h-[200px] rounded-lg" />
         </div>
       )}
       {isError && (

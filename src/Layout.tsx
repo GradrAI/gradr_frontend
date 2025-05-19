@@ -6,28 +6,24 @@ import useStore from "./state";
 
 export const ModalContext = createContext<any>(null);
 
-const Layout = () => {
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/ui/app-sidebar";
+
+export default function Layout() {
   const [showModal, setShowModal] = useState(false);
   const { user } = useStore();
 
   return (
     <ModalContext.Provider value={{ showModal, setShowModal }}>
-      <div className="w-100 h-full flex">
-        <div
-          className={`md:w-2/12 ${Boolean(user?._id?.length) ? "inline-block" : "hidden"}`}
-        >
-          <Sidebar />
-        </div>
-
-        <div
-          className={`w-full ${Boolean(user?._id?.length) ? "md:w-10/12" : "md:w-full"} h-100 flex flex-col bg-gray-200`}
-        >
-          <Header />
-          <Outlet />
-        </div>
-      </div>
+      <SidebarProvider>
+        <AppSidebar />
+        <main className="w-screen h-screen">
+          <div className={`w-full h-full flex flex-col bg-gray-200`}>
+            <Header />
+            <Outlet />
+          </div>
+        </main>
+      </SidebarProvider>
     </ModalContext.Provider>
   );
-};
-
-export default Layout;
+}

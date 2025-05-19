@@ -150,6 +150,8 @@ const Grader = () => {
   const handleGrade = () => {
     if (!Boolean(selectedRows.length)) return;
 
+    //! TO-DO: first check if user hasn't passed limit based on their payment plan
+
     mutate(
       { resultData: selectedRows, examData: {} }, //! TO-DO: pass examData: { maxScoreAttainable, guide, question } to reduce work done at the backend
       {

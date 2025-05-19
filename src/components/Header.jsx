@@ -1,10 +1,13 @@
 import useStore from "@/state";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const Header = () => {
   const { user } = useStore();
 
   return (
-    <div className="bg-gray-600 w-full h-[10dvh] p-6 border-b-neutral-600 flex justify-end items-center">
+    <div className="bg-gray-600 w-full h-[10dvh] p-6 border-b-neutral-600 flex justify-between items-center">
+      <SidebarTrigger />
+
       <div className="flex items-center gap-2 p-4 justify-between">
         <span className="rounded-full width-[2rem] bg-neutral-800" />
         {!!user && (
