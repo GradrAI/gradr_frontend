@@ -96,9 +96,9 @@ const Uploads = () => {
       </div>
       {isLoading && (
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-2">
-          <Skeleton className="w-[250px] h-[200px] rounded-lg" />
-          <Skeleton className="w-[250px] h-[200px] rounded-lg" />
-          <Skeleton className="w-[250px] h-[200px] rounded-lg" />
+          <Skeleton className="w-full md:w-[250px] h-[200px] rounded-lg" />
+          <Skeleton className="w-full md:w-[250px] h-[200px] rounded-lg" />
+          <Skeleton className="w-full md:w-[250px] h-[200px] rounded-lg" />
         </div>
       )}
       {isError && (
