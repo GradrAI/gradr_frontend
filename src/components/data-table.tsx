@@ -7,6 +7,7 @@ import {
   VisibilityState,
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -28,17 +29,21 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Resource } from "@/types/Resource";
+import { Category } from "@/types/Category";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   setSelectedRows?: any;
+  getSubRows?: any;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   setSelectedRows,
+  getSubRows,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -51,6 +56,7 @@ export function DataTable<TData, TValue>({
     pageIndex: 0, //initial page index
     pageSize: 5, //default page size
   });
+  const [expanded, setExpanded] = useState({});
 
   useEffect(() => {
     const selections = table.getFilteredSelectedRowModel().rows;
@@ -70,12 +76,17 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    getSubRows,
+    // getRowCanExpand: (row) => true,
+    getExpandedRowModel: getExpandedRowModel(),
+    onExpandedChange: setExpanded,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
       pagination,
+      expanded,
     },
   });
 
@@ -83,12 +94,10 @@ export function DataTable<TData, TValue>({
     <div className="">
       <div className="flex gap-4 items-center py-4">
         <Input
-          placeholder="Filter by exam name..."
-          value={
-            (table.getColumn("examName")?.getFilterValue() as string) ?? ""
-          }
+          placeholder="Filter by course name..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("examName")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm bg-white"
         />
@@ -142,19 +151,81 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-4">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                <>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="py-4">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {row.getIsExpanded() && row.subRows.length > 0 && (
+                    <TableRow>
+                      <TableCell colSpan={columns.length}>
+                        <div className="p-4 bg-muted rounded-md space-y-2">
+                          {row.subRows.map((subRow) => {
+                            const category = subRow.original as Category;
+
+                            return (
+                              <div
+                                key={category._id}
+                                className="p-4 border border-green-500"
+                              >
+                                <p className="font-semibold">
+                                  {category?.name}
+                                </p>
+                                <p className="">
+                                  Maximum Score Attainable:{" "}
+                                  <span className="text-sm text-gray-500">
+                                    {category?.maxScoreAttainable}
+                                  </span>
+                                </p>
+                                <div className="flex flex-col gap-4">
+                                  {category.resources?.map(
+                                    (resource: Resource) => {
+                                      if (
+                                        ["guide", "question"].includes(
+                                          resource?.type
+                                        )
+                                      ) {
+                                        return (
+                                          <div key={resource._id} className="">
+                                            <p className="m-0">
+                                              {resource?.type?.toLocaleUpperCase()}
+                                            </p>
+                                            <p
+                                              className="truncate max-w-xl text-sm text-blue-400 hover:text-blue-600 cursor-pointer"
+                                              onClick={() =>
+                                                window.open(
+                                                  `${resource?.fileUrl}`,
+                                                  "_blank"
+                                                )
+                                              }
+                                            >
+                                              {resource?.fileUrl}
+                                            </p>
+                                          </div>
+                                        );
+                                      }
+                                      return null;
+                                    }
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </>
               ))
             ) : (
               <TableRow>

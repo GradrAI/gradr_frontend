@@ -40,12 +40,6 @@ const Settings = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (organizationData) {
-      console.log("organizationData: ", organizationData);
-    }
-  }, [organizationData]);
-
   return (
     <div className="p-4 flex flex-col justify-between items-start gap-8">
       <div>

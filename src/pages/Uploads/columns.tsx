@@ -1,5 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DataTableColumnHeader } from "../../components/DataTableColumnHeader";
+import { Course } from "@/types/Course";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,26 +9,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { DataTableColumnHeader } from "../../components/DataTableColumnHeader";
-import { Course } from "@/types/Course";
-import { MoreHorizontal } from "lucide-react";
+import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-export const columns: ColumnDef<Partial<Course>>[] = [
+export const getColumns = (
+  handleGenerateLink: (courseId: string) => void
+): ColumnDef<Partial<Course>>[] => [
   {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Course Name" />
     ),
   },
+
   {
-    id: "categoryName",
+    id: "categories",
     accessorKey: "categories",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Categories" />
+      <DataTableColumnHeader column={column} title="Total Categories" />
     ),
     cell: ({ row }) => {
-      console.log(row.original);
-      return <p>{row.original?.categories?.length}</p>;
+      return <p className="">{row.original?.categories?.length}</p>;
     },
   },
   // {
@@ -39,16 +43,16 @@ export const columns: ColumnDef<Partial<Course>>[] = [
   //     return <p className="text-red-500">Ungraded</p>; //! TO-DO: calculate overall grade status of an exam based on grade value of each individual student(?)
   //   },
   // },
-  // {
-  //   id: "students",
-  //   accessorKey: "students",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Number of students" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     return <p className="">{row.original?.students?.length}</p>;
+  //   {
+  //     id: "students",
+  //     accessorKey: "students",
+  //     header: ({ column }) => (
+  //       <DataTableColumnHeader column={column} title="Number of students" />
+  //     ),
+  //     cell: ({ row }) => {
+  //       return <p className="">{row.original?.students?.length}</p>;
+  //     },
   //   },
-  // },
   {
     id: "createdAt",
     accessorKey: "createdAt",
@@ -66,8 +70,6 @@ export const columns: ColumnDef<Partial<Course>>[] = [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const data = row.original;
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -78,15 +80,33 @@ export const columns: ColumnDef<Partial<Course>>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() =>
-                (window.location.href = `/app/assessments/${encodeURI(data?._id ?? "")}`)
-              }
+              onClick={() => {
+                const id = row.original.id;
+                if (id) {
+                  handleGenerateLink(id);
+                }
+              }}
             >
-              View details
+              Generate link
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
     },
+  },
+  {
+    id: "expander",
+    header: () => "Expand",
+    cell: ({ row }) =>
+      row.getCanExpand() ? (
+        <button
+          onClick={row.getToggleExpandedHandler()}
+          className="text-sm text-blue-500 hover:underline"
+        >
+          {row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
+        </button>
+      ) : (
+        ""
+      ),
   },
 ];

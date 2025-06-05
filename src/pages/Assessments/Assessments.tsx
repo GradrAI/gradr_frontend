@@ -35,6 +35,7 @@ const Assessments = () => {
         const { token, user } = data;
         // save token to be reused in all axios requests
         axios.defaults.headers.common["Authorization"] = token;
+        localStorage.setItem("token", token);
         saveUserToken(token);
         saveUser(user);
       }
@@ -63,7 +64,6 @@ const Assessments = () => {
   useEffect(() => {
     const code = searchParams.get("code");
     if (code) setCode(code);
-    console.log("user data: ", data);
     if (accountType === "student") nav(`/link/${uniqueExamCode}`);
     if (accountType === "organization") {
       // if user already belongs to an organization, nav to dashboard
@@ -75,23 +75,20 @@ const Assessments = () => {
   }, [searchParams, accountType]);
 
   const {
-    data: examData,
-    isLoading: examIsLoading,
-    isPending: examIsPending,
-    isSuccess: examIsSuccess,
-    isError: examIsError,
-    error: examError,
+    data: courseData,
+    isLoading: courseIsLoading,
+    isSuccess: courseIsSuccess,
+    isError: courseIsError,
+    error: courseError,
   } = useQuery({
-    queryKey: ["exams"],
-    queryFn: async () => await axios.get(`/exams/users?userId=${user?._id}`),
+    queryKey: ["courses"],
+    queryFn: async () => await axios.get(`/courses/users?userId=${user?._id}`),
     enabled: Boolean(user?._id?.length),
   });
 
   return (
     <div className="w-100 p-4 flex flex-col justify-between gap-2">
-      <h1 className="text-3xl">Assessments</h1>
-
-      {(examIsLoading || examIsPending) && (
+      {courseIsLoading && (
         <div className="flex flex-col space-y-3">
           <div className="flex flex-wrap gap-4 justify-between items-center">
             <Skeleton className="w-[200px] h-[50px] rounded-md" />
@@ -101,15 +98,15 @@ const Assessments = () => {
         </div>
       )}
 
-      {examIsError && (
+      {courseIsError && (
         <p className="text-2xl text-red-500">
-          {(examError as AxiosError<ErrorResponse>)?.response?.data?.error ||
+          {(courseError as AxiosError<ErrorResponse>)?.response?.data?.error ||
             "An error occurred"}
         </p>
       )}
 
-      {examIsSuccess && Boolean(examData?.data?.length) && (
-        <DataTable columns={columns} data={examData.data} />
+      {courseIsSuccess && Boolean(courseData?.data?.length) && (
+        <DataTable columns={columns} data={courseData.data} />
       )}
     </div>
   );

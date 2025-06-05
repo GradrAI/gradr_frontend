@@ -21,6 +21,8 @@ import PostPayment from "./pages/SignUp/PostPayment";
 import useStore from "./state";
 import "./App.css";
 import { useEffect } from "react";
+import ProtectedRoutes from "./pages/ProtectedRoutes";
+import AssessmentDetails from "./pages/Assessments/AssessmentDetails";
 
 function App() {
   const nav = useNavigate();
@@ -48,17 +50,22 @@ function App() {
           <Route element={<Home />}>
             <Route index element={<Content />} />
           </Route>
-          <Route path="assessments" element={<Assessments />} />
-          <Route path="grader">
-            <Route index element={<Grader />} />
-            <Route path="details" element={<Details />} />
+          <Route path="assessments">
+            <Route index element={<Assessments />} />
+            <Route path=":courseId" element={<AssessmentDetails />} />
           </Route>
-          <Route path="uploads">
-            <Route index element={<Uploads />} />
-            <Route path=":id" element={<Details />} />
-            <Route path="new" element={<NewUpload />} />
+          <Route element={<ProtectedRoutes />}>
+            <Route path="grader">
+              <Route index element={<Grader />} />
+              <Route path="details" element={<Details />} />
+            </Route>
+            <Route path="uploads">
+              <Route index element={<Uploads />} />
+              <Route path=":id" element={<Details />} />
+              <Route path="new" element={<NewUpload />} />
+            </Route>
+            <Route path="settings" element={<Settings />} />
           </Route>
-          <Route path="settings" element={<Settings />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />

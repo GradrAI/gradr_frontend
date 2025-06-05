@@ -1,4 +1,3 @@
-import { DataTable } from "@/components/data-table";
 import {
   Select,
   SelectContent,
@@ -12,7 +11,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
-import { Exam } from "@/types/Exam";
+import { Course } from "@/types/Course";
 import { Student } from "@/types/Student";
 import { Result } from "@/types/Result";
 import toast from "react-hot-toast";
@@ -20,6 +19,8 @@ import notifications from "@/requests/notifications";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import useStore from "@/state";
 import { useNavigate } from "react-router-dom";
+import { Category } from "@/types/Category";
+import { DataTable } from "./data-table";
 
 const postResults = async (data: any) =>
   await axios.post<Result[]>(`/results`, data);
@@ -29,6 +30,7 @@ const Grader = () => {
   const queryClient = new QueryClient();
   const { user, code, token } = useStore();
 
+  const [selectedSubRows, setSelectedSubRows] = useState<any[]>([]);
   const [selectedExam, setSelectedExam] = useState("");
   const [tableData, setTableData] = useState<any[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
@@ -39,23 +41,24 @@ const Grader = () => {
     "Export to Google Sheets"
   );
   const {
-    data: examData,
-    isLoading: examIsLoading,
-    isPending: examIsPending,
-    isSuccess: examIsSuccess,
-    isError: examIsError,
-    error: examError,
+    data: courseData,
+    isLoading: courseIsLoading,
+    isSuccess: courseIsSuccess,
+    isError: courseIsError,
+    error: courseError,
   } = useQuery({
-    queryKey: ["exams"],
-    queryFn: async () => await axios.get(`/exams/users?userId=${user?._id}`),
+    queryKey: ["courses"],
+    queryFn: async () => await axios.get(`/courses/users?userId=${user?._id}`),
     enabled: Boolean(user?._id?.length),
   });
 
-  const { data, isLoading, isPending, isSuccess, isError, refetch } = useQuery({
-    queryKey: ["students"],
+  const { data, isLoading, isSuccess, isError, refetch } = useQuery({
+    queryKey: ["singleCourse"],
     queryFn: async () =>
-      await axios.get<Student[]>(`/students?exam=${selectedExam}`),
-    enabled: Boolean(selectedExam.length),
+      await axios.get<Course[]>(
+        `/courses/${selectedExam}/students-by-category`
+      ),
+    enabled: Boolean(selectedExam),
   });
 
   const { isPending: gradeIsPending, mutate } = useMutation({
@@ -122,38 +125,39 @@ const Grader = () => {
   }, [selectedExam]);
 
   useEffect(() => {
-    if (data?.data?.length) {
-      const _tableData = data.data.map(({ _id, createdAt, exams }) => {
-        return {
-          _id,
-          createdAt,
-          exam: exams[0],
-        };
-      });
-      setTableData(_tableData);
-
-      const filteredExams = data.data.map(
-        ({ exams }) => exams.filter(({ name }) => name === selectedExam)[0]
-      );
-      if (filteredExams?.length && filteredExams[0]?.result?.score) {
-        const header = ["Student ID", "Grade"];
-        const sheetsData = [header];
-        console.log("filteredExams: ", filteredExams);
-        filteredExams?.map(({ _id, result }) => {
-          sheetsData.push([`${_id}`, `${result?.score}`]);
-        });
-        setSheetsObject(sheetsData);
-      }
-    }
+    console.log("data: ", data);
+    // if (data?.data?.length) {
+    // const _tableData = data.data.map(({ _id, createdAt, exams }) => {
+    //   return {
+    //     _id,
+    //     createdAt,
+    //     exam: exams[0],
+    //   };
+    // });
+    // setTableData(_tableData);
+    // const filteredExams = data.data.map(
+    //   ({ exams }) => exams.filter(({ name }) => name === selectedExam)[0]
+    // );
+    // if (filteredExams?.length && filteredExams[0]?.result?.score) {
+    //   const header = ["Student ID", "Grade"];
+    //   const sheetsData = [header];
+    //   console.log("filteredExams: ", filteredExams);
+    //   filteredExams?.map(({ _id, result }) => {
+    //     sheetsData.push([`${_id}`, `${result?.score}`]);
+    //   });
+    //   setSheetsObject(sheetsData);
+    // }
+    // }
   }, [isSuccess, data]);
 
   const handleGrade = () => {
-    if (!Boolean(selectedRows.length)) return;
+    // if (!Boolean(selectedRows.length)) return;
+    if (!Boolean(selectedSubRows.length)) return;
 
     //! TO-DO: first check if user hasn't passed limit based on their payment plan
 
     mutate(
-      { resultData: selectedRows, examData: {} }, //! TO-DO: pass examData: { maxScoreAttainable, guide, question } to reduce work done at the backend
+      { resultData: selectedSubRows, courseData: {} }, //! TO-DO: pass courseData: { maxScoreAttainable, guide, question } to reduce work done at the backend
       {
         onSuccess: (data: any, variables: any, context: any) => {
           console.log("data: ", data);
@@ -170,30 +174,30 @@ const Grader = () => {
 
   return (
     <div className="w-full p-4 flex flex-col justify-between gap-2">
-      {(examIsLoading || examIsPending) && (
-        <div className="md:w-[200px] w-full flex items-baseline justify-between gap-4">
-          <p className="text-2xl m-0">Fetching exams</p>
-          <div className="h-5 w-5 border-2 rounded-full border-solid border-black border-e-transparent animate-spin transition-all ease-in-out"></div>
+      {courseIsLoading && (
+        <div className="flex items-center justify-between">
+          <Skeleton className="w-[200px] h-[35px] rounded-md" />
+          <Skeleton className="w-[200px] h-[35px] rounded-md" />
         </div>
       )}
-      {examIsError && (
-        <p className="text-2xl text-red-500">An error occurred</p>
+      {courseIsError && (
+        <p className="text-2xl text-red-500">
+          Unable to fetch courses for user
+        </p>
       )}
-      {Boolean(examData?.data?.length) && (
+      {Boolean(courseData?.data?.length) && (
         <>
-          <div className="w-full flex flex-wrap items-center justify-between">
+          <div className="w-full flex flex-wrap items-center justify-between gap-4">
             <Select onValueChange={handleSelect}>
               <SelectTrigger className="w-[200px] bg-white">
-                <SelectValue placeholder="Select exam" />
+                <SelectValue placeholder="Select course" />
               </SelectTrigger>
               <SelectContent>
-                {examData?.data?.map(
-                  ({ examName, _id }: { examName: string; _id: string }) => (
-                    <div key={_id}>
-                      <SelectItem value={examName}>{examName}</SelectItem>
-                    </div>
-                  )
-                )}
+                {courseData?.data?.map(({ name, _id }: Course) => (
+                  <div key={_id}>
+                    <SelectItem value={_id}>{name}</SelectItem>
+                  </div>
+                ))}
               </SelectContent>
             </Select>
 
@@ -217,36 +221,46 @@ const Grader = () => {
             )}
           </div>
 
-          {isLoading || isPending ? (
-            <div className="flex flex-col space-y-3">
-              <div className="flex flex-wrap gap-4 justify-between items-center">
-                <Skeleton className="w-[200px] h-[50px] rounded-md" />
-                <Skeleton className="w-[100px] h-[50px] rounded-md" />
+          {isLoading && (
+            <div className="flex flex-col justify-between gap-8">
+              <div className="flex items-center justify-between">
+                <Skeleton className="w-[300px] h-[35px] rounded-md" />
+                <Skeleton className="w-[200px] h-[35px] rounded-md" />
               </div>
-              <Skeleton className="w-full h-[300px] rounded-md" />
-            </div>
-          ) : (
-            Boolean(tableData?.length) && (
-              <>
-                <DataTable<any, any>
-                  columns={columns}
-                  data={tableData}
-                  setSelectedRows={setSelectedRows}
-                />
 
-                <Button
-                  className="w-[180px]"
-                  disabled={!Boolean(selectedRows.length) || gradeIsPending}
-                  onClick={handleGrade}
-                >
-                  {gradeIsPending ? (
-                    <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
-                  ) : (
-                    "Grade"
-                  )}
-                </Button>
-              </>
-            )
+              <Skeleton className="w-full h-[200px] rounded-md" />
+
+              <div className="flex items-center justify-between self-end gap-6">
+                <Skeleton className="w-[50px] h-[35px] rounded-md" />
+                <Skeleton className="w-[50px] h-[35px] rounded-md" />
+              </div>
+
+              <Skeleton className="w-[200px] h-[40px] rounded-md self-start" />
+            </div>
+          )}
+
+          {data && Boolean(Object.keys(data)?.length) && (
+            <>
+              <DataTable<Partial<any>, any>
+                columns={columns}
+                data={data?.data?.data?.categories}
+                setSelectedRows={setSelectedRows}
+                setSelectedSubRows={setSelectedSubRows}
+                getSubRows={(row: Partial<Category>) => row?.students ?? []}
+              />
+
+              <Button
+                className="w-[180px]"
+                disabled={!Boolean(selectedSubRows.length) || gradeIsPending}
+                onClick={handleGrade}
+              >
+                {gradeIsPending ? (
+                  <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
+                ) : (
+                  "Grade"
+                )}
+              </Button>
+            </>
           )}
         </>
       )}

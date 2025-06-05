@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import useStore from "@/state";
 import { ErrorResponse } from "@/types/ErrorResponse";
-import { Exam } from "@/types/Exam";
+import { Course } from "@/types/Course";
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
@@ -25,19 +25,28 @@ import {
 } from "@/components/ui/dialog";
 import { CheckCircle, EllipsisVertical, Paperclip } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DataTable } from "@/components/data-table";
+import { getColumns } from "./columns";
 
 const Uploads = () => {
   const nav = useNavigate();
   const { user, token } = useStore();
-  const [selectedExamId, setSelectedExamId] = useState("");
+  const [selectedCourseId, setSelectedCourseId] = useState("");
   const [open, setOpen] = useState(false);
   const [changeClipboardIcon, setChangeClipboardIcon] = useState(false);
 
   const { data, isLoading, isSuccess, isError, error } = useQuery({
-    queryKey: ["exams"],
-    queryFn: async () => await axios.get(`/exams/users?userId=${user?._id}`),
+    queryKey: ["courses"],
+    queryFn: async () => await axios.get(`/courses/users?userId=${user?._id}`),
     enabled: Boolean(user?._id?.length),
+    refetchOnWindowFocus: false,
   });
+
+  // const { data: resourceData } = useQuery({
+  //   querykey: ["resources"],
+  //   queryFn: async () => await axios.get(`/courses/${data?._id}/resources`),
+  //   enabled: Boolean(data?.id?.length),
+  // });
 
   const {
     data: linkData,
@@ -46,16 +55,16 @@ const Uploads = () => {
     isError: linkIsError,
     error: linkError,
   } = useQuery({
-    queryKey: ["examLink"],
+    queryKey: ["courseLink"],
     queryFn: async () =>
       await axios.post(
-        `/exams/generateLink`,
-        { examId: selectedExamId },
+        `/courses/generateLink`,
+        { courseId: selectedCourseId },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       ),
-    enabled: Boolean(selectedExamId?.length),
+    enabled: Boolean(selectedCourseId?.length),
   });
 
   const handleClick = () => {
@@ -68,14 +77,14 @@ const Uploads = () => {
   };
 
   const handleGenerateLink = (examId: string) => {
-    setSelectedExamId(examId);
+    setSelectedCourseId(examId);
   };
 
   useEffect(() => {
-    if (linkIsLoading) toast.success(`Generating link for exam`);
+    if (linkIsLoading) toast.success(`Generating link for course`);
     if (linkIsSuccess && linkData) setOpen(true);
     if (linkIsError)
-      toast.error(linkError?.message || "Unable to generate exam link");
+      toast.error(linkError?.message || "Unable to generate course link");
   }, [linkIsSuccess, linkIsLoading, linkIsError, linkData]);
 
   useEffect(() => {
@@ -88,17 +97,20 @@ const Uploads = () => {
 
   return (
     <div className="p-4 flex flex-col gap-4 ">
-      <div className="w-full flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-bold text-3xl m-0">Uploads</h1>
-        <Button className="w-[150px] self-end" onClick={handleClick}>
-          Upload new file(s)
-        </Button>
-      </div>
+      <Button className="w-[150px] self-end" onClick={handleClick}>
+        Upload new file(s)
+      </Button>
       {isLoading && (
-        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-2">
-          <Skeleton className="w-full md:w-[250px] h-[200px] rounded-lg" />
-          <Skeleton className="w-full md:w-[250px] h-[200px] rounded-lg" />
-          <Skeleton className="w-full md:w-[250px] h-[200px] rounded-lg" />
+        <div className="w-full flex flex-col items-center justify-between gap-2">
+          <div className="w-full flex items-center justify-between gap-6">
+            <Skeleton className="w-[200px] h-[30px] rounded-lg" />
+            <Skeleton className="w-[100px] h-[30px] rounded-lg" />
+          </div>
+          <Skeleton className="w-full h-[150px] rounded-lg" />
+          <div className="w-full flex items-center justify-end gap-6">
+            <Skeleton className="w-[50px] h-[30px] rounded-lg" />
+            <Skeleton className="w-[50px] h-[30px] rounded-lg" />
+          </div>
         </div>
       )}
       {isError && (
@@ -107,64 +119,19 @@ const Uploads = () => {
             "An error occurred"}
         </p>
       )}
-      <div className="flex gap-4 flex-wrap">
-        {data?.data?.map(
-          ({ _id, examName, guide, question, students }: Exam) => (
-            <div
-              key={_id}
-              className="w-full md:w-1/4 flex flex-col gap-4 items-start justify-between p-4 border border-solid rounded-md bg-white shadow-md"
-            >
-              <div className="w-full flex justify-between items-start">
-                <p className="font-semibold text-2xl text-slate-500">
-                  {examName}
-                </p>
-                <Menubar>
-                  <MenubarMenu>
-                    <MenubarTrigger>
-                      <EllipsisVertical />
-                    </MenubarTrigger>
-                    <MenubarContent>
-                      <MenubarItem onClick={() => handleGenerateLink(_id)}>
-                        Generate link
-                      </MenubarItem>
-                    </MenubarContent>
-                  </MenubarMenu>
-                </Menubar>
-              </div>
-              {Boolean(guide?.length) && (
-                <a
-                  target="_blank"
-                  href={guide}
-                  rel="noopener noreferrer"
-                  className="text-blue-500 cursor-pointer"
-                >
-                  View marking guide
-                </a>
-              )}
-              {Boolean(question?.length) && (
-                <a
-                  target="_blank"
-                  href={question}
-                  rel="noopener noreferrer"
-                  className="text-blue-500 cursor-pointer"
-                >
-                  View question
-                </a>
-              )}
-              {Boolean(students?.length) && (
-                <p className="text-gray-500 cursor-not-allowed">
-                  View student answers
-                </p>
-              )}
-            </div>
-          )
-        )}
-      </div>
+
+      {data?.data?.length && (
+        <DataTable<Partial<Course>, unknown>
+          columns={getColumns(handleGenerateLink)}
+          data={data.data}
+          getSubRows={(row: Partial<Course>) => row.categories ?? []}
+        />
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Exam Link</DialogTitle>
+            <DialogTitle>Course Link</DialogTitle>
             <DialogDescription>
               Copy the link and share with your students.
             </DialogDescription>

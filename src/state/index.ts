@@ -20,6 +20,8 @@ interface State {
   setSelectedPaymentPlan: (plan: PaymentPlan | null) => void;
   organizationData: OrganizationData;
   appendOrganizationData: (data: OrganizationData) => void;
+  expandedRowId: number | null;
+  setExpandedRowId: (id: number) => void;
 }
 
 const useStore = create<State>()(
@@ -46,6 +48,8 @@ const useStore = create<State>()(
           set((state) => ({
             organizationData: { ...state.organizationData, ...data },
           })),
+        expandedRowId: null,
+        setExpandedRowId: (id) => set({ expandedRowId: id }),
       }),
       {
         name: "storage",

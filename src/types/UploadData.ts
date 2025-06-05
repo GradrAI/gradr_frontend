@@ -1,6 +1,8 @@
 export type UploadData = {
   lecturerId: string;
-  examName: string;
+  name: string;
+  categoryName?: string;
+  categoryType: "test" | "assignment" | "exam";
   fileType: "guide" | "question" | "answers";
   file: File;
   maxScoreAttainable: number;

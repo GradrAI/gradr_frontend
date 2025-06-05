@@ -1,38 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Exam } from "@/types/Exam";
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
+import { Category } from "@/types/Category";
 
-export const columns: ColumnDef<any>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-  },
+export const columns: ColumnDef<Partial<Category>>[] = [
   {
     id: "id",
     accessorKey: "_id",
@@ -41,26 +13,40 @@ export const columns: ColumnDef<any>[] = [
     ),
   },
   {
-    id: "examName",
-    accessorKey: "exam.name",
+    id: "categoryName",
+    accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Exam Name" />
+      <DataTableColumnHeader column={column} title="Category Name" />
     ),
   },
+  // {
+  //   id: "categoryType",
+  //   accessorKey: "type",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Category Type" />
+  //   ),
+  // },
   {
-    id: "status",
-    accessorKey: "exam.result.score",
+    id: "maxScoreAttainable",
+    accessorKey: "maxScoreAttainable",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
-    ),
-    cell: ({ row }) => (
-      <p
-        className={`${row.original?.exam?.result?.score ? "text-blue-500" : "text-red-500"}`}
-      >
-        {row?.original?.exam?.result?.score ? "Graded" : "Ungraded"}
-      </p>
+      <DataTableColumnHeader column={column} title="Maximum Score Attainable" />
     ),
   },
+  // {
+  //   id: "status",
+  //   accessorKey: "exam.result.score",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Status" />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <p
+  //       className={`${row.original?.exam?.result?.score ? "text-blue-500" : "text-red-500"}`}
+  //     >
+  //       {row?.original?.exam?.result?.score ? "Graded" : "Ungraded"}
+  //     </p>
+  //   ),
+  // },
   {
     id: "createdAt",
     accessorKey: "createdAt",
@@ -68,60 +54,40 @@ export const columns: ColumnDef<any>[] = [
       <DataTableColumnHeader column={column} title="Created At" />
     ),
     cell: ({ row }) => {
-      const formattedDate = new Date(
-        row.getValue("createdAt")
-      ).toLocaleDateString("en-US");
-      return <div className="font-medium">{formattedDate}</div>;
+      // console.log(' row.getValue("createdAt"): ', row.getValue("createdAt"));
+      // const formattedDate = new Date(
+
+      // ).toLocaleDateString("en-US");
+      // return <div className="font-medium">{formattedDate}</div>;
+
+      const raw = row.original.createdAt;
+      const date = raw ? new Date(raw) : null;
+      return date instanceof Date && !isNaN(date.getTime())
+        ? date.toLocaleDateString()
+        : null;
     },
   },
   {
-    id: "url",
-    accessorKey: "answer",
+    id: "students",
+    accessorKey: "students",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="URL" />
+      <DataTableColumnHeader column={column} title="No. of Students" />
     ),
+    cell: ({ row }) => <p className="">{row.original?.students?.length}</p>,
   },
   {
-    id: "fileName",
-    accessorKey: "fileName",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="File Name" />
-    ),
-  },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => {
-      const {
-        _id,
-        exam: { name },
-      } = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="h-8 w-8 p-0"
-              disabled={!row.original.exam?.result?.score}
-            >
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {/* disable if file is ungraded */}
-
-            <DropdownMenuItem
-              onClick={() => {
-                window.location.href = `${encodeURI(`/app/grader/details?exam=${name}&studentId=${_id}`)}`;
-              }}
-            >
-              View details
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    id: "expander",
+    header: () => "Expand",
+    cell: ({ row }) =>
+      row.getCanExpand() ? (
+        <button
+          onClick={row.getToggleExpandedHandler()}
+          className="text-sm text-blue-500 hover:underline"
+        >
+          {row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
+        </button>
+      ) : (
+        ""
+      ),
   },
 ];

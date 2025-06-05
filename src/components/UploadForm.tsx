@@ -51,8 +51,8 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
   });
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["exams"],
-    queryFn: async () => await axios.get(`/exams/users?userId=${user?._id}`),
+    queryKey: ["courses"],
+    queryFn: async () => await axios.get(`/courses/users?userId=${user?._id}`),
     enabled: Boolean(user?._id?.length),
   });
 

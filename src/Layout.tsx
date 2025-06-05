@@ -16,7 +16,7 @@ export default function Layout() {
   return (
     <ModalContext.Provider value={{ showModal, setShowModal }}>
       <SidebarProvider>
-        <AppSidebar />
+        {user && Object.keys(user)?.length && <AppSidebar />}
         <main className="w-screen h-screen">
           <div className={`w-full h-full flex flex-col bg-gray-200`}>
             <Header />

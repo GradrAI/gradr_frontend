@@ -1,20 +1,7 @@
 import { MongoDBDefault } from "./MongoDBDefault";
 
 export type Student = MongoDBDefault & {
-  exams: [
-    {
-      name: string;
-      lecturerId: string;
-      file: {
-        url: string;
-        name: string;
-      };
-      result: {
-        score: string;
-        explanation: string;
-        feedback: string;
-      };
-      _id: string;
-    },
-  ];
+  name: string;
+  email: string;
+  studentId: string;
 };
