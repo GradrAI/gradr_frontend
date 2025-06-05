@@ -5,9 +5,19 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+type AssessmentStat = {
+  totalUniqueStudents: number;
+  gradedCount: number;
+  averageScore: string;
+  highestScore: number;
+  lowestScore: number;
+};
+
 const AssessmentDetails = () => {
   const { courseId } = useParams();
-  const [assessmentStat, setAssessmentStat] = useState({});
+  const [assessmentStat, setAssessmentStat] = useState<AssessmentStat | null>(
+    null
+  );
   const { isSuccess, data } = useQuery({
     queryKey: ["course", courseId],
     queryFn: async () =>
@@ -36,7 +46,7 @@ const AssessmentDetails = () => {
       const totalScore = scores.reduce((sum, s) => sum + s, 0);
       const averageScore = scores?.length
         ? (totalScore / scores.length).toFixed(2)
-        : 0;
+        : "0";
 
       setAssessmentStat({
         totalUniqueStudents: uniqueStudentIds.size,

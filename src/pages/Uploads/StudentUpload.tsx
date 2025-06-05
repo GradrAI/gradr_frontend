@@ -192,7 +192,7 @@ const StudentUpload = () => {
     } //toast.success("Retrieving exam info");
     if (examIsSuccess && examData) {
       setUploadData({
-        examName: examData.examName,
+        name: examData.examName,
         lecturerId: examData.lecturerId,
         fileType: "answers",
         maxScoreAttainable: examData.maxScoreAttainable,
