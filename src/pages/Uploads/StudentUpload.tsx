@@ -21,7 +21,6 @@ import useStore from "@/state";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
 import { UploadData } from "@/types/UploadData";
-import { Exam } from "@/types/Course";
 import { Result } from "@/types/Result";
 import { ErrorResponse } from "@/types/ErrorResponse";
 

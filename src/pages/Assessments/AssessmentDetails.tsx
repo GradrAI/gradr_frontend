@@ -1,3 +1,5 @@
+import { Category } from "@/types/Category";
+import { Student } from "@/types/Student";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -13,7 +15,6 @@ const AssessmentDetails = () => {
         `/courses/${decodeURI(courseId ?? "")}/students-by-category`
       ),
   });
-  console.log("data: ", data);
 
   useEffect(() => {
     if (isSuccess && data?.data?.data) {
@@ -21,8 +22,8 @@ const AssessmentDetails = () => {
       const scores: number[] = [];
       let gradedCount = 0;
 
-      data?.data?.data.categories.forEach((category) => {
-        category.students.forEach(({ student, result }) => {
+      data?.data?.data.categories.forEach((category: Category) => {
+        category?.students?.forEach(({ student, result }) => {
           uniqueStudentIds.add(student.studentId);
           if (result?.score) {
             gradedCount++;

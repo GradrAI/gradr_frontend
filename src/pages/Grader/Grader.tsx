@@ -55,9 +55,7 @@ const Grader = () => {
   const { data, isLoading, isSuccess, isError, refetch } = useQuery({
     queryKey: ["singleCourse"],
     queryFn: async () =>
-      await axios.get<Course[]>(
-        `/courses/${selectedExam}/students-by-category`
-      ),
+      await axios.get<any>(`/courses/${selectedExam}/students-by-category`),
     enabled: Boolean(selectedExam),
   });
 

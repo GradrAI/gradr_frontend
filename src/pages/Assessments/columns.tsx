@@ -24,10 +24,7 @@ export const columns: ColumnDef<Partial<Course>>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Categories" />
     ),
-    cell: ({ row }) => {
-      console.log(row.original);
-      return <p>{row.original?.categories?.length}</p>;
-    },
+    cell: ({ row }) => <p>{row.original?.categories?.length}</p>,
   },
   // {
   //   id: "status",
