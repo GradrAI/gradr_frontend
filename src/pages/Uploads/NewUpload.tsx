@@ -227,7 +227,7 @@ const NewUpload = () => {
         <SelectContent>
           <SelectGroup>
             <SelectItem value="guide">Marking Guide</SelectItem>
-            <SelectItem value="question">Exam question</SelectItem>
+            <SelectItem value="question">Question</SelectItem>
             <SelectItem value="answers">Student Answers</SelectItem>
           </SelectGroup>
         </SelectContent>
