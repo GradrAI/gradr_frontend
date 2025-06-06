@@ -27,9 +27,11 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UpdatedResource } from "@/types/UpdatedResource";
+import { MoreHorizontal } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -246,7 +248,13 @@ export function DataTable<TData, TValue>({
                                   File URL
                                 </TableHead>
                                 <TableHead className="text-xs uppercase text-muted-foreground">
-                                  STATUS
+                                  Status
+                                </TableHead>
+                                <TableHead className="text-xs uppercase text-muted-foreground">
+                                  Score
+                                </TableHead>
+                                <TableHead className="text-xs uppercase text-muted-foreground">
+                                  Actions
                                 </TableHead>
                               </TableRow>
                             </TableHeader>
@@ -292,6 +300,35 @@ export function DataTable<TData, TValue>({
                                       className={`font-semibold truncate max-w-sm ${resource?.result ? "text-green-500" : "text-red-500"}`}
                                     >
                                       {resource?.result ? "Graded" : "Ungraded"}
+                                    </TableCell>
+                                    <TableCell>
+                                      {resource?.result?.score
+                                        ? resource?.result?.score?.split("/")[0]
+                                        : "N/A"}
+                                    </TableCell>
+                                    <TableCell>
+                                      <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            className="h-8 w-8 p-0"
+                                          >
+                                            <span className="sr-only">
+                                              Open menu
+                                            </span>
+                                            <MoreHorizontal className="h-4 w-4" />
+                                          </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                          <DropdownMenuItem
+                                            onClick={() => {
+                                              console.log("fetching details");
+                                            }}
+                                          >
+                                            View details
+                                          </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
                                     </TableCell>
                                   </TableRow>
                                 );

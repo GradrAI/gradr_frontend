@@ -19,13 +19,16 @@ export const columns: ColumnDef<Partial<Category>>[] = [
       <DataTableColumnHeader column={column} title="Category Name" />
     ),
   },
-  // {
-  //   id: "categoryType",
-  //   accessorKey: "type",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Category Type" />
-  //   ),
-  // },
+  {
+    id: "categoryType",
+    accessorKey: "type",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Category Type" />
+    ),
+    cell: ({ row }) => {
+      return <p className="uppercase">{row.original.type}</p>;
+    },
+  },
   {
     id: "maxScoreAttainable",
     accessorKey: "maxScoreAttainable",
@@ -35,17 +38,14 @@ export const columns: ColumnDef<Partial<Category>>[] = [
   },
   // {
   //   id: "status",
-  //   accessorKey: "exam.result.score",
+  //   accessorKey: "",
   //   header: ({ column }) => (
   //     <DataTableColumnHeader column={column} title="Status" />
   //   ),
-  //   cell: ({ row }) => (
-  //     <p
-  //       className={`${row.original?.exam?.result?.score ? "text-blue-500" : "text-red-500"}`}
-  //     >
-  //       {row?.original?.exam?.result?.score ? "Graded" : "Ungraded"}
-  //     </p>
-  //   ),
+  //   cell: ({ row }) => {
+  //     console.log("row.original(status): ", row.original);
+  //     return <p className=""></p>;
+  //   },
   // },
   {
     id: "createdAt",
