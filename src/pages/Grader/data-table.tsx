@@ -32,6 +32,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UpdatedResource } from "@/types/UpdatedResource";
 import { MoreHorizontal } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Course } from "@/types/Course";
+import { Category } from "@/types/Category";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -48,6 +51,7 @@ export function DataTable<TData, TValue>({
   getSubRows,
   setSelectedSubRows,
 }: DataTableProps<TData, TValue>) {
+  const nav = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -260,6 +264,7 @@ export function DataTable<TData, TValue>({
                             </TableHeader>
                             <TableBody>
                               {row.subRows.map((subRow) => {
+                                const rowOriginal = row.original as Category;
                                 const resource =
                                   subRow.original as UpdatedResource;
                                 return (
@@ -322,7 +327,14 @@ export function DataTable<TData, TValue>({
                                         <DropdownMenuContent align="end">
                                           <DropdownMenuItem
                                             onClick={() => {
-                                              console.log("fetching details");
+                                              nav(
+                                                `details?studentId=${resource.student.studentId}&courseId=${rowOriginal.courseId}&categoryId=${rowOriginal._id}`,
+                                                {
+                                                  state: {
+                                                    result: resource.result,
+                                                  },
+                                                }
+                                              );
                                             }}
                                           >
                                             View details
