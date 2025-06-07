@@ -13,7 +13,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -31,9 +30,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Category } from "@/types/Category";
 import { Course } from "@/types/Course";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import toast from "react-hot-toast";
 import CategoryRow from "./CategoryRow";
 
 interface DataTableProps<TData, TValue> {
@@ -61,11 +57,6 @@ export function DataTable<TData, TValue>({
     pageSize: 5, //default page size
   });
   const [expanded, setExpanded] = useState({});
-  const [dataForLinkGeneration, setDataForLinkGeneration] = useState({
-    courseId: "",
-    categoryId: "",
-  });
-  const [open, setOpen] = useState(false);
   const [changeClipboardIcon, setChangeClipboardIcon] = useState(false);
 
   useEffect(() => {
@@ -82,31 +73,6 @@ export function DataTable<TData, TValue>({
       }, 1000);
     }
   }, [changeClipboardIcon]);
-
-  const {
-    data: linkData,
-    isLoading: linkIsLoading,
-    isSuccess: linkIsSuccess,
-    isError: linkIsError,
-    error: linkError,
-  } = useQuery({
-    queryKey: ["courseLink"],
-    queryFn: async () =>
-      await axios.post(`/courses/generateLink`, dataForLinkGeneration, {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-    enabled:
-      Boolean(dataForLinkGeneration?.courseId?.length) &&
-      Boolean(dataForLinkGeneration?.categoryId?.length),
-    refetchOnWindowFocus: false,
-  });
-
-  useEffect(() => {
-    if (linkIsLoading) toast.success(`Generating link for category`);
-    if (linkIsSuccess && linkData) setOpen(true);
-    if (linkIsError)
-      toast.error(linkError?.message || "Unable to generate course link");
-  }, [linkIsSuccess, linkIsLoading, linkIsError, linkData]);
 
   const table = useReactTable({
     data,

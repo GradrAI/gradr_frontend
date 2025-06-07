@@ -1,5 +1,5 @@
 import { Category } from "@/types/Category";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import useStore from "@/state";
@@ -8,17 +8,10 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  CheckCircle,
-  EllipsisVertical,
-  Loader2Icon,
-  Paperclip,
-} from "lucide-react";
+import { CheckCircle, Loader2Icon, Paperclip } from "lucide-react";
 import { Button } from "./ui/button";
 import { Resource } from "@/types/Resource";
 
@@ -35,14 +28,11 @@ export default function CategoryRow({
 
   const {
     data: linkData,
-    isLoading: linkIsLoading,
-    isSuccess: linkIsSuccess,
-    isError: linkIsError,
-    error: linkError,
-    refetch,
-  } = useQuery({
-    queryKey: ["courseLink", category._id], // different per category
-    queryFn: async () =>
+    isPending: linkIsPending,
+    mutate,
+  } = useMutation({
+    mutationKey: ["courseLink", category._id],
+    mutationFn: async () =>
       await axios.post(
         `/courses/generateLink`,
         {
@@ -53,15 +43,11 @@ export default function CategoryRow({
           headers: { Authorization: `Bearer ${token}` },
         }
       ),
-    enabled: false, // don't auto-run
+    onMutate: () => toast.success(`Generating link for ${category.name}`),
+    onSuccess: () => setOpen(true),
+    onError: (err: any) =>
+      toast.error(err?.message || "Unable to generate link"),
   });
-
-  useEffect(() => {
-    if (linkIsLoading) toast.success(`Generating link for ${category.name}`);
-    if (linkIsSuccess && linkData) setOpen(true);
-    if (linkIsError)
-      toast.error(linkError?.message || "Unable to generate link");
-  }, [linkIsSuccess, linkIsLoading, linkIsError]);
 
   return (
     <div key={category._id} className="p-4 border border-green-500">
@@ -79,10 +65,10 @@ export default function CategoryRow({
         <Button
           size="sm"
           variant="outline"
-          disabled={linkIsLoading}
-          onClick={() => refetch()}
+          disabled={linkIsPending}
+          onClick={() => mutate()}
         >
-          {linkIsLoading && <Loader2Icon className="animate-spin" />}
+          {linkIsPending && <Loader2Icon className="animate-spin" />}
           Generate Link
         </Button>
       </div>
@@ -106,28 +92,32 @@ export default function CategoryRow({
 
       {/* Dialog for link */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Course Link</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-start">Course Link</DialogTitle>
+            <DialogDescription className="text-start">
               Copy the link and share with your students.
             </DialogDescription>
           </DialogHeader>
           {linkData?.data?.uploadLink && (
-            <div className="flex items-center justify-between gap-4">
-              <p>{linkData.data.uploadLink}</p>
-              {!changeClipboardIcon ? (
-                <Paperclip
-                  onClick={() => {
-                    navigator.clipboard.writeText(linkData.data.uploadLink);
-                    toast.success("Copied");
-                    setChangeClipboardIcon(true);
-                  }}
-                  className="cursor-pointer hover:text-slate-400 border rounded-full"
-                />
-              ) : (
-                <CheckCircle className="pointer-events-none" />
-              )}
+            <div className="flex flex-col items-center justify-between gap-4">
+              <p className="break-all max-w-full text-sm text-start">
+                {linkData.data.uploadLink}
+              </p>
+              <div className="self-end">
+                {!changeClipboardIcon ? (
+                  <Paperclip
+                    onClick={() => {
+                      navigator.clipboard.writeText(linkData.data.uploadLink);
+                      toast.success("Copied");
+                      setChangeClipboardIcon(true);
+                    }}
+                    className="cursor-pointer hover:text-slate-400 border rounded-full"
+                  />
+                ) : (
+                  <CheckCircle className="pointer-events-none" />
+                )}
+              </div>
             </div>
           )}
         </DialogContent>
