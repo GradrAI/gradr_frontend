@@ -136,7 +136,7 @@ const NewUpload = () => {
           context: any
         ) => {
           if (data?.status === 201) {
-            toast.success("Added exam successfully");
+            toast.success("Added course successfully");
             queryClient.invalidateQueries({ queryKey: ["courses"] });
             setCourses((prev) => [...prev, data.data]);
             setAddNew(false);

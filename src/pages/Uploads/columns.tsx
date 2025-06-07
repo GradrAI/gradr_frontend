@@ -13,9 +13,7 @@ import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export const getColumns = (
-  handleGenerateLink: (courseId: string) => void
-): ColumnDef<Partial<Course>>[] => [
+export const columns: ColumnDef<Partial<Course>>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -66,34 +64,34 @@ export const getColumns = (
       return <div className="font-medium">{formattedDate}</div>;
     },
   },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => {
-                const id = row.original.id;
-                if (id) {
-                  handleGenerateLink(id);
-                }
-              }}
-            >
-              Generate link
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
+  // {
+  //   id: "actions",
+  //   header: "Actions",
+  //   cell: ({ row }) => {
+  //     return (
+  //       <DropdownMenu>
+  //         <DropdownMenuTrigger asChild>
+  //           <Button variant="ghost" className="h-8 w-8 p-0">
+  //             <span className="sr-only">Open menu</span>
+  //             <MoreHorizontal className="h-4 w-4" />
+  //           </Button>
+  //         </DropdownMenuTrigger>
+  //         <DropdownMenuContent align="end">
+  //           <DropdownMenuItem
+  //             onClick={() => {
+  //               const id = row.original.id;
+  //               if (id) {
+  //                 handleGenerateLink(id);
+  //               }
+  //             }}
+  //           >
+  //             Generate link
+  //           </DropdownMenuItem>
+  //         </DropdownMenuContent>
+  //       </DropdownMenu>
+  //     );
+  //   },
+  // },
   {
     id: "expander",
     header: () => "Expand",

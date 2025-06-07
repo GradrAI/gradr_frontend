@@ -4,7 +4,7 @@ const notifications = {
     FAILURE: "Upload failed",
   },
   EXAM: {
-    FAILURE: "Unable to add exam",
+    FAILURE: "Unable to add course",
   },
   GRADE: {
     SUCCESS: "Grading successful",
