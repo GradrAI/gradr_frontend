@@ -127,7 +127,7 @@ const Details = () => {
         </p>
       </div>
 
-      <div className="w-full h-full flex flex-col gap-8 justify-start text-black border rounded-xl p-6 cursor-pointer">
+      <div className="w-full h-full flex flex-col gap-8 justify-start text-black border rounded-xl cursor-pointer text-justify">
         <div className="flex flex-col justify-start">
           <p className="text-xl m-0 font-bold">Score</p>
           <p>{score}</p>

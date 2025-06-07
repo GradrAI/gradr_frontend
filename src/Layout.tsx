@@ -18,7 +18,7 @@ export default function Layout() {
       <SidebarProvider>
         {user && Object.keys(user)?.length && <AppSidebar />}
         <main className="w-screen h-screen">
-          <div className={`w-full h-full flex flex-col bg-gray-200`}>
+          <div className="w-full h-full flex flex-col bg-gray-200 overflow-y-auto">
             <Header />
             <Outlet />
           </div>
