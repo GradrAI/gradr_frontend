@@ -257,6 +257,7 @@ export function DataTable<TData, TValue>({
 
                                     <Button
                                       size="sm"
+                                      variant="outline"
                                       onClick={() => {
                                         setDataForLinkGeneration({
                                           courseId: data._id,
