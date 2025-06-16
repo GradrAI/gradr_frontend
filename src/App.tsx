@@ -14,7 +14,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Content from "./pages/Content";
 import PaymentPlan from "./pages/SignUp/PaymentPlan";
 import KYC from "./pages/SignUp/KYC";
-import StudentUpload from "./pages/Uploads/StudentUpload";
+import StudentUpload from "./pages/Student/pages/StudentUpload";
 import NotFound from "./pages/NotFound";
 import TermsOfService from "./pages/TermsOfService";
 import PostPayment from "./pages/SignUp/PostPayment";
@@ -40,7 +40,7 @@ function App() {
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
         <Route path="terms-of-service" element={<TermsOfService />} />
         <Route index element={<Landing />} />
-        <Route path="link/:uniqueCode" element={<StudentUpload />} />
+        <Route path="link/:courseId/:uniqueCode" element={<StudentUpload />} />
         <Route path="sign-up" element={<SignUp />}>
           <Route index element={<KYC />} />
           <Route path="payment-plan" element={<PaymentPlan />} />

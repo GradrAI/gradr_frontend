@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios, { AxiosError } from "axios";
@@ -7,18 +7,13 @@ import { DataTable } from "../../components/data-table";
 import { columns } from "./columns";
 import useStore from "@/state";
 import { Skeleton } from "@/components/ui/skeleton";
+import api from "@/lib/axios";
 
 const Assessments = () => {
   const nav = useNavigate();
   const [searchParams] = useSearchParams();
-  const {
-    accountType,
-    user,
-    saveUserToken,
-    saveUser,
-    setCode,
-    uniqueExamCode,
-  } = useStore();
+  const { accountType, user, saveUserToken, saveUser, setCode, studentData } =
+    useStore();
 
   const code = searchParams.get("code");
 
@@ -33,10 +28,7 @@ const Assessments = () => {
       } = res;
       if (data) {
         const { token, user } = data;
-        // save token to be reused in all axios requests
-        axios.defaults.headers.common["Authorization"] = token;
         localStorage.setItem("token", token);
-        saveUserToken(token);
         saveUser(user);
       }
       return res;
@@ -55,7 +47,7 @@ const Assessments = () => {
       ) {
         // get refresh token and try again
         if (user?.refresh_token) {
-          console.log("user?.refresh_token: ", user?.refresh_token);
+          // console.log("user?.refresh_token: ", user?.refresh_token);
         }
       }
     }
@@ -64,7 +56,8 @@ const Assessments = () => {
   useEffect(() => {
     const code = searchParams.get("code");
     if (code) setCode(code);
-    if (accountType === "student") nav(`/link/${uniqueExamCode}`);
+    if (accountType === "student")
+      nav(`/link/${studentData?.courseId}/${studentData?.uniqueCode}`);
     if (accountType === "organization") {
       // if user already belongs to an organization, nav to dashboard
       if (user?.organization) nav("/app/assessments", { replace: true });
@@ -82,7 +75,7 @@ const Assessments = () => {
     error: courseError,
   } = useQuery({
     queryKey: ["courses"],
-    queryFn: async () => await axios.get(`/courses/users?userId=${user?._id}`),
+    queryFn: async () => await api.get(`/courses/users`),
     enabled: Boolean(user?._id?.length),
   });
 

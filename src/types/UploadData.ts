@@ -1,10 +1,15 @@
+import { User } from "./User";
+
 export type UploadData = {
   lecturerId: string;
   name: string;
-  categoryName?: string;
-  categoryType: "test" | "assignment" | "exam";
   fileType: "guide" | "question" | "answers";
-  file: File;
   maxScoreAttainable: number;
   studentId?: string | null;
+  categoryName?: string;
+  categoryType: "test" | "assignment" | "exam";
+  file: File;
+  uploader: User | null;
+  uploaderType: "lecturer" | "student";
+  matricNo: string | null;
 };

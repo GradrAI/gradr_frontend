@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
+import api from "@/lib/axios";
 
 const Uploads = () => {
   const nav = useNavigate();
@@ -17,7 +18,7 @@ const Uploads = () => {
 
   const { data, isLoading, isSuccess, isError, error } = useQuery({
     queryKey: ["courses"],
-    queryFn: async () => await axios.get(`/courses/users?userId=${user?._id}`),
+    queryFn: async () => await api.get(`/courses/users?userId=${user?._id}`),
     enabled: Boolean(user?._id?.length),
     refetchOnWindowFocus: false,
   });

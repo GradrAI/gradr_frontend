@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { Course } from "@/types/Course";
-import { Student } from "@/types/Student";
 import { Result } from "@/types/Result";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
@@ -21,6 +20,8 @@ import useStore from "@/state";
 import { useNavigate } from "react-router-dom";
 import { Category } from "@/types/Category";
 import { DataTable } from "./data-table";
+import api from "@/lib/axios";
+import { normalizeGradingPayload } from "@/lib/normalizeGradingPayload";
 
 const postResults = async (data: any) =>
   await axios.post<Result[]>(`/results`, data);
@@ -48,14 +49,14 @@ const Grader = () => {
     error: courseError,
   } = useQuery({
     queryKey: ["courses"],
-    queryFn: async () => await axios.get(`/courses/users?userId=${user?._id}`),
+    queryFn: async () => await api.get(`/courses/users?userId=${user?._id}`),
     enabled: Boolean(user?._id?.length),
   });
 
   const { data, isLoading, isSuccess, isError, refetch } = useQuery({
     queryKey: ["singleCourse"],
     queryFn: async () =>
-      await axios.get<any>(`/courses/${selectedExam}/students-by-category`),
+      await api.get<any>(`/courses/${selectedExam}/students-by-category`),
     enabled: Boolean(selectedExam),
   });
 
@@ -72,16 +73,10 @@ const Grader = () => {
   } = useQuery({
     queryKey: ["exportData"],
     queryFn: async () =>
-      await axios.post(
-        `/oauth2callback`,
-        {
-          code,
-          sheetsObject,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      ),
+      await axios.post(`/oauth2callback`, {
+        code,
+        sheetsObject,
+      }),
     enabled: Boolean(sheetsObject.length) && clicked && Boolean(token?.length),
     retry: false,
   });
@@ -94,6 +89,8 @@ const Grader = () => {
   const handleExport = () => {
     setClicked(true);
   };
+
+  console.log("selectedSubRows: ", selectedSubRows);
 
   useEffect(() => {
     if (exportData) {
@@ -152,10 +149,27 @@ const Grader = () => {
     // if (!Boolean(selectedRows.length)) return;
     if (!Boolean(selectedSubRows.length)) return;
 
+    // Normalize the payload to ensure consistent format
+    const normalizedResultData = selectedSubRows.map((item) => ({
+      student: {
+        studentId:
+          typeof item.student === "string"
+            ? item.student
+            : item.student?.studentId || item.student?._id,
+        _id:
+          typeof item.student === "string"
+            ? item.student
+            : item.student?._id || item.student?.studentId,
+      },
+      fileUrl: item.fileUrl,
+      resourceId: item.resourceId,
+      result: item.result || null,
+    }));
+
     //! TO-DO: first check if user hasn't passed limit based on their payment plan
 
     mutate(
-      { resultData: selectedSubRows, courseData: {} }, //! TO-DO: pass courseData: { maxScoreAttainable, guide, question } to reduce work done at the backend
+      { resultData: normalizedResultData, courseData: {} }, //! TO-DO: pass courseData: { maxScoreAttainable, guide, question } to reduce work done at the backend
       {
         onSuccess: (data: any, variables: any, context: any) => {
           console.log("data: ", data);

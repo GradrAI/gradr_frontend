@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import useStore from "@/state";
 import { Category } from "@/types/Category";
-import { Student } from "@/types/Student";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ type AssessmentStat = {
 
 const AssessmentDetails = () => {
   const { courseId } = useParams();
+  const { token } = useStore();
   const [assessmentStat, setAssessmentStat] = useState<AssessmentStat | null>(
     null
   );
@@ -53,8 +54,8 @@ const AssessmentDetails = () => {
         totalUniqueStudents: uniqueStudentIds.size,
         gradedCount,
         averageScore,
-        highestScore: Math.max(...scores),
-        lowestScore: Math.min(...scores),
+        highestScore: scores.length ? Math.max(...scores) : 0,
+        lowestScore: scores.length ? Math.min(...scores) : 0,
       });
     }
   }, [isSuccess, data]);

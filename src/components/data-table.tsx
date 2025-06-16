@@ -57,6 +57,7 @@ export function DataTable<TData, TValue>({
     pageSize: 5, //default page size
   });
   const [expanded, setExpanded] = useState({});
+  const [globalFilter, setGlobalFilter] = useState([]);
   const [changeClipboardIcon, setChangeClipboardIcon] = useState(false);
 
   useEffect(() => {
@@ -77,6 +78,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    globalFilterFn: "includesString",
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
@@ -86,9 +88,16 @@ export function DataTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     getSubRows,
-    // getRowCanExpand: (row) => true,
     getExpandedRowModel: getExpandedRowModel(),
     onExpandedChange: setExpanded,
+    onGlobalFilterChange: setGlobalFilter,
+    filterFns: {
+      fuzzy: (row, columnId, filterValue) => {
+        // Simple fuzzy filter implementation (case-insensitive substring match)
+        const rowValue = String(row.getValue(columnId) ?? "").toLowerCase();
+        return rowValue.includes(String(filterValue).toLowerCase());
+      },
+    },
     state: {
       sorting,
       columnFilters,
@@ -103,11 +112,9 @@ export function DataTable<TData, TValue>({
     <div className="">
       <div className="flex gap-4 items-center py-4">
         <Input
-          placeholder="Filter by course name..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
+          placeholder="Filter..."
+          value={globalFilter ?? ""}
+          onChange={(event) => table.setGlobalFilter(event.target.value)}
           className="max-w-sm bg-white"
         />
         <DropdownMenu>

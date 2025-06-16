@@ -14,13 +14,7 @@ const Settings = () => {
   const { data, isPending, isSuccess, isError, mutate, error } = useMutation({
     mutationKey: ["organization"],
     mutationFn: async (code: string) => {
-      await axios.post(
-        `/user`,
-        { tenant_code: code },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axios.post(`/user`, { tenant_code: code });
     },
   });
 

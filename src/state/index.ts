@@ -4,6 +4,7 @@ import type {} from "@redux-devtools/extension"; // required for devtools typing
 import { User } from "@/types/User";
 import { PaymentPlan } from "@/types/PaymentPlan";
 import { OrganizationData } from "@/types/OrganizationData";
+import { StudentData } from "@/types/StudentData";
 
 interface State {
   accountType: string;
@@ -14,8 +15,8 @@ interface State {
   saveUserToken: (token: string) => void;
   code: string;
   setCode: (code: string) => void;
-  uniqueExamCode: string;
-  setUniqueExamCode: (uniqueExamCode: string) => void;
+  studentData: StudentData | null;
+  setStudentData: (studentData: StudentData) => void;
   selectedPaymentPlan: PaymentPlan | null;
   setSelectedPaymentPlan: (plan: PaymentPlan | null) => void;
   organizationData: OrganizationData;
@@ -39,8 +40,8 @@ const useStore = create<State>()(
           }),
         code: "",
         setCode: (code) => set({ code }),
-        uniqueExamCode: "",
-        setUniqueExamCode: (uniqueExamCode) => set({ uniqueExamCode }),
+        studentData: null,
+        setStudentData: (studentData) => set({ studentData }),
         selectedPaymentPlan: null,
         setSelectedPaymentPlan: (plan) => set({ selectedPaymentPlan: plan }),
         organizationData: {} as OrganizationData,

@@ -1,8 +1,7 @@
 import { Category } from "@/types/Category";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import useStore from "@/state";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import {
   Dialog,
@@ -22,7 +21,6 @@ export default function CategoryRow({
   category: Category;
   courseId: string;
 }) {
-  const { token } = useStore();
   const [open, setOpen] = useState(false);
   const [changeClipboardIcon, setChangeClipboardIcon] = useState(false);
 
@@ -33,16 +31,10 @@ export default function CategoryRow({
   } = useMutation({
     mutationKey: ["courseLink", category._id],
     mutationFn: async () =>
-      await axios.post(
-        `/courses/generateLink`,
-        {
-          courseId,
-          categoryId: category._id,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      ),
+      await axios.post(`/courses/generateLink`, {
+        courseId,
+        categoryId: category._id,
+      }),
     onMutate: () => toast.success(`Generating link for ${category.name}`),
     onSuccess: () => setOpen(true),
     onError: (err: any) =>

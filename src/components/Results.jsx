@@ -34,16 +34,10 @@ const Results = () => {
   const { isLoading, isError, error, data } = useQuery({
     queryKey: ["exportData"],
     queryFn: async (sheetsObject) =>
-      await axios.post(
-        `/oauth2callback`,
-        {
-          code,
-          sheetsObject,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      ),
+      await axios.post(`/oauth2callback`, {
+        code,
+        sheetsObject,
+      }),
     enabled: Boolean(sheetsObject.length) && clicked && Boolean(token?.length),
   });
 

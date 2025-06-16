@@ -27,12 +27,8 @@ const PostPayment = () => {
     mutate: organizationMutate,
   } = useMutation({
     mutationKey: ["organization"],
-    mutationFn: async (data: OrganizationData) => {
-      if (token)
-        return await axios.post("/organizations", data, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-    },
+    mutationFn: async (data: OrganizationData) =>
+      await axios.post("/organizations", data),
   });
 
   useEffect(() => {
