@@ -1,6 +1,6 @@
 import { Category } from "@/types/Category";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   Dialog,
@@ -40,6 +40,16 @@ export default function CategoryRow({
     onError: (err: any) =>
       toast.error(err?.message || "Unable to generate link"),
   });
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (changeClipboardIcon) {
+      timeout = setTimeout(() => {
+        setChangeClipboardIcon(false);
+      }, 1000);
+    }
+    return () => clearTimeout(timeout);
+  }, [changeClipboardIcon]);
 
   return (
     <div key={category._id} className="p-4 border border-green-500">
@@ -96,13 +106,16 @@ export default function CategoryRow({
               <p className="break-all max-w-full text-sm text-start">
                 {linkData.data.uploadLink}
               </p>
-              <div className="self-end">
+              <div
+                className="self-end"
+                key={changeClipboardIcon ? "checked" : "copy"}
+              >
                 {!changeClipboardIcon ? (
                   <Paperclip
                     onClick={() => {
                       navigator.clipboard.writeText(linkData.data.uploadLink);
-                      toast.success("Copied");
                       setChangeClipboardIcon(true);
+                      toast.success("Copied");
                     }}
                     className="cursor-pointer hover:text-slate-400 border rounded-full"
                   />
