@@ -1,5 +1,4 @@
 import { z } from "zod";
-import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -21,6 +20,8 @@ import notifications from "@/requests/notifications";
 import useStore from "@/state";
 import { ACCEPTED_FILE_TYPES, MAX_FILE_SIZE } from "@/requests/constants";
 import { useEffect } from "react";
+import api from "@/lib/axios";
+import { Loader2Icon } from "lucide-react";
 
 const formSchema = z.object({
   file: z
@@ -52,14 +53,14 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["courses"],
-    queryFn: async () => await axios.get(`/courses/users?userId=${user?._id}`),
+    queryFn: async () => await api.get(`/courses/users?userId=${user?._id}`),
     enabled: Boolean(user?._id?.length),
   });
 
   const { isPending, mutate } = useMutation({
     mutationKey: ["gradeData"],
     mutationFn: async (uploadData: any) =>
-      await axios.post(`/upload`, uploadData),
+      await api.post(`/upload`, uploadData),
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -124,11 +125,8 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
             type="submit"
             disabled={isError || isPending || !data?.data?.length}
           >
-            {isPending ? (
-              <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
-            ) : (
-              "Upload"
-            )}
+            {isPending && <Loader2Icon className="animate-spin" />}
+            Upload
           </Button>
         </div>
       </form>
