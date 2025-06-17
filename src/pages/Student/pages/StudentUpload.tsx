@@ -58,7 +58,7 @@ const StudentUpload = () => {
 
   return (
     <>
-      <StudentHeader user={user} />
+      {user && <StudentHeader user={user} />}
 
       <div className="md:w-2/4 p-6 flex flex-col gap-4">
         {!hasResult && (

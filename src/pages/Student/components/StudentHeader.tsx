@@ -1,6 +1,11 @@
+import { User } from "@/types/User";
 import { useNavigate } from "react-router-dom";
 
-const StudentHeader = ({ user }) => {
+interface StudentHeaderProps {
+  user: User;
+}
+
+const StudentHeader: React.FC<StudentHeaderProps> = ({ user }) => {
   const nav = useNavigate();
 
   return (
