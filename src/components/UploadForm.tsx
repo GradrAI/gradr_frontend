@@ -66,6 +66,28 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
   async function onSubmit(data: z.infer<typeof formSchema>) {
     if (!uploadData || !data?.file?.length) return;
 
+    const requiredUploadFields = [
+      "lecturerId",
+      "name",
+      "fileType",
+      "categoryName",
+      "categoryType",
+      "uploaderType",
+      "uploader",
+    ];
+
+    // Validate required fields
+    const missingFields = requiredUploadFields.filter(
+      (field) =>
+        uploadData[field as keyof UploadData] === undefined ||
+        uploadData[field as keyof UploadData] === ""
+    );
+
+    if (missingFields.length) {
+      toast.error(`Missing upload fields: ${missingFields.join(", ")}`);
+      return;
+    }
+
     const formData = new FormData();
 
     for (const [key, val] of Object.entries(uploadData)) {

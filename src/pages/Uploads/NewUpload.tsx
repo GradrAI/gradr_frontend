@@ -56,16 +56,26 @@ const NewUpload = () => {
   const [courses, setCourses] = useState<CourseData[]>([]);
 
   const [uploadData, setUploadData] = useState<Partial<UploadData>>({
-    lecturerId: user?._id || "",
+    lecturerId: "",
     name: "",
     fileType: undefined,
     studentId: null,
     categoryName: undefined,
     categoryType: undefined,
     uploaderType: "lecturer",
-    uploader: user,
+    uploader: undefined,
   });
   const [addNew, setAddNew] = useState(false);
+
+  useEffect(() => {
+    if (user?._id) {
+      setUploadData((prev) => ({
+        ...prev,
+        lecturerId: user._id || undefined,
+        uploader: user,
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
