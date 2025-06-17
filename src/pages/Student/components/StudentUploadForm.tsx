@@ -15,13 +15,13 @@ import { ACCEPTED_FILE_TYPES, MAX_FILE_SIZE } from "@/requests/constants";
 import { UploadData } from "@/types/UploadData";
 import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
 import { Button } from "@/components/ui/button";
 import { Loader2Icon } from "lucide-react";
 import { User } from "@/types/User";
 import { useQueryClient } from "@tanstack/react-query";
+import api from "@/lib/axios";
 
 interface StudentUploadFormProps {
   courseInfo: {
@@ -132,7 +132,7 @@ const StudentUploadForm: React.FC<StudentUploadFormProps> = ({
   // for file upload
   const { isPending: uploadIsPending, mutate } = useMutation({
     mutationKey: ["upload"],
-    mutationFn: async (data: any) => await axios.post(`/upload`, data),
+    mutationFn: async (data: any) => await api.post(`/upload`, data),
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {

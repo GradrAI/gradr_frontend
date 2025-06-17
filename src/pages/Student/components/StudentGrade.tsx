@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/User";
-import axios from "axios";
 import { Result } from "@/types/Result";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Resource } from "@/types/Resource";
 import notifications from "@/requests/notifications";
 import { Loader2Icon } from "lucide-react";
+import api from "@/lib/axios";
 
 interface StudentGradeProps {
   courseInfo: {
@@ -57,8 +57,7 @@ const StudentGrade: React.FC<StudentGradeProps> = ({
     mutate: postResultsMutate,
   } = useMutation({
     mutationKey: ["postResults"],
-    mutationFn: async (data: any) =>
-      await axios.post<Result[]>(`/results`, data),
+    mutationFn: async (data: any) => await api.post<Result[]>(`/results`, data),
   });
 
   useEffect(() => {

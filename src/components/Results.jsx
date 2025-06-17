@@ -10,10 +10,10 @@ import {
   Button,
   Table,
 } from "semantic-ui-react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useEffect, useMemo, useState } from "react";
 import useStore from "@/state";
+import api from "@/lib/axios";
 
 const Results = () => {
   const nav = useNavigate();
@@ -34,7 +34,7 @@ const Results = () => {
   const { isLoading, isError, error, data } = useQuery({
     queryKey: ["exportData"],
     queryFn: async (sheetsObject) =>
-      await axios.post(`/oauth2callback`, {
+      await api.post(`/oauth2callback`, {
         code,
         sheetsObject,
       }),

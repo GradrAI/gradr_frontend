@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
-import axios from "axios";
 import toast from "react-hot-toast";
 
 export const columns: ColumnDef<Partial<Course>>[] = [

@@ -1,6 +1,5 @@
 import { Category } from "@/types/Category";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -13,6 +12,7 @@ import {
 import { CheckCircle, Loader2Icon, Paperclip } from "lucide-react";
 import { Button } from "./ui/button";
 import { Resource } from "@/types/Resource";
+import api from "@/lib/axios";
 
 export default function CategoryRow({
   category,
@@ -31,7 +31,7 @@ export default function CategoryRow({
   } = useMutation({
     mutationKey: ["courseLink", category._id],
     mutationFn: async () =>
-      await axios.post(`/courses/generateLink`, {
+      await api.post(`/courses/generateLink`, {
         courseId,
         categoryId: category._id,
       }),

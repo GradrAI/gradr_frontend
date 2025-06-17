@@ -20,11 +20,12 @@ import UploadForm from "@/components/UploadForm";
 import { useEffect, useState } from "react";
 import { UploadData } from "@/types/UploadData";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
 import useStore from "@/state";
+import api from "@/lib/axios";
 
 type CourseData = {
   name: string;
@@ -106,13 +107,13 @@ const NewUpload = () => {
 
   const { data, isLoading, isSuccess, isError } = useQuery({
     queryKey: ["courses", user?._id],
-    queryFn: async () => await axios.get(`/courses/users?userId=${user?._id}`),
+    queryFn: async () => await api.get(`/courses/users?userId=${user?._id}`),
     enabled: Boolean(user?._id?.length),
   });
 
   const { isPending, mutate } = useMutation({
     mutationKey: ["courses"],
-    mutationFn: async (data: any) => await axios.post(`/courses`, data),
+    mutationFn: async (data: any) => await api.post(`/courses`, data),
   });
 
   useEffect(() => {

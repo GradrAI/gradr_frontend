@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { Button } from "@/components/ui/button";
@@ -21,10 +21,9 @@ import { useNavigate } from "react-router-dom";
 import { Category } from "@/types/Category";
 import { DataTable } from "./data-table";
 import api from "@/lib/axios";
-import { normalizeGradingPayload } from "@/lib/normalizeGradingPayload";
 
 const postResults = async (data: any) =>
-  await axios.post<Result[]>(`/results`, data);
+  await api.post<Result[]>(`/results`, data);
 
 const Grader = () => {
   const nav = useNavigate();
@@ -73,7 +72,7 @@ const Grader = () => {
   } = useQuery({
     queryKey: ["exportData"],
     queryFn: async () =>
-      await axios.post(`/oauth2callback`, {
+      await api.post(`/oauth2callback`, {
         code,
         sheetsObject,
       }),

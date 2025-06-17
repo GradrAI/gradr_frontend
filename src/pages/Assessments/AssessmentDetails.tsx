@@ -1,8 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import api from "@/lib/axios";
 import useStore from "@/state";
 import { Category } from "@/types/Category";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -23,7 +23,7 @@ const AssessmentDetails = () => {
   const { isSuccess, isLoading, isError, error, data } = useQuery({
     queryKey: ["course", courseId],
     queryFn: async () =>
-      await axios.get(
+      await api.get(
         `/courses/${decodeURI(courseId ?? "")}/students-by-category`
       ),
   });

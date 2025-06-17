@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +7,7 @@ import useStore from "@/state";
 import PaystackPop from "@paystack/inline-js";
 import type { PaymentPlan } from "@/types/PaymentPlan";
 import { OrganizationData } from "@/types/OrganizationData";
+import api from "@/lib/axios";
 
 const PaymentPlan = () => {
   const nav = useNavigate();
@@ -17,7 +17,7 @@ const PaymentPlan = () => {
 
   const { data: paymentPlanData } = useQuery({
     queryKey: ["paymentPlan"],
-    queryFn: async () => await axios.get(`/paymentPlans`),
+    queryFn: async () => await api.get(`/paymentPlans`),
     retry: false,
     select: (data) => data.data,
   });
@@ -32,13 +32,13 @@ const PaymentPlan = () => {
   } = useMutation({
     mutationKey: ["organization"],
     mutationFn: async (data: OrganizationData) =>
-      await axios.post("/organizations", data),
+      await api.post("/organizations", data),
   });
 
   const { mutate: paymentMutate } = useMutation({
     mutationKey: ["payment"],
     mutationFn: async (data: { email: string; amount: string }) =>
-      await axios.post("/payment", data),
+      await api.post("/payment", data),
   });
 
   const handleSubmit = () => {

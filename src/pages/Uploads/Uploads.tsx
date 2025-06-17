@@ -4,7 +4,7 @@ import useStore from "@/state";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { Course } from "@/types/Course";
 import { useQuery } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";

@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
-import initialUserState from "@/data/initialUserState";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import useStore from "@/state";
+import api from "@/lib/axios";
 
 const Settings = () => {
   const { user, token } = useStore();
@@ -14,14 +13,13 @@ const Settings = () => {
   const { data, isPending, isSuccess, isError, mutate, error } = useMutation({
     mutationKey: ["organization"],
     mutationFn: async (code: string) => {
-      await axios.post(`/user`, { tenant_code: code });
+      await api.post(`/user`, { tenant_code: code });
     },
   });
 
   const { data: organizationData } = useQuery({
     queryKey: [""],
-    queryFn: async () =>
-      await axios.get(`/organizations/${user?.organization}`),
+    queryFn: async () => await api.get(`/organizations/${user?.organization}`),
     enabled: Boolean(user?.organization?.length),
     select: (res) => res.data.data,
   });
