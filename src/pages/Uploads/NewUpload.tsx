@@ -63,12 +63,17 @@ const NewUpload = () => {
     categoryName: undefined,
     categoryType: undefined,
     uploaderType: "lecturer",
+    uploader: undefined,
   });
   const [addNew, setAddNew] = useState(false);
 
   useEffect(() => {
     if (user?._id) {
-      setUploadData({ ...uploadData, lecturerId: user._id, uploader: user });
+      setUploadData((prev) => ({
+        ...prev,
+        lecturerId: user._id || undefined,
+        uploader: user,
+      }));
     }
   }, [user]);
 
