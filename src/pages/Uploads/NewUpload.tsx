@@ -62,7 +62,7 @@ const NewUpload = () => {
     studentId: null,
     categoryName: undefined,
     categoryType: undefined,
-    uploaderType: "student",
+    uploaderType: "lecturer",
   });
   const [addNew, setAddNew] = useState(false);
 
