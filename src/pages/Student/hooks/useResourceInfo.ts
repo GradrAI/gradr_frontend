@@ -13,14 +13,10 @@ export const useResourceInfo = (
       studentInfo?.data?.student?._id,
       type,
     ],
-    queryFn: async () => {
-      console.log("courseData: ", courseData);
-      console.log("studentInfo.data: ", studentInfo.data);
-      console.log("type: ", type);
-      return await api.get(
+    queryFn: async () =>
+      await api.get(
         `/resources/${courseData?.category._id}/${studentInfo?.data?._id}/${type}`
-      );
-    },
+      ),
     enabled:
       !!courseData?.course?._id && !!studentInfo?.data?._id?.length && !!type,
     select: (res) => res.data.data,
