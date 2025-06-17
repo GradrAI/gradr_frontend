@@ -72,7 +72,7 @@ const NewUpload = () => {
       setUploadData((prev) => ({
         ...prev,
         lecturerId: user._id || undefined,
-        uploader: user,
+        uploader: JSON.stringify(user),
       }));
     }
   }, [user]);

@@ -125,7 +125,10 @@ const StudentUploadForm: React.FC<StudentUploadFormProps> = ({
   //* updates uploadResources state with user value (when it's available)
   useEffect(() => {
     if (user?._id) {
-      setUploadResources((prev) => ({ ...prev, uploader: user }));
+      setUploadResources((prev) => ({
+        ...prev,
+        uploader: JSON.stringify(user),
+      }));
     }
   }, [user]);
 

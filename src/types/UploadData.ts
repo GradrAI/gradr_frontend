@@ -9,7 +9,7 @@ export type UploadData = {
   categoryName?: string;
   categoryType: "test" | "assignment" | "exam";
   file: File;
-  uploader: User | null;
+  uploader: string | null;
   uploaderType: "lecturer" | "student";
   matricNo: string | null;
 };
