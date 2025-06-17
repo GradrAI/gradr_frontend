@@ -20,12 +20,18 @@ const StudentUpload = () => {
   const { user } = useStore();
   const [matricNo, setMatricNo] = useState("");
 
+  const studentInfo = useQuery({
+    queryKey: ["studentInfo"],
+    queryFn: async () => await api.get(`/students/${matricNo}`),
+    enabled: !!matricNo?.length,
+    select: (res) => res.data.data,
+  });
+
   const courseInfo = useCourseInfo(courseId, uniqueCode);
   const { isLoading: courseIsLoading, data: courseData } = courseInfo;
 
-  const resourceInfo = useResourceInfo(courseData, matricNo);
+  const resourceInfo = useResourceInfo(courseData, studentInfo, "answers");
   const resultInfo = useResultInfo(courseId, uniqueCode);
-  console.log("resultInfo.data: ", resultInfo.data);
 
   const shouldSignIn = !user;
   const hasResult = resultInfo?.data;
@@ -39,7 +45,6 @@ const StudentUpload = () => {
 
   useEffect(() => {
     if (courseData?.category._id && userInfo?.data?.studentId) {
-      console.log("userInfo?.data?.studentId: ", userInfo?.data?.studentId);
       setMatricNo(userInfo.data.studentId);
       queryClient.invalidateQueries({
         queryKey: [
@@ -77,7 +82,11 @@ const StudentUpload = () => {
             courseId={courseId}
           />
         ) : hasResult ? (
-          <StudentResult resultInfo={resultInfo} />
+          <StudentResult
+            resultInfo={resultInfo}
+            courseInfo={courseInfo}
+            studentInfo={studentInfo}
+          />
         ) : hasUpload ? (
           <div className="flex flex-col gap-2">
             <StudentUploadDetails resourceInfo={resourceInfo} />
