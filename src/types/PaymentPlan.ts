@@ -3,7 +3,7 @@ export type PaymentPlan = {
   amount: string;
   createdAt: string;
   currency: string;
-  description: string;
+  features: string[];
   duration: string;
   name: string;
 };

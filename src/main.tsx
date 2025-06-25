@@ -11,6 +11,7 @@ import Error from "./components/Error.jsx";
 import axios from "axios";
 import { BASE_URL } from "./requests/constants";
 import { Analytics } from "@vercel/analytics/react";
+import { ThemeProvider } from "./components/ThemeProvider";
 // import { Toaster } from "@/components/ui/toaster";
 
 const queryClient = new QueryClient();
@@ -22,9 +23,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <BrowserRouter>
         <Toaster />
         <ErrorBoundary fallback={<Error />}>
-          <App />
-          <Analytics />
-          {/* <Toaster /> */}
+          <ThemeProvider>
+            <App />
+            <Analytics />
+            {/* <Toaster /> */}
+          </ThemeProvider>
         </ErrorBoundary>
       </BrowserRouter>
     </QueryClientProvider>

@@ -1,6 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/axios";
-import useStore from "@/state";
 import { Category } from "@/types/Category";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -16,7 +15,6 @@ type AssessmentStat = {
 
 const AssessmentDetails = () => {
   const { courseId } = useParams();
-  const { token } = useStore();
   const [assessmentStat, setAssessmentStat] = useState<AssessmentStat | null>(
     null
   );

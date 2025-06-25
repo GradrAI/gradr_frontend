@@ -12,7 +12,7 @@ import Settings from "./pages/Settings";
 import SignUp from "./pages/SignUp/SignUp";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Content from "./pages/Content";
-import PaymentPlan from "./pages/SignUp/PaymentPlan";
+import Pricing from "./pages/SignUp/Pricing";
 import KYC from "./pages/SignUp/KYC";
 import StudentUpload from "./pages/Student/pages/StudentUpload";
 import NotFound from "./pages/NotFound";
@@ -43,8 +43,8 @@ function App() {
         <Route path="link/:courseId/:uniqueCode" element={<StudentUpload />} />
         <Route path="sign-up" element={<SignUp />}>
           <Route index element={<KYC />} />
-          <Route path="payment-plan" element={<PaymentPlan />} />
-          <Route path="post-payment" element={<PostPayment />} />
+          <Route path="pricing" element={<Pricing />} />
+          <Route path="confirmation" element={<PostPayment />} />
         </Route>
         <Route path="app" element={<Layout />}>
           <Route element={<Home />}>
