@@ -540,7 +540,7 @@ const Landing = () => {
                     className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   >
-                    <span className="font-semibold text-gray-900 pr-8">
+                    <span className="font-semibold text-gray-900 dark:text-white pr-8">
                       {faq.question}
                     </span>
                     {openFaq === index ? (
