@@ -537,7 +537,7 @@ const Landing = () => {
               <Card key={index} className="overflow-hidden">
                 <CardContent className="p-0">
                   <button
-                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   >
                     <span className="font-semibold text-gray-900 dark:text-white pr-8">
@@ -551,7 +551,7 @@ const Landing = () => {
                   </button>
                   {openFaq === index && (
                     <div className="px-6 pb-4">
-                      <p className="text-gray-600 leading-relaxed">
+                      <p className="text-gray-600 dark:text-white leading-relaxed">
                         {faq.answer}
                       </p>
                     </div>
