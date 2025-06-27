@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
@@ -63,14 +63,11 @@ const SignUpForm = () => {
     setClicked(true);
   };
 
-  useEffect(() => {
-    if (clicked) {
-      axios.get(`/auth/google`).then((res) => {
-        const { authorizationUrl } = res.data;
-        window.location.href = authorizationUrl;
-      });
-    }
-  }, [clicked]);
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["auth"],
+    queryFn: () => axios.get(`/auth/google`),
+    enabled: clicked,
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     registerMutate(values, {
@@ -85,6 +82,13 @@ const SignUpForm = () => {
       },
     });
   }
+
+  useEffect(() => {
+    if (isLoading) toast.success("Signing you in...");
+    if (isError)
+      toast.error(error?.message || "An error occurred. Please retry");
+    if (data) window.location.href = data?.data?.authorizationUrl;
+  }, [isLoading, isError, error, data]);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -214,8 +218,10 @@ const SignUpForm = () => {
         <Button
           type="button"
           onClick={handleGoogleSignUp}
+          disabled={isLoading}
           className="w-full border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 font-medium py-2 rounded-xl"
         >
+          {isLoading && <Loader2Icon className="animate-spin" />}
           <span className="mr-2">🔗</span> Sign up with Google
         </Button>
 
