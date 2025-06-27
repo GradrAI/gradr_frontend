@@ -30,7 +30,7 @@ const AuthLayout = () => {
         )}
       </header>
 
-      <main className="flex-grow flex items-center justify-center py-4 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
+      <main className="p-4 flex-grow flex items-start md:items-center justify-center py-4 bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
         <Outlet />
       </main>
 

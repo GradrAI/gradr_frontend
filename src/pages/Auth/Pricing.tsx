@@ -26,19 +26,6 @@ const Pricing = () => {
     select: (data) => data.data,
   });
 
-  const {
-    isSuccess,
-    isPending,
-    isError,
-    error,
-    data,
-    mutate: organizationMutate,
-  } = useMutation({
-    mutationKey: ["organization"],
-    mutationFn: async (data: OrganizationData) =>
-      await api.post("/organizations", data),
-  });
-
   const { mutate: paymentMutate, isPending: paymentPending } = useMutation({
     mutationKey: ["payment"],
     mutationFn: async (data: { email: string; amount: string }) =>

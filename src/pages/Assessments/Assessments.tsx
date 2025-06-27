@@ -12,8 +12,7 @@ import api from "@/lib/axios";
 const Assessments = () => {
   const nav = useNavigate();
   const [searchParams] = useSearchParams();
-  const { accountType, user, saveUserToken, saveUser, setCode, studentData } =
-    useStore();
+  const { accountType, user, saveUser, setCode, studentData } = useStore();
 
   const code = searchParams.get("code");
 
@@ -23,11 +22,13 @@ const Assessments = () => {
     mutationFn: async (code: string) => {
       // this endpoint uses the code (gotten after a user has signed-in with google) to retrieve tokens(contains access_token, refresh_token etc)
       const res = await axios.get(`/getGoogleUser?code=${code}`);
-      const {
-        data: { data },
-      } = res;
+      // !TO-DO: move this logic to mutate's onSuccess
       if (data) {
-        const { token, user } = data;
+        const {
+          data: {
+            data: { token, user },
+          },
+        } = res;
         localStorage.setItem("token", token);
         saveUser(user);
       }
