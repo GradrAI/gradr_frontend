@@ -59,9 +59,12 @@ const Assessments = () => {
     if (accountType === "student")
       nav(`/link/${studentData?.courseId}/${studentData?.uniqueCode}`);
     if (accountType === "organization") {
-      // if user already belongs to an organization, nav to dashboard
-      if (user?.organization) nav("/app/assessments", { replace: true });
-      else nav("/sign-up");
+      // if user already belongs to an organization...
+      if (user?.organization) {
+        // user is either signing-in or organization is "default"
+        nav("/app/assessments", { replace: true });
+        // user must be signing-up. redirect to continue onboarding
+      } else nav("/auth/kyc");
     }
     if (accountType === "individual")
       nav("/app/assessments", { replace: true });

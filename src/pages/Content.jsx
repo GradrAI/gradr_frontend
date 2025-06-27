@@ -1,33 +1,11 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { CircleCheckBig, Sparkles, Users, BarChart3 } from "lucide-react";
-import toast from "react-hot-toast";
+import { Sparkles, Users, BarChart3 } from "lucide-react";
 import useStore from "@/state";
 
 const Content = () => {
   const nav = useNavigate();
-  const [clicked, setClicked] = useState(false);
   const { accountType } = useStore();
-
-  const { isLoading, isError, error, data } = useQuery({
-    queryKey: ["auth"],
-    queryFn: () => axios.get(`/auth/google`),
-    enabled: clicked,
-  });
-
-  useEffect(() => {
-    if (isLoading) toast.success("Signing you in...");
-    if (isError)
-      toast.error(error?.message || "An error occurred. Please retry");
-    if (data) window.location.href = data?.data?.authorizationUrl;
-  }, [isLoading, isError, error, data]);
-
-  const handleLogin = () => {
-    setClicked(true);
-  };
 
   const organizationFeatures = [
     {
@@ -110,18 +88,10 @@ const Content = () => {
       </div>
 
       <Button
-        onClick={handleLogin}
-        disabled={isLoading}
+        onClick={() => nav("../sign-up")}
         className="self-start bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 py-6 px-12 text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading ? (
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            Signing in...
-          </div>
-        ) : (
-          <>Get Started 🚀</>
-        )}
+        Get Started
       </Button>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Clock,
@@ -28,14 +28,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import useStore from "@/state";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import toast from "react-hot-toast";
 
 const Landing = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [clicked, setClicked] = useState(false);
 
   const featuresRef = useRef<HTMLDivElement>(null);
   const howItWorksRef = useRef<HTMLDivElement>(null);
@@ -46,19 +42,6 @@ const Landing = () => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
     setMobileMenuOpen(false);
   };
-
-  const { isLoading, isError, error, data } = useQuery({
-    queryKey: ["auth"],
-    queryFn: () => axios.get(`/auth/google`),
-    enabled: clicked,
-  });
-
-  useEffect(() => {
-    if (isLoading) toast.success("Signing you in...");
-    if (isError)
-      toast.error(error?.message || "An error occurred. Please retry");
-    if (data) window.location.href = data?.data?.authorizationUrl;
-  }, [isLoading, isError, error, data]);
 
   const features = [
     {
@@ -181,15 +164,7 @@ const Landing = () => {
   ];
 
   const nav = useNavigate();
-  const { user, setAccountType } = useStore();
-
-  const handleSignIn = () => {
-    if (user && Object.keys(user)?.length) nav("/app/assessments");
-    else {
-      setAccountType("individual");
-      setClicked(true);
-    }
-  };
+  const { setAccountType } = useStore();
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
@@ -239,7 +214,7 @@ const Landing = () => {
               <Button
                 variant="ghost"
                 className="text-muted-foreground hover:text-primary"
-                onClick={handleSignIn}
+                onClick={() => nav(`auth/sign-in`)}
               >
                 Sign In
               </Button>
@@ -256,7 +231,7 @@ const Landing = () => {
                   <DropdownMenuItem
                     onClick={() => {
                       setAccountType("individual");
-                      nav("/app");
+                      nav("auth/sign-up");
                     }}
                   >
                     As Individual
@@ -264,7 +239,7 @@ const Landing = () => {
                   <DropdownMenuItem
                     onClick={() => {
                       setAccountType("organization");
-                      nav("app");
+                      nav("auth/sign-up");
                     }}
                   >
                     As Organization
@@ -316,14 +291,9 @@ const Landing = () => {
               <div className="pt-4 pb-3 border-t border-border">
                 <Button
                   className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                  onClick={() =>
-                    window.open(
-                      "mailto:contact@gradrai.com?subject=Early Access Request",
-                      "_blank"
-                    )
-                  }
+                  onClick={() => nav(`auth/sign-in`)}
                 >
-                  Get Early Access
+                  Sign In
                 </Button>
               </div>
             </div>
@@ -335,10 +305,10 @@ const Landing = () => {
       <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/50 via-background to-purple-50/50 dark:from-blue-950/20 dark:via-background dark:to-purple-950/20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
-            <Badge className="mb-4 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 hover:from-blue-100 hover:to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 dark:text-blue-300 border-0">
+            {/* <Badge className="mb-4 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 hover:from-blue-100 hover:to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 dark:text-blue-300 border-0">
               🚀 Now in Beta - Join Early Access
-            </Badge>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+            </Badge> */}
+            <h1 className="text-4xl sm:text-5xl py-6 lg:text-6xl font-bold text-foreground mb-6">
               Break Free From{" "}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Manual Grading
@@ -353,14 +323,9 @@ const Landing = () => {
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg"
-                onClick={() =>
-                  window.open(
-                    "mailto:contact@gradrai.com?subject=Early Access Request",
-                    "_blank"
-                  )
-                }
+                onClick={() => nav(`auth/sign-in`)}
               >
-                Register for Early Access
+                Get Started
               </Button>
               <Button
                 size="lg"
@@ -506,7 +471,7 @@ const Landing = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-blue-600 hover:bg-white hover:text-blue-600 px-8 py-3 text-lg shadow-lg"
+              className="border-white text-blue-600 hover:bg-white hover:text-blue-600 dark:text-white dark:hover:bg-gray-500 px-8 py-3 text-lg shadow-lg"
               onClick={() =>
                 window.open(
                   "mailto:contact@gradrai.com?subject=Demo Request",
