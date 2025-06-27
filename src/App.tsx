@@ -1,4 +1,7 @@
+import { useEffect } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import useStore from "./state";
+
 import Layout from "./Layout";
 
 import Assessments from "./pages/Assessments/Assessments";
@@ -9,7 +12,6 @@ import Grader from "./pages/Grader/Grader";
 import NewUpload from "./pages/Uploads/NewUpload";
 import Details from "./pages/Grader/Details";
 import Settings from "./pages/Settings";
-import SignUp from "./pages/Auth/SignUp";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Content from "./pages/Content";
 import Pricing from "./pages/Auth/Pricing";
@@ -18,14 +20,13 @@ import StudentUpload from "./pages/Student/pages/StudentUpload";
 import NotFound from "./pages/NotFound";
 import TermsOfService from "./pages/TermsOfService";
 import PostPayment from "./pages/Auth/PostPayment";
-import useStore from "./state";
-import "./App.css";
-import { useEffect } from "react";
 import ProtectedRoutes from "./pages/ProtectedRoutes";
 import AssessmentDetails from "./pages/Assessments/AssessmentDetails";
 import SignInForm from "./pages/Auth/SignInForm";
 import SignUpForm from "./pages/Auth/SignUpForm";
 import AuthLayout from "./pages/Auth/AuthLayout";
+
+import "./App.css";
 
 function App() {
   const nav = useNavigate();
