@@ -1,75 +1,20 @@
-import { useEffect } from "react";
 import { ErrorResponse } from "@/types/ErrorResponse";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import { AxiosError } from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "../../components/data-table";
 import { columns } from "./columns";
-import useStore from "@/state";
 import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/axios";
+import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 
 const Assessments = () => {
-  const nav = useNavigate();
   const [searchParams] = useSearchParams();
-  const { accountType, user, saveUser, setCode, studentData } = useStore();
 
   const code = searchParams.get("code");
 
-  // mutation to get user data
-  const { data, mutate, isError, error } = useMutation({
-    mutationKey: ["profileData"],
-    mutationFn: async (code: string) => {
-      // this endpoint uses the code (gotten after a user has signed-in with google) to retrieve tokens(contains access_token, refresh_token etc)
-      const res = await axios.get(`/getGoogleUser?code=${code}`);
-      // !TO-DO: move this logic to mutate's onSuccess
-      if (data) {
-        const {
-          data: {
-            data: { token, user },
-          },
-        } = res;
-        localStorage.setItem("token", token);
-        saveUser(user);
-      }
-      return res;
-    },
-  });
-
-  useEffect(() => {
-    // when code is available, call mutation
-    if (code) mutate(code);
-  }, [code]);
-
-  useEffect(() => {
-    if (isError) {
-      if (
-        (error as AxiosError<ErrorResponse>)?.response?.data?.success === false
-      ) {
-        // get refresh token and try again
-        if (user?.refresh_token) {
-          // console.log("user?.refresh_token: ", user?.refresh_token);
-        }
-      }
-    }
-  }, [data, isError]);
-
-  useEffect(() => {
-    const code = searchParams.get("code");
-    if (code) setCode(code);
-    if (accountType === "student")
-      nav(`/link/${studentData?.courseId}/${studentData?.uniqueCode}`);
-    if (accountType === "organization") {
-      // if user already belongs to an organization...
-      if (user?.organization) {
-        // user is either signing-in or organization is "default"
-        nav("/app/assessments", { replace: true });
-        // user must be signing-up. redirect to continue onboarding
-      } else nav("/auth/kyc");
-    }
-    if (accountType === "individual")
-      nav("/app/assessments", { replace: true });
-  }, [searchParams, accountType]);
+  // Handles token exchange, saving user, navigation
+  useGoogleAuth(code);
 
   const {
     data: courseData,
@@ -80,7 +25,6 @@ const Assessments = () => {
   } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => await api.get(`/courses/users`),
-    enabled: Boolean(user?._id?.length),
   });
 
   return (

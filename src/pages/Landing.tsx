@@ -214,7 +214,11 @@ const Landing = () => {
               <Button
                 variant="ghost"
                 className="text-muted-foreground hover:text-primary"
-                onClick={() => nav(`auth/sign-in`)}
+                onClick={() => {
+                  // let user select account type
+                  setAccountType("individual");
+                  nav(`auth/sign-in`);
+                }}
               >
                 Sign In
               </Button>
@@ -291,7 +295,10 @@ const Landing = () => {
               <div className="pt-4 pb-3 border-t border-border">
                 <Button
                   className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                  onClick={() => nav(`auth/sign-in`)}
+                  onClick={() => {
+                    setAccountType("individual");
+                    nav(`auth/sign-in`);
+                  }}
                 >
                   Sign In
                 </Button>

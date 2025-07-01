@@ -48,7 +48,7 @@ const KYC = () => {
 
   const onsubmit = (values: OrganizationData) => {
     appendOrganizationData(values);
-    nav("pricing");
+    nav("../pricing");
   };
 
   return (
