@@ -118,6 +118,9 @@ export function DataTable<TData, TValue>({
         return rowValue.includes(String(filterValue).toLowerCase());
       },
     },
+    getRowId: (originalRow: any, index, parent) => {
+      return originalRow?._id ?? `${parent?.id ?? "row"}-${index}`;
+    },
     state: {
       sorting,
       columnFilters,
@@ -277,27 +280,24 @@ export function DataTable<TData, TValue>({
                                 return (
                                   <TableRow key={resource._id}>
                                     <TableCell>
-                                      <Input
-                                        type="checkbox"
-                                        checked={
-                                          subRowSelection[row.id]?.has(
-                                            subRow.id
-                                          ) || false
-                                        }
-                                        onChange={(e) => {
-                                          setSubRowSelection((prev) => {
-                                            const set = new Set(
-                                              prev[row.id] || []
-                                            );
-                                            if (e.target.checked) {
-                                              set.add(subRow.id);
-                                            } else {
-                                              set.delete(subRow.id);
-                                            }
-                                            return { ...prev, [row.id]: set };
-                                          });
-                                        }}
-                                      />
+<input
+  type="checkbox"
+  checked={
+    subRowSelection[row.id]?.has(subRow.id) || false
+  }
+  onChange={(e) => {
+    setSubRowSelection((prev) => {
+      const currentSet = prev[row.id] ?? new Set();
+      const newSet = new Set(currentSet);
+      if (e.target.checked) {
+        newSet.add(subRow.id);
+      } else {
+        newSet.delete(subRow.id);
+      }
+      return { ...prev, [row.id]: newSet };
+    });
+  }}
+/>
                                     </TableCell>
                                     <TableCell>
                                       {resource?.student?.studentId}

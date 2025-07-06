@@ -1,6 +1,5 @@
 // lib/axios.ts
 import { BASE_URL } from "@/requests/constants";
-import useStore from "@/state";
 import axios from "axios";
 
 const api = axios.create({
