@@ -36,24 +36,6 @@ const StudentUpload = () => {
   const hasResult = resultInfo?.data;
   const hasUpload = resourceInfo?.data;
 
-  console.log("courseData", courseData);
-  console.log("studentInfo", studentInfo);
-  console.log("resourceInfo", resourceInfo);
-  console.log("resultInfo", resultInfo);
-
-  // use user info to get matric number
-  // and invalidate queries for resources
-  // so that the student can see their uploads
-  // and grades
-
-  const linkedUserInfo = useQuery({
-    queryKey: ["linkedUserInfo", user?._id],
-    queryFn: async () => await api.get(`/students/linked-user/${user?._id}`),
-    enabled: !!user?._id,
-  });
-
-  console.log("linkedUserInfo", linkedUserInfo);
-
   const userInfo = useQuery({
     queryKey: ["userInfo"],
     queryFn: async () => await api.get(`user/student`),
