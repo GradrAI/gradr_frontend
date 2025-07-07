@@ -139,8 +139,12 @@ const StudentUploadForm: React.FC<StudentUploadFormProps> = ({
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    if (!courseData?.category || !user) {
-      toast.error("Missing course or user info.");
+    if (!courseData?.category) {
+      toast.error("Missing course information");
+      return;
+    }
+    if (!user || !Object.keys(user)?.length) {
+      toast.error("Missing user information");
       return;
     }
     setMatricNo(data.matricNo);

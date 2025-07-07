@@ -11,7 +11,7 @@ const StudentHeader: React.FC<StudentHeaderProps> = ({ user }) => {
 
   return (
     <header className="bg-stone-200 py-2 px-6 flex justify-between items-center">
-      <SidebarTrigger />
+      <SidebarTrigger className="text-gray-600" />
 
       <h1 onClick={() => nav("/")} className="m-0">
         GradrAI for students
@@ -26,7 +26,7 @@ const StudentHeader: React.FC<StudentHeaderProps> = ({ user }) => {
             />
           )}
           <div className="flex flex-wrap flex-col items-end justify-between text-white hidden md:block">
-            <p className="font-semibold">{`${user?.first_name} ${user?.last_name}`}</p>
+            <p className="font-semibold text-slate-600">{`${user?.first_name} ${user?.last_name}`}</p>
           </div>
         </div>
       )}
