@@ -1,3 +1,4 @@
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { User } from "@/types/User";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +11,8 @@ const StudentHeader: React.FC<StudentHeaderProps> = ({ user }) => {
 
   return (
     <header className="bg-stone-200 py-2 px-6 flex justify-between items-center">
+      <SidebarTrigger />
+
       <h1 onClick={() => nav("/")} className="m-0">
         GradrAI for students
       </h1>

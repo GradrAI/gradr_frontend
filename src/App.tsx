@@ -27,6 +27,7 @@ import SignUpForm from "./pages/Auth/SignUpForm";
 import AuthLayout from "./pages/Auth/AuthLayout";
 
 import "./App.css";
+import StudentLayout from "./pages/Student/components/StudentLayout";
 
 function App() {
   const nav = useNavigate();
@@ -46,7 +47,9 @@ function App() {
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
         <Route path="terms-of-service" element={<TermsOfService />} />
 
-        <Route path="link/:courseId/:uniqueCode" element={<StudentUpload />} />
+        <Route path="link/:courseId/:uniqueCode" element={<StudentLayout />}>
+          <Route index element={<StudentUpload />} />
+        </Route>
 
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="sign-in" element={<SignInForm />} />

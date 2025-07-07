@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import useStore from "@/state";
 import { Skeleton } from "@/components/ui/skeleton";
-import StudentHeader from "../components/StudentHeader";
 import SignInPrompt from "../components/SignInPrompt";
 import StudentUploadDetails from "../components/StudentUploadDetails";
 import StudentUploadForm from "../components/StudentUploadForm";
@@ -37,6 +36,24 @@ const StudentUpload = () => {
   const hasResult = resultInfo?.data;
   const hasUpload = resourceInfo?.data;
 
+  console.log("courseData", courseData);
+  console.log("studentInfo", studentInfo);
+  console.log("resourceInfo", resourceInfo);
+  console.log("resultInfo", resultInfo);
+
+  // use user info to get matric number
+  // and invalidate queries for resources
+  // so that the student can see their uploads
+  // and grades
+
+  const linkedUserInfo = useQuery({
+    queryKey: ["linkedUserInfo", user?._id],
+    queryFn: async () => await api.get(`/students/linked-user/${user?._id}`),
+    enabled: !!user?._id,
+  });
+
+  console.log("linkedUserInfo", linkedUserInfo);
+
   const userInfo = useQuery({
     queryKey: ["userInfo"],
     queryFn: async () => await api.get(`user/student`),
@@ -58,8 +75,6 @@ const StudentUpload = () => {
 
   return (
     <>
-      {user && <StudentHeader user={user} />}
-
       <div className="md:w-2/4 p-6 flex flex-col gap-4">
         {!hasResult && (
           <div className="flex flex-row items-baseline justify-start gap-1 font-bold">

@@ -1,4 +1,4 @@
-import { Bug, Folder, LogOut, Scan, Settings, Upload } from "lucide-react";
+import { Bug, LogOut } from "lucide-react";
 
 import {
   Sidebar,
@@ -14,30 +14,8 @@ import useStore from "@/state";
 import { logo } from "@/assets";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
-// Menu items.
-const items = [
-  {
-    title: "Assessments",
-    url: "/app/assessments",
-    icon: Folder,
-  },
-  {
-    title: "Grader",
-    url: "/app/grader",
-    icon: Scan,
-  },
-  {
-    title: "Uploads",
-    url: "/app/uploads",
-    icon: Upload,
-  },
-  {
-    title: "Settings",
-    url: "/app/settings",
-    icon: Settings,
-  },
-];
+import { Items } from "@/types/MenuItems";
+import React from "react";
 
 const bottomItems = [
   {
@@ -52,7 +30,11 @@ const bottomItems = [
   },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  items?: Items[];
+}
+
+export function AppSidebar({ items }: AppSidebarProps) {
   const nav = useNavigate();
   const location = useLocation();
   const { user, saveUser } = useStore();
@@ -60,42 +42,44 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="">
       <SidebarContent className="justify-between">
-        <SidebarGroup>
-          <SidebarGroupLabel className="py-8">
-            <img
-              src={logo}
-              alt="logo"
-              className="cursor-pointer py-8"
-              onClick={() => {
-                if (user && Object.keys(user)?.length) return;
-                else nav("/app");
-              }}
-            />
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="py-8 gap-8">
-              {items.map((item) => {
-                const isActive = location.pathname.startsWith(item.url);
-                return (
-                  <SidebarMenuItem key={item.title} className="">
-                    <SidebarMenuButton asChild isActive={isActive}>
-                      <a href={item.url}>
-                        <item.icon
-                          className={`h-5 w-5 ${isActive ? "text-green-500" : "text-muted-foreground"}`}
-                        />
-                        <span
-                          className={`text-xl ${isActive ? "text-green-500" : "text-muted-foreground"}`}
-                        >
-                          {item.title}
-                        </span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {items?.length && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="py-8">
+              <img
+                src={logo}
+                alt="logo"
+                className="cursor-pointer py-8"
+                onClick={() => {
+                  if (user && Object.keys(user)?.length) return;
+                  else nav("/app");
+                }}
+              />
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu className="py-8 gap-8">
+                {items.map((item) => {
+                  const isActive = location.pathname.startsWith(item.url);
+                  return (
+                    <SidebarMenuItem key={item.title} className="">
+                      <SidebarMenuButton asChild isActive={isActive}>
+                        <a href={item.url}>
+                          <item.icon
+                            className={`h-5 w-5 ${isActive ? "text-green-500" : "text-muted-foreground"}`}
+                          />
+                          <span
+                            className={`text-xl ${isActive ? "text-green-500" : "text-muted-foreground"}`}
+                          >
+                            {item.title}
+                          </span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         <SidebarGroup>
           <SidebarGroupContent>
