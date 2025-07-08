@@ -147,6 +147,15 @@ const StudentUploadForm: React.FC<StudentUploadFormProps> = ({
       toast.error("Missing user information");
       return;
     }
+    // MatricNo and file name match validation
+    const file = data.file[0];
+    if (file) {
+      const fileNameWithoutExt = file.name.split(".")[0];
+      if (data.matricNo.trim() !== fileNameWithoutExt.trim()) {
+        toast.error("Matric No must match the file name");
+        return;
+      }
+    }
     setMatricNo(data.matricNo);
     const fullUploadData = {
       ...uploadResources,

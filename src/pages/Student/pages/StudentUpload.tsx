@@ -32,6 +32,9 @@ const StudentUpload = () => {
   const resourceInfo = useResourceInfo(courseData, studentInfo, "answers");
   const resultInfo = useResultInfo(courseId, uniqueCode);
 
+  const resourceIsLoading = resourceInfo.isLoading;
+  const resultIsLoading = resultInfo.isLoading;
+
   const shouldSignIn = !user;
   const hasResult = resultInfo?.data;
   const hasUpload = resourceInfo?.data;
@@ -78,6 +81,8 @@ const StudentUpload = () => {
             uniqueCode={uniqueCode}
             courseId={courseId}
           />
+        ) : resultIsLoading || resourceIsLoading ? (
+          <Skeleton className="w-full h-[200px] rounded-sm" />
         ) : hasResult ? (
           <StudentResult
             resultInfo={resultInfo}
