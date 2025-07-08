@@ -28,6 +28,22 @@ import AuthLayout from "./pages/Auth/AuthLayout";
 
 import "./App.css";
 import StudentLayout from "./pages/Student/components/StudentLayout";
+import { Navigate, Outlet } from "react-router-dom";
+
+// Route guard for lecturer-only routes
+function ProtectedLecturerRoute({
+  user,
+  children,
+}: {
+  user: any;
+  children?: React.ReactNode;
+}) {
+  if (!user || user.role === "student") {
+    // If not logged in or is a student, redirect to home
+    return <Navigate to="/" replace />;
+  }
+  return children ? children : <Outlet />;
+}
 
 function App() {
   const nav = useNavigate();
@@ -59,7 +75,15 @@ function App() {
           <Route path="confirmation" element={<PostPayment />} />
         </Route>
 
-        <Route path="app" element={<Layout />}>
+        {/* Lecturer-only protected routes */}
+        <Route
+          path="app"
+          element={
+            <ProtectedLecturerRoute user={user}>
+              <Layout />
+            </ProtectedLecturerRoute>
+          }
+        >
           <Route element={<Home />}>
             <Route index element={<Content />} />
           </Route>
