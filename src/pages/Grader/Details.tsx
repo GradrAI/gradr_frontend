@@ -96,9 +96,7 @@ const Details = () => {
   });
 
   // Use latestResult for score only, fallback to navigation state
-  console.log("latestResult: ", latestResult);
   const displayScore = latestResult?.result?.score ?? score;
-  console.log("displayScore: ", displayScore);
 
   const { mutate: editResultMutate, isPending } = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {

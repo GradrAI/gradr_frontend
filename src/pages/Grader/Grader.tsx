@@ -89,8 +89,6 @@ const Grader = () => {
     setClicked(true);
   };
 
-  console.log("selectedSubRows: ", selectedSubRows);
-
   useEffect(() => {
     if (exportData) {
       toast.success("Successfully exported data");
