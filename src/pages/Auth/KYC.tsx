@@ -108,7 +108,7 @@ const KYC = () => {
                   <Input placeholder="contact@yourorg.edu.ng" {...field} />
                 </FormControl>
                 <FormDescription>
-                  We’ll send updates and notifications here.
+                  We'll send updates and notifications here.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

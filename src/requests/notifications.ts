@@ -10,6 +10,10 @@ const notifications = {
     SUCCESS: "Grading successful",
     FAILURE: "Grading failed",
   },
+  RESULT: {
+    SUCCESS: "Result edit successful",
+    FAILURE: "Result edit failed",
+  },
 };
 
 export default notifications;

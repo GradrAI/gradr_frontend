@@ -53,10 +53,10 @@ const Grader = () => {
   });
 
   const { data, isLoading, isSuccess, isError, refetch } = useQuery({
-    queryKey: ["singleCourse"],
+    queryKey: ["singleCourse", selectedExam],
     queryFn: async () =>
       await api.get<any>(`/courses/${selectedExam}/students-by-category`),
-    enabled: Boolean(selectedExam),
+    enabled: Boolean(selectedExam?.length),
   });
 
   const { isPending: gradeIsPending, mutate } = useMutation({

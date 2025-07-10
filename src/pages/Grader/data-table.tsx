@@ -280,24 +280,30 @@ export function DataTable<TData, TValue>({
                                 return (
                                   <TableRow key={resource._id}>
                                     <TableCell>
-<input
-  type="checkbox"
-  checked={
-    subRowSelection[row.id]?.has(subRow.id) || false
-  }
-  onChange={(e) => {
-    setSubRowSelection((prev) => {
-      const currentSet = prev[row.id] ?? new Set();
-      const newSet = new Set(currentSet);
-      if (e.target.checked) {
-        newSet.add(subRow.id);
-      } else {
-        newSet.delete(subRow.id);
-      }
-      return { ...prev, [row.id]: newSet };
-    });
-  }}
-/>
+                                      <input
+                                        type="checkbox"
+                                        checked={
+                                          subRowSelection[row.id]?.has(
+                                            subRow.id
+                                          ) || false
+                                        }
+                                        onChange={(e) => {
+                                          setSubRowSelection((prev) => {
+                                            const currentSet =
+                                              prev[row.id] ?? new Set();
+                                            const newSet = new Set(currentSet);
+                                            if (e.target.checked) {
+                                              newSet.add(subRow.id);
+                                            } else {
+                                              newSet.delete(subRow.id);
+                                            }
+                                            return {
+                                              ...prev,
+                                              [row.id]: newSet,
+                                            };
+                                          });
+                                        }}
+                                      />
                                     </TableCell>
                                     <TableCell>
                                       {resource?.student?.studentId}
@@ -338,6 +344,8 @@ export function DataTable<TData, TValue>({
                                                 `details?studentId=${resource.student.studentId}&courseId=${rowOriginal.courseId}&categoryId=${rowOriginal._id}`,
                                                 {
                                                   state: {
+                                                    categoryData: rowOriginal,
+                                                    fileUrl: resource.fileUrl,
                                                     result: resource.result,
                                                   },
                                                 }
