@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
+import { convertGCSUrlToPublicUrl } from "@/lib/convertGCSUrlToPublicUrl";
 
 const formSchema = z.object({
   score: z.string(),
@@ -171,7 +172,11 @@ const Details = () => {
 
         <p
           onClick={() => {
-            window.open(fileUrl, "_blank", "noopener,noreferrer");
+            window.open(
+              convertGCSUrlToPublicUrl(fileUrl),
+              "_blank",
+              "noopener,noreferrer"
+            );
           }}
           className={`p-2 border rounded-xl m-0 ${!Boolean(fileUrl?.length) ? "text-gray-500 pointer-events-none" : "cursor-pointer text-cyan-700 hover:text-cyan-500 hover:border-cyan-500 border-cyan-700"}`}
         >
