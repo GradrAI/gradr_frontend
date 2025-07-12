@@ -6,12 +6,35 @@ import { Category } from "@/types/Category";
 
 export const columns: ColumnDef<Partial<Category>>[] = [
   {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     id: "id",
     accessorKey: "_id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
     ),
   },
+
   {
     id: "categoryName",
     accessorKey: "name",

@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { Category } from "@/types/Category";
 import { DataTable } from "./data-table";
 import api from "@/lib/axios";
+import { Loader2Icon } from "lucide-react";
 
 const postResults = async (data: any) =>
   await api.post<Result[]>(`/results`, data);
@@ -28,13 +29,11 @@ const postResults = async (data: any) =>
 const Grader = () => {
   const nav = useNavigate();
   const queryClient = new QueryClient();
-  const { user, code, token } = useStore();
+  const { user, code } = useStore();
 
   const [selectedSubRows, setSelectedSubRows] = useState<any[]>([]);
-  const [selectedExam, setSelectedExam] = useState("");
-  const [tableData, setTableData] = useState<any[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
-  const [clicked, setClicked] = useState(false);
   const [sheetsObject, setSheetsObject] = useState<string[][]>([[""]]);
   const [sheetsUri, setSheetsUri] = useState("");
   const [exportButtonText, setExportButtonText] = useState(
@@ -53,10 +52,10 @@ const Grader = () => {
   });
 
   const { data, isLoading, isSuccess, isError, refetch } = useQuery({
-    queryKey: ["singleCourse", selectedExam],
+    queryKey: ["singleCourse", selectedCourse],
     queryFn: async () =>
-      await api.get<any>(`/courses/${selectedExam}/students-by-category`),
-    enabled: Boolean(selectedExam?.length),
+      await api.get<any>(`/courses/${selectedCourse}/students-by-category`),
+    enabled: Boolean(selectedCourse?.length),
   });
 
   const { isPending: gradeIsPending, mutate } = useMutation({
@@ -64,83 +63,79 @@ const Grader = () => {
     mutationFn: postResults,
   });
 
-  const {
-    isLoading: exportIsLoading,
-    isError: exportIsError,
-    error: exportError,
-    data: exportData,
-  } = useQuery({
-    queryKey: ["exportData"],
-    queryFn: async () =>
-      await api.post(`/oauth2callback`, {
-        code,
-        sheetsObject,
-      }),
-    enabled: Boolean(sheetsObject.length) && clicked && Boolean(token?.length),
+  const { isPending: exportIsPending, mutate: exportMutate } = useMutation({
+    mutationKey: ["exportData"],
+    mutationFn: async (payload: string[][]) => {
+      const res = await api.post(`/oauth2callback`, {
+        sheetsObject: payload,
+        metadata: {
+          courseId: selectedCourse,
+          categoryId: selectedRows[0]?._id,
+        },
+      });
+      return res.data;
+    },
     retry: false,
   });
 
   const handleSelect = (selection: string) => {
-    setSelectedExam(selection);
+    setSelectedCourse(selection);
     queryClient.invalidateQueries({ queryKey: ["students"] });
   };
 
   const handleExport = () => {
-    setClicked(true);
+    if (
+      sheetsObject.length <= 1 ||
+      !sheetsObject.slice(1).some((row) => row.length > 0)
+    ) {
+      toast.error("An error occurred while generating sheet data");
+      return;
+    }
+
+    exportMutate(sheetsObject, {
+      onSuccess: (data: any, variables: any, context: any) => {
+        console.log("data(sheets): ", data);
+        toast.success("Successfully exported data");
+        setSheetsUri(data?.data?.spreadsheetUrl);
+      },
+      onError: (error: any, variables: any, context: any) => {
+        console.log("error", error);
+        // if (
+        //   (exportError as AxiosError<ErrorResponse>)?.response?.data?.message
+        // ) {
+        //   const message = (exportError as AxiosError<ErrorResponse>)?.response
+        //     ?.data?.message;
+
+        //   toast.error(message || "An error occurred");
+        //   if (message === "Unauthorized") nav("/app");
+        // } else {
+        toast.error("An error occurred");
+        // }
+        setExportButtonText("Retry");
+      },
+    });
   };
 
   useEffect(() => {
-    if (exportData) {
-      toast.success("Successfully exported data");
-      setSheetsUri(exportData?.data?.data?.spreadsheetUrl);
-    }
-  }, [exportData]);
-
-  useEffect(() => {
-    if (exportIsLoading) setExportButtonText("Exporting...");
-    if (exportIsError) {
-      if ((exportError as AxiosError<ErrorResponse>)?.response?.data?.message) {
-        const message = (exportError as AxiosError<ErrorResponse>)?.response
-          ?.data?.message;
-
-        toast.error(message || "An error occurred");
-        if (message === "Unauthorized") nav("/app");
-      } else {
-        toast.error("An error occurred");
-      }
-      setExportButtonText("Retry");
-    }
-  }, [exportIsLoading, exportIsError, exportError]);
-
-  useEffect(() => {
     refetch();
-  }, [selectedExam]);
+  }, [selectedCourse]);
 
   useEffect(() => {
-    console.log("data: ", data);
-    // if (data?.data?.length) {
-    // const _tableData = data.data.map(({ _id, createdAt, exams }) => {
-    //   return {
-    //     _id,
-    //     createdAt,
-    //     exam: exams[0],
-    //   };
-    // });
-    // setTableData(_tableData);
-    // const filteredExams = data.data.map(
-    //   ({ exams }) => exams.filter(({ name }) => name === selectedExam)[0]
-    // );
-    // if (filteredExams?.length && filteredExams[0]?.result?.score) {
-    //   const header = ["Student ID", "Grade"];
-    //   const sheetsData = [header];
-    //   console.log("filteredExams: ", filteredExams);
-    //   filteredExams?.map(({ _id, result }) => {
-    //     sheetsData.push([`${_id}`, `${result?.score}`]);
-    //   });
-    //   setSheetsObject(sheetsData);
-    // }
-    // }
-  }, [isSuccess, data]);
+    if (!selectedRows?.length) return;
+
+    const header = ["Student ID", "Grade"];
+    const sheetsData: string[][] = [header];
+
+    selectedRows.forEach((category: Category) => {
+      category.students?.forEach((student) => {
+        const studentId = student?.result?._id ?? "N/A";
+        const score = student?.result?.score ?? "N/A";
+        sheetsData.push([String(studentId), String(score)]);
+      });
+    });
+
+    setSheetsObject(sheetsData);
+  }, [selectedRows]);
 
   const handleGrade = () => {
     // if (!Boolean(selectedRows.length)) return;
@@ -214,7 +209,6 @@ const Grader = () => {
               <p
                 className="text-blue-500 cursor-pointer"
                 onClick={() => {
-                  setClicked(false);
                   window.open(sheetsUri, "_blank", "noopener,noreferrer");
                 }}
               >
@@ -223,8 +217,14 @@ const Grader = () => {
             ) : (
               <Button
                 onClick={handleExport}
-                disabled={!Boolean(selectedExam?.length)}
+                disabled={
+                  !Boolean(selectedCourse?.length) ||
+                  selectedRows?.length > 1 ||
+                  exportIsPending
+                }
+                className={`${!Boolean(selectedCourse?.length) || selectedRows?.length > 1} ? 'cursor-not-allowed' : 'cursor-pointer'`}
               >
+                {exportIsPending && <Loader2Icon className="animate-spin" />}
                 {exportButtonText}
               </Button>
             )}
@@ -260,7 +260,7 @@ const Grader = () => {
 
               <Button
                 className="w-[180px]"
-                disabled={!Boolean(selectedSubRows.length) || gradeIsPending}
+                disabled={!Boolean(selectedSubRows?.length) || gradeIsPending}
                 onClick={handleGrade}
               >
                 {gradeIsPending ? (
