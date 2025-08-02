@@ -5,6 +5,7 @@ import { User } from "@/types/User";
 import { PaymentPlan } from "@/types/PaymentPlan";
 import { OrganizationData } from "@/types/OrganizationData";
 import { StudentData } from "@/types/StudentData";
+import { IPaymentPlan } from "@/types/IPaymentPlan";
 
 interface State {
   accountType: string;
@@ -17,8 +18,8 @@ interface State {
   setCode: (code: string) => void;
   studentData: StudentData | null;
   setStudentData: (studentData: StudentData) => void;
-  selectedPaymentPlan: PaymentPlan | null;
-  setSelectedPaymentPlan: (plan: PaymentPlan | null) => void;
+  selectedPaymentPlan: IPaymentPlan | null;
+  setSelectedPaymentPlan: (plan: IPaymentPlan | null) => void;
   organizationData: OrganizationData;
   appendOrganizationData: (data: OrganizationData) => void;
   expandedRowId: number | null;

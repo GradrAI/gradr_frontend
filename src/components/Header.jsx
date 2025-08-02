@@ -3,6 +3,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const Header = () => {
   const { user } = useStore();
+  console.log("user(header): ", user);
 
   return (
     <div className="bg-gray-600 w-full h-[10dvh] p-6 border-b-neutral-600 flex justify-between items-center">
@@ -19,9 +20,11 @@ const Header = () => {
                 className="w-[35px] rounded-full"
               />
             )}
-            <div className="flex flex-wrap flex-col items-end justify-between text-white">
-              <p className="font-semibold">{`${user?.first_name} ${user?.last_name}`}</p>
-            </div>
+            {user?.first_name && user?.last_name && (
+              <div className="flex flex-wrap flex-col items-end justify-between text-white">
+                <p className="font-semibold">{`${user.first_name} ${user.last_name}`}</p>
+              </div>
+            )}
           </div>
         )}
       </div>

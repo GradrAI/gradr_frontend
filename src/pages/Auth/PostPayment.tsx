@@ -63,7 +63,7 @@ const PostPayment = () => {
 
       organizationMutate({
         ...organizationData,
-        paymentPlan: String(selectedPaymentPlan?._id),
+        payment_plan_id: String(selectedPaymentPlan?.id),
       });
     }
 

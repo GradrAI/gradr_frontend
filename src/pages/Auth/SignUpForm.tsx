@@ -18,6 +18,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import useStore from "@/state";
+import api from "@/lib/axios";
+import { type Response } from "@/types/Response";
+import { IGoogleAuth } from "@/types/IGoogleAuth";
 
 const formSchema = z
   .object({
@@ -72,7 +75,10 @@ const SignUpForm = () => {
     mutate: googleMutate,
   } = useMutation({
     mutationKey: ["auth"],
-    mutationFn: () => axios.get(`/auth/google`),
+    mutationFn: async () => {
+      const res = await api.get<Response<IGoogleAuth>>(`/auth/google`);
+      return res.data;
+    },
   });
 
   const handleGoogleSignUp = async () => {
@@ -104,9 +110,12 @@ const SignUpForm = () => {
 
   useEffect(() => {
     if (googleIsPending) toast.success("Signing you in...");
-    if (googleIsError)
+    if (googleIsError) {
       toast.error(googleError?.message || "An error occurred. Please retry");
-    if (googleData) window.location.href = googleData?.data?.authorizationUrl;
+    }
+    if (googleData?.status === "success") {
+      window.location.href = googleData.data!.url;
+    }
   }, [googleIsPending, googleIsError, googleError, googleData]);
 
   return (
