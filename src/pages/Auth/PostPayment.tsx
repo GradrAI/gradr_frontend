@@ -1,6 +1,5 @@
 import api from "@/lib/axios";
 import useStore from "@/state";
-import { OrganizationData } from "@/types/OrganizationData";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
@@ -20,6 +19,10 @@ import {
   ArrowRight,
   RefreshCw,
 } from "lucide-react";
+import { IOrganisationPayload } from "@/types/IOrganisation";
+import createOrganisation from "@/data/createOrganisation";
+import { AxiosError } from "axios";
+import createCustomUrl from "@/lib/createCustomUrl";
 
 const PostPayment = () => {
   const nav = useNavigate();
@@ -35,18 +38,11 @@ const PostPayment = () => {
     retryDelay: 2000,
   });
 
-  const {
-    isSuccess: orgIsSuccess,
-    isPending: orgIsPending,
-    isError: orgIsError,
-    error: orgError,
-    data: orgData,
-    mutate: organizationMutate,
-  } = useMutation({
-    mutationKey: ["organization"],
-    mutationFn: async (data: OrganizationData) =>
-      await api.post("/organizations", data),
-  });
+  const { isPending: organizationIsPending, mutate: organizationMutate } =
+    useMutation({
+      mutationKey: ["organisation"],
+      mutationFn: (data: IOrganisationPayload) => createOrganisation(data),
+    });
 
   useEffect(() => {
     if (isLoading) {
@@ -61,10 +57,35 @@ const PostPayment = () => {
       });
       toast.loading("Setting up your organization...", { id: "org-creation" });
 
-      organizationMutate({
-        ...organizationData,
-        payment_plan_id: String(selectedPaymentPlan?.id),
-      });
+      organizationMutate(
+        {
+          ...organizationData,
+          payment_plan_id: String(selectedPaymentPlan?.id),
+        },
+        {
+          onSuccess: (data) => {
+            if (data.status === "error") {
+              toast.error(data.message);
+              return;
+            }
+            toast.success(data.message);
+            window.location.href = createCustomUrl(
+              data.data!.organisation.name
+            );
+          },
+          onError: (error) => {
+            let message = error?.message || "An error occurred";
+            let code = 500;
+
+            if (error instanceof AxiosError) {
+              message = error.response?.data.message || "Server Unavailable";
+              code = error.response?.status || 503;
+            }
+
+            toast.error(message);
+          },
+        }
+      );
     }
 
     if (isError) {

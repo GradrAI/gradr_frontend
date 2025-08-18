@@ -39,3 +39,12 @@ export interface IOrganisation {
     features: string[];
   };
 }
+
+export interface IOrganisationPayload {
+  name: string;
+  email: string;
+  phone_number?: string;
+  physical_address: string;
+  workspace_type: WorkspaceType;
+  payment_plan_id: string | null;
+}
