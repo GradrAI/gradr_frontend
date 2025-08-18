@@ -102,15 +102,12 @@ const SignUpForm = () => {
 
         organizationMutate(
           {
-            data: {
-              name: subDomain,
-              email: values.email as string,
-              physical_address: "",
-              phone_number: undefined,
-              workspace_type: "personal" as WorkspaceType,
-              payment_plan_id: null,
-            },
-            token: access_token,
+            name: subDomain,
+            email: values.email as string,
+            physical_address: "",
+            phone_number: undefined,
+            workspace_type: "personal" as WorkspaceType,
+            payment_plan_id: null,
           },
           {
             onSuccess: (data) => {
