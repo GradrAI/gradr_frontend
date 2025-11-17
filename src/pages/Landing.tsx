@@ -647,10 +647,16 @@ const Landing = () => {
               © {new Date().getFullYear()} GradrAI. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <button className="text-gray-400 hover:text-white text-sm transition-colors">
+              <button
+                className="text-gray-400 hover:text-white text-sm transition-colors"
+                onClick={() => nav("privacy-policy")}
+              >
                 Privacy Policy
               </button>
-              <button className="text-gray-400 hover:text-white text-sm transition-colors">
+              <button
+                className="text-gray-400 hover:text-white text-sm transition-colors"
+                onClick={() => nav("terms-of-service")}
+              >
                 Terms of Service
               </button>
             </div>
