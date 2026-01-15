@@ -3,6 +3,10 @@ const notifications = {
     SUCCESS: "Upload successful",
     FAILURE: "Upload failed",
   },
+  QUIZ: {
+    SUCCESS: "Quiz created successfully",
+    FAILURE: "Quiz creation failed",
+  },
   EXAM: {
     FAILURE: "Unable to add course",
   },

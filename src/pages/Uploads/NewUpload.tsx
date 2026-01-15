@@ -26,29 +26,8 @@ import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
 import useStore from "@/state";
 import api from "@/lib/axios";
-
-type CourseData = {
-  name: string;
-  students: [];
-  maxScoreAttainable: number;
-  lecturerId: string;
-  _id: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-};
-
-type Category = {
-  id: number;
-  name: string;
-  value: string;
-};
-
-const categories = [
-  { id: 0, name: "Test", value: "test" },
-  { id: 1, name: "Assignment", value: "assignment" },
-  { id: 2, name: "Exam", value: "exam" },
-];
+import { Category, CourseData } from "@/types/CourseData";
+import categories from "@/data/categories";
 
 const NewUpload = () => {
   const queryClient = useQueryClient();
@@ -82,7 +61,7 @@ const NewUpload = () => {
     setUploadData({ ...uploadData, [name]: value });
   };
 
-  const handleSelectExam = (selection: string) => {
+  const handleSelectCourse = (selection: string) => {
     if (selection === "addNew") {
       setAddNew(true);
       return;
@@ -126,7 +105,7 @@ const NewUpload = () => {
     if (!data) console.log("No exam record for current user");
   }, [data]);
 
-  const handleAddExam = () => {
+  const handleAddCourse = () => {
     if (!user?._id?.length) {
       toast.error(notifications.EXAM.FAILURE);
       return;
@@ -147,7 +126,7 @@ const NewUpload = () => {
             queryClient.invalidateQueries({ queryKey: ["courses"] });
             setCourses((prev) => [...prev, data.data]);
             setAddNew(false);
-            handleSelectExam(data.data.name);
+            handleSelectCourse(data.data.name);
           }
         },
         onError: (error: any, variables: any, context: any) => {
@@ -162,7 +141,7 @@ const NewUpload = () => {
       <h1>Upload resources.</h1>
 
       <Select
-        onValueChange={handleSelectExam}
+        onValueChange={handleSelectCourse}
         name="exam"
         required
         value={uploadData.name}
@@ -261,7 +240,7 @@ const NewUpload = () => {
             />
           </div>
           <DialogFooter>
-            <Button onClick={handleAddExam} disabled={isPending}>
+            <Button onClick={handleAddCourse} disabled={isPending}>
               {isPending ? (
                 <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
               ) : (

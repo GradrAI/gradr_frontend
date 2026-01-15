@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import useStore from "@/state";
 import { Skeleton } from "@/components/ui/skeleton";
-import SignInPrompt from "../components/SignInPrompt";
 import StudentUploadDetails from "../components/StudentUploadDetails";
 import StudentUploadForm from "../components/StudentUploadForm";
 import StudentResult from "../components/StudentResult";
@@ -35,7 +34,6 @@ const StudentUpload = () => {
   const resourceIsLoading = resourceInfo.isLoading;
   const resultIsLoading = resultInfo.isLoading;
 
-  const shouldSignIn = !user;
   const hasResult = resultInfo?.data;
   const hasUpload = resourceInfo?.data;
 
@@ -75,13 +73,7 @@ const StudentUpload = () => {
           </div>
         )}
 
-        {shouldSignIn ? (
-          <SignInPrompt
-            courseInfo={courseInfo}
-            uniqueCode={uniqueCode}
-            courseId={courseId}
-          />
-        ) : resultIsLoading || resourceIsLoading ? (
+        {resultIsLoading || resourceIsLoading ? (
           <Skeleton className="w-full h-[200px] rounded-sm" />
         ) : hasResult ? (
           <StudentResult

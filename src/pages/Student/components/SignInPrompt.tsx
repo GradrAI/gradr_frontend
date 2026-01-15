@@ -1,11 +1,18 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import useStore from "@/state";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Loader2Icon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Button } from "semantic-ui-react";
 
 interface SignInPromptProps {
   courseInfo: {
@@ -56,32 +63,37 @@ const SignInPrompt: React.FC<SignInPromptProps> = ({
   }, [data, isLoading, isSuccess, isError, error]);
 
   return (
-    <>
-      <div className="flex flex-row items-baseline justify-betwween gap-0.5">
-        <p>Sign in to get started and get your grade</p>
-        <span>
-          {courseIsLoading && (
-            <Skeleton className="w-[60px] h-[10px] rounded-sm" />
-          )}
-        </span>
-        {courseData && (
-          <>
-            <p>for</p>
-            <p className="text-green-500">{`${courseData?.category?.name}`}</p>
-          </>
-        )}
-      </div>
+    <div className="flex items-center justify-center min-h-[400px] p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
+          <CardDescription>Please sign in to proceed with</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="text-center space-y-2">
+            {courseIsLoading ? (
+              <Skeleton className="w-32 h-6 mx-auto" />
+            ) : (
+              courseData && (
+                <p className="text-lg font-semibold text-green-600">
+                  {courseData?.category?.name}
+                </p>
+              )
+            )}
+          </div>
 
-      <Button
-        className="w-[250px]"
-        variant="primary"
-        onClick={handleSignIn}
-        disabled={isLoading}
-      >
-        {isLoading && <Loader2Icon className="animate-spin" />}
-        Sign in
-      </Button>
-    </>
+          <Button
+            onClick={handleSignIn}
+            disabled={isLoading}
+            className="w-full"
+            size="lg"
+          >
+            {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+            Sign In with Google
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

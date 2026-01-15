@@ -13,7 +13,10 @@ const StudentHeader: React.FC<StudentHeaderProps> = ({ user }) => {
     <header className="bg-stone-200 py-2 px-6 flex justify-between items-center">
       <SidebarTrigger className="text-gray-600" />
 
-      <h1 onClick={() => nav("/")} className="m-0">
+      <h1
+        onClick={() => nav("/")}
+        className="m-0 font-bold text-2xl md:text-4xl"
+      >
         GradrAI for students
       </h1>
       {!!user && (

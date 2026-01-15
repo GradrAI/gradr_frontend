@@ -16,7 +16,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Content from "./pages/Content";
 import Pricing from "./pages/Auth/Pricing";
 import KYC from "./pages/Auth/KYC";
-import StudentUpload from "./pages/Student/pages/StudentUpload";
 import NotFound from "./pages/NotFound";
 import TermsOfService from "./pages/TermsOfService";
 import PostPayment from "./pages/Auth/PostPayment";
@@ -25,9 +24,14 @@ import AssessmentDetails from "./pages/Assessments/AssessmentDetails";
 import SignInForm from "./pages/Auth/SignInForm";
 import SignUpForm from "./pages/Auth/SignUpForm";
 import AuthLayout from "./pages/Auth/AuthLayout";
+import StudentLayout from "./pages/Student/components/StudentLayout";
+import StudentRouter from "./pages/Student/pages/StudentRouter";
+import ExamCreate from "./pages/Exams/pages/ExamCreate";
+import Exams from "./pages/Exams/pages/Exams";
 
 import "./App.css";
-import StudentLayout from "./pages/Student/components/StudentLayout";
+import ExamComponent from "./pages/Student/pages/ExamComponent";
+import StudentUpload from "./pages/Student/pages/StudentUpload";
 
 function App() {
   const nav = useNavigate();
@@ -48,7 +52,9 @@ function App() {
         <Route path="terms-of-service" element={<TermsOfService />} />
 
         <Route path="link/:courseId/:uniqueCode" element={<StudentLayout />}>
-          <Route index element={<StudentUpload />} />
+          <Route index element={<StudentRouter />} />
+          <Route path="quiz" element={<ExamComponent />} />
+          <Route path="grading" element={<StudentUpload />} />
         </Route>
 
         <Route path="/auth" element={<AuthLayout />}>
@@ -82,6 +88,11 @@ function App() {
             </Route>
 
             <Route path="settings" element={<Settings />} />
+
+            <Route path="exams">
+              <Route index element={<Exams />} />
+              <Route path="create" element={<ExamCreate />} />
+            </Route>
           </Route>
         </Route>
       </Route>

@@ -15,7 +15,6 @@ import { logo } from "@/assets";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Items } from "@/types/MenuItems";
-import React from "react";
 
 const bottomItems = [
   {

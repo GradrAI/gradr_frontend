@@ -25,11 +25,12 @@ import { Loader2Icon } from "lucide-react";
 
 const postResults = async (data: any) =>
   await api.post<Result[]>(`/results`, data);
+//! TODO: replace LLM endpoint call with Agentic endpoint
 
 const Grader = () => {
   const nav = useNavigate();
   const queryClient = new QueryClient();
-  const { user, code } = useStore();
+  const { user } = useStore();
 
   const [selectedSubRows, setSelectedSubRows] = useState<any[]>([]);
   const [selectedCourse, setSelectedCourse] = useState("");
