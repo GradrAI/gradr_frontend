@@ -29,6 +29,7 @@ const ExamComponent = () => {
     queryKey: ["examPreview", courseId, uniqueCode],
     queryFn: async () => await api.get(`/exam/link/${courseId}/${uniqueCode}`),
     select: (res) => res.data?.data,
+    refetchOnWindowFocus: false,
   });
 
   // Mutation for starting exam attempt
@@ -51,7 +52,7 @@ const ExamComponent = () => {
   // Mutation for submitting exam
   const submitExamMutation = useMutation({
     mutationFn: async () =>
-      await api.post(`/exams/${attemptId}/submit`, { answers }),
+      await api.post(`/exam/${attemptId}/submit`, { answers }),
     onSuccess: () => {
       setState("submitted");
       toast.success("Exam submitted successfully!");
