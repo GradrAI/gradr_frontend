@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -24,13 +24,36 @@ import { CheckCircle, Paperclip } from "lucide-react";
 import toast from "react-hot-toast";
 import { Exam, Option, Question } from "@/types/Exam";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const Exams = () => {
   const nav = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: examData, isLoading } = useQuery({
     queryKey: ["exam"],
     queryFn: async () => await api.get(`/exam`),
+  });
+
+  const { data: deleteExamData, mutate: deleteExamMutate } = useMutation({
+    mutationFn: async (examId: string) => await api.delete(`/exam/${examId}`),
+    onSuccess: () => {
+      toast.success("Exam deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["exam"] });
+    },
+    onError: () => {
+      toast.error("Failed to delete exam");
+    },
   });
 
   const exams = examData?.data?.data ?? [];
@@ -124,12 +147,38 @@ const Exams = () => {
                     : "-"}
                 </div>
                 <div className="flex items-center gap-2">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="link" className="text-red-500">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-red-600 hover:bg-red-700"
+                          onClick={() => deleteExamMutate(exam._id)}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   {exam.fileUri && (
                     <a
                       href={exam.fileUri}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-indigo-600 underline text-sm"
+                      className="text-indigo-600 underline text-sm px-4"
                     >
                       PDF
                     </a>
