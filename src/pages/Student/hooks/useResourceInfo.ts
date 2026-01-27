@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 export const useResourceInfo = (
   courseData: any,
   studentInfo: any,
-  type: "answers" | "report"
+  type: "answers" | "report" | "guide" | "onlineAnswer" | "generatedExam"
 ) =>
   useQuery({
     queryKey: [

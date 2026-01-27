@@ -6,19 +6,20 @@ const formSchema = z
   .object({
     file: z
       .instanceof(FileList)
-      // .refine((files) => files.length > 0, "The file is required.")
-      .refine((files: FileList) => {
+      .optional()
+      .refine((files: FileList | undefined) => {
+        if (!files) return true;
         return Array.from(files).every((file) => file.size <= MAX_FILE_SIZE);
       }, `File size must be less than ${MAX_FILE_SIZE}MB`)
       .refine(
-        (files: FileList) => {
+        (files: FileList | undefined) => {
+          if (!files) return true;
           return Array.from(files).every((file) =>
             ACCEPTED_FILE_TYPES.includes(file.type)
           );
         },
         `File must be one of ${ACCEPTED_FILE_TYPES.join(", ")}`
       ),
-    note: z.string().optional(),
     topic: z.string().min(1, "Topic is required"),
     difficulty: z.enum(["easy", "moderate", "hard"], {
       required_error: "Difficulty is required",
@@ -41,6 +42,7 @@ const formSchema = z
       .number()
       .positive("Must be a positive number")
       .gt(1, "Must be at least 2 questions"),
+    standard: z.enum(["GENERIC", "JAMB", "WASSCE"]).default("GENERIC"),
     startDate: z.date().optional(),
     endDate: z.date().optional(),
     startTime: z.string().optional(),
@@ -49,6 +51,12 @@ const formSchema = z
       .number()
       .min(1, "Duration must be at least 1 minute")
       .optional(),
+    resourceIds: z.array(z.string()).optional(),
+    topicPriorities: z.array(z.object({
+      topic: z.string(),
+      weight: z.number().min(0).max(100),
+      selected: z.boolean().default(true),
+    })).optional(),
   })
   .refine(
     (data) => {
