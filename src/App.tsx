@@ -51,7 +51,7 @@ function App() {
           <Route index element={<StudentUpload />} />
         </Route>
 
-        <Route path="/auth" element={<AuthLayout />}>
+        <Route path="auth" element={<AuthLayout />}>
           <Route path="sign-in" element={<SignInForm />} />
           <Route path="sign-up" element={<SignUpForm />} />
           <Route path="kyc" element={<KYC />} />
