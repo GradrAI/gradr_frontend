@@ -564,6 +564,23 @@ const Landing = () => {
                   <Mail className="h-5 w-5" />
                 </Button>
               </div>
+              {/* supported by */}
+              <span className="text-gray-500 text-xs font-semibold uppercase tracking-widest mb-6">
+                Supported By
+              </span>
+              
+              <div className="flex flex-wrap justify-center md:justify-start items-center gap-8 md:gap-12">
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" 
+                  alt="Google" 
+                  className="h-6 md:h-7 transition-transform duration-300 hover:scale-110 cursor-pointer" 
+                />
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" 
+                  alt="MongoDB" 
+                  className="h-7 md:h-8 transition-transform duration-300 hover:scale-110 cursor-pointer" 
+                />
+              </div>
             </div>
 
             <div>
@@ -641,6 +658,27 @@ const Landing = () => {
               </ul>
             </div>
           </div>
+
+
+           {/* <div className="border-t border-gray-800 mt-12 pt-8">
+            <div className="flex flex-col items-center md:items-start">
+              <span className="text-gray-500 text-xs font-semibold uppercase tracking-widest mb-6">
+                Powered & Supported By
+              </span>
+              <div className="flex flex-wrap justify-center md:justify-start items-center gap-8 md:gap-12 opacity-50 hover:opacity-100 transition-opacity duration-500">
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" 
+                  alt="Google" 
+                  className="h-6 md:h-7 grayscale hover:grayscale-0 transition-all cursor-pointer" 
+                />
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" 
+                  alt="MongoDB" 
+                  className="h-7 md:h-8 grayscale hover:grayscale-0 transition-all cursor-pointer" 
+                />
+              </div>
+            </div>
+          </div> */}
 
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
