@@ -11,13 +11,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff, Loader2Icon } from "lucide-react";
-import useStore from "@/state";
+import registerUserLocal from "@/data/registerUserLocal";
+import registerUserGoogle from "@/data/registerUserGoogle";
+import createOrganisation from "@/data/createOrganisation";
+import { IOrganisationPayload, WorkspaceType } from "@/types/IOrganisation";
+import createCustomUrl from "@/lib/createCustomUrl";
 
 const formSchema = z
   .object({
@@ -35,7 +39,6 @@ const formSchema = z
 
 const SignUpForm = () => {
   const nav = useNavigate();
-  const { saveUser } = useStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -51,17 +54,15 @@ const SignUpForm = () => {
     },
   });
 
-  const {
-    mutate: registerMutate,
-    isPending,
-    data,
-  } = useMutation({
+  const { isPending: organizationIsPending, mutate: organizationMutate } =
+    useMutation({
+      mutationKey: ["organisation"],
+      mutationFn: (data: IOrganisationPayload) => createOrganisation(data),
+    });
+
+  const { mutate: registerMutate, isPending } = useMutation({
     mutationKey: ["register"],
-    mutationFn: (data: z.infer<typeof formSchema>) =>
-      axios.post(`/auth/register`, {
-        ...data,
-        confirmPassword: undefined, // exclude confirmPassword before sending
-      }),
+    mutationFn: (data: z.infer<typeof formSchema>) => registerUserLocal(data),
   });
 
   const {
@@ -72,42 +73,94 @@ const SignUpForm = () => {
     mutate: googleMutate,
   } = useMutation({
     mutationKey: ["auth"],
-    mutationFn: () => axios.get(`/auth/google`),
+    mutationFn: registerUserGoogle,
   });
-
-  const handleGoogleSignUp = async () => {
-    googleMutate();
-  };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     registerMutate(values, {
-      onSuccess: (data: any, variables: any, context: any) => {
-        toast.success("Account created! You can now sign in.");
-        if (data.data.success) {
-          const {
-            data: {
-              data: { token, user },
-            },
-          } = data;
-          localStorage.setItem("token", token);
-          saveUser(user);
-          nav("/auth/sign-in");
+      onSuccess: (data) => {
+        if (data.status === "error" || !data.data) {
+          toast.error(data.message);
+          return;
         }
+
+        toast.success(data.message);
+        const {
+          data: {
+            user: { access_token },
+          },
+        } = data;
+
+        localStorage.setItem("token", access_token);
+
+        if (!access_token) {
+          toast.error("No access token received");
+          return;
+        }
+
+        const subDomain = `${values?.first_name}${values?.last_name}`;
+
+        organizationMutate(
+          {
+            name: subDomain,
+            email: values.email as string,
+            physical_address: "",
+            phone_number: undefined,
+            workspace_type: "personal" as WorkspaceType,
+            payment_plan_id: null,
+          },
+          {
+            onSuccess: (data) => {
+              if (data.status === "error") {
+                toast.error(data.message);
+                return;
+              }
+              toast.success(data.message);
+              window.location.href = createCustomUrl(
+                data.data!.organisation.name
+              );
+
+              nav("/auth/pricing");
+            },
+            onError: (error) => {
+              let message = error?.message || "An error occurred";
+              let code = 500;
+
+              if (error instanceof AxiosError) {
+                message = error.response?.data.message || "Server Unavailable";
+                code = error.response?.status || 503;
+              }
+
+              toast.error(message);
+            },
+          }
+        );
       },
-      onError: (error: any) => {
-        const msg =
-          error?.response?.data?.error || "Something went wrong. Try again.";
-        toast.error(msg);
+      onError: (error) => {
+        let message = error?.message || "An error occurred";
+        let code = 500;
+
+        if (error instanceof AxiosError) {
+          message = error.response?.data.message || "Server Unavailable";
+          code = error.response?.status || 503;
+        }
+
+        toast.error(message);
       },
     });
   }
 
-  useEffect(() => {
-    if (googleIsPending) toast.success("Signing you in...");
-    if (googleIsError)
-      toast.error(googleError?.message || "An error occurred. Please retry");
-    if (googleData) window.location.href = googleData?.data?.authorizationUrl;
-  }, [googleIsPending, googleIsError, googleError, googleData]);
+  if (googleIsPending) toast.success("Signing you in...");
+  if (googleIsError) {
+    toast.error(googleError?.message || "An error occurred. Please retry");
+  }
+  if (googleData?.status === "success") {
+    window.location.href = googleData.data!.url;
+  }
+
+  if (organizationIsPending) {
+    toast.success("Creating organisation...");
+  }
 
   return (
     <div className="w-full max-w-md bg-white p-4 rounded-3xl shadow-xl space-y-6 animate-fade-in">
@@ -120,7 +173,7 @@ const SignUpForm = () => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 gap-5">
             {[
               {
                 name: "first_name",
@@ -128,11 +181,11 @@ const SignUpForm = () => {
                 placeholder: "John",
               },
               { name: "last_name", label: "Last Name", placeholder: "Doe" },
-              {
-                name: "username",
-                label: "Username",
-                placeholder: "johndoe123",
-              },
+              // {
+              //   name: "username",
+              //   label: "Username",
+              //   placeholder: "johndoe123",
+              // },
               {
                 name: "email",
                 label: "Email",
@@ -217,9 +270,10 @@ const SignUpForm = () => {
           />
 
           <Button
-            type="submit"
+            type="button"
             disabled={isPending}
             className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-2 rounded-xl"
+            onClick={() => onSubmit(form.getValues())}
           >
             {isPending && <Loader2Icon className="animate-spin mr-2" />}
             Sign Up
@@ -235,11 +289,13 @@ const SignUpForm = () => {
 
       <Button
         type="button"
-        onClick={handleGoogleSignUp}
-        disabled={googleIsPending}
+        onClick={() => googleMutate}
+        disabled={googleIsPending || organizationIsPending}
         className="w-full border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 font-medium py-2 rounded-xl"
       >
-        {googleIsPending && <Loader2Icon className="animate-spin" />}
+        {(googleIsPending || organizationIsPending) && (
+          <Loader2Icon className="animate-spin" />
+        )}
         <span className="mr-2">🔗</span> Sign up with Google
       </Button>
 

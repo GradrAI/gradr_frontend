@@ -11,13 +11,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 import useStore from "@/state";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader2Icon } from "lucide-react";
+import { Response } from "@/types/Response";
+import { IGoogleAuth } from "@/types/IGoogleAuth";
+import api from "@/lib/axios";
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -44,7 +47,10 @@ const SignInForm = () => {
     mutate: googleMutate,
   } = useMutation({
     mutationKey: ["auth"],
-    mutationFn: () => axios.get(`/auth/google`),
+    mutationFn: async () => {
+      const res = await api.get<Response<IGoogleAuth>>(`/auth/google`);
+      return res.data;
+    },
   });
 
   const { mutate: loginMutate, isPending } = useMutation({
@@ -59,10 +65,13 @@ const SignInForm = () => {
   };
 
   useEffect(() => {
+    console.log("googleData: ", googleData);
     if (googleIsPending) toast.success("Signing you in...");
     if (googleIsError)
       toast.error(googleError?.message || "An error occurred. Please retry");
-    if (googleData) window.location.href = googleData?.data?.authorizationUrl;
+    if (googleData?.status === "success") {
+      window.location.href = googleData.data!.url;
+    }
   }, [googleIsPending, googleIsError, googleError, googleData]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {

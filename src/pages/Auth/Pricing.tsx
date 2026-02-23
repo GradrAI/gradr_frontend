@@ -1,37 +1,45 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Star, Mail, Loader2 } from "lucide-react";
+import { CheckCircle, Star, Mail, Loader2, Loader2Icon } from "lucide-react";
 import toast from "react-hot-toast";
 import useStore from "@/state";
 import PaystackPop from "@paystack/inline-js";
-import type { PaymentPlan as PaymentPlanType } from "@/types/PaymentPlan";
-import { OrganizationData } from "@/types/OrganizationData";
-import api from "@/lib/axios";
 import { formatNumber } from "@/lib/formatNumber";
-import { PayStackResponse } from "@/types/PayStackResponse";
+import { type PayStackResponse } from "@/types/PayStackResponse";
+import { type IPaymentPlan } from "@/types/IPaymentPlan";
+import createOrganisation from "@/data/createOrganisation";
+import { IOrganisationPayload, WorkspaceType } from "@/types/IOrganisation";
+import fetchPaymentPlans from "@/data/fetchPaymentPlans";
+import { IPaymentPayload } from "@/types/IPaymentPayload";
+import makePayment from "@/data/makePayment";
+import { AxiosError } from "axios";
+import createCustomUrl from "@/lib/createCustomUrl";
 
 const Pricing = () => {
   const nav = useNavigate();
-  const { state } = useLocation();
-  const { user, token, selectedPaymentPlan, setSelectedPaymentPlan } =
-    useStore();
+  const { user, selectedPaymentPlan, setSelectedPaymentPlan } = useStore();
 
   const { data: paymentPlanData, isLoading: plansLoading } = useQuery({
-    queryKey: ["paymentPlan"],
-    queryFn: async () => await api.get(`/paymentPlans`),
+    queryKey: ["payment-plan"],
+    queryFn: fetchPaymentPlans,
     retry: false,
-    select: (data) => data.data,
+    select: (res) => res.data,
   });
 
   const { mutate: paymentMutate, isPending: paymentPending } = useMutation({
     mutationKey: ["payment"],
-    mutationFn: async (data: { email: string; amount: string }) =>
-      await api.post("/payment", data),
+    mutationFn: async (data: IPaymentPayload) => makePayment(data),
     // select:res=>res.data.data
   });
+
+  const { isPending: organizationIsPending, mutate: organizationMutate } =
+    useMutation({
+      mutationKey: ["organisation"],
+      mutationFn: (data: IOrganisationPayload) => createOrganisation(data),
+    });
 
   const handleSubmit = () => {
     if (selectedPaymentPlan?.name?.toLocaleLowerCase() === "custom") {
@@ -51,7 +59,7 @@ const Pricing = () => {
     paymentMutate(
       {
         email: user.email,
-        amount: selectedPaymentPlan.amount,
+        amount: String(selectedPaymentPlan.price),
       },
       {
         onSuccess: (data: any) => {
@@ -75,7 +83,7 @@ const Pricing = () => {
     );
   };
 
-  const isPopularPlan = (plan: PaymentPlanType) => {
+  const isPopularPlan = (plan: IPaymentPlan) => {
     return (
       plan.name?.toLowerCase().includes("pro") ||
       plan.name?.toLowerCase().includes("standard")
@@ -93,6 +101,45 @@ const Pricing = () => {
     );
   }
 
+  const handleFreePlan = () => {
+    if (!selectedPaymentPlan || !user) return;
+
+    const subDomain = `${user?.first_name}${user?.last_name}`;
+
+    // call endpoint to create organization
+    organizationMutate(
+      {
+        name: subDomain,
+        email: user.email as string,
+        physical_address: "",
+        phone_number: undefined,
+        workspace_type: "personal" as WorkspaceType,
+        payment_plan_id: selectedPaymentPlan!.id,
+      },
+      {
+        onSuccess: (data) => {
+          if (data.status === "error") {
+            toast.error(data.message);
+            return;
+          }
+          toast.success(data.message);
+          window.location.href = createCustomUrl(data.data!.organisation.name);
+        },
+        onError: (error) => {
+          let message = error?.message || "An error occurred";
+          let code = 500;
+
+          if (error instanceof AxiosError) {
+            message = error.response?.data.message || "Server Unavailable";
+            code = error.response?.status || 503;
+          }
+
+          toast.error(message);
+        },
+      }
+    );
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto p-6">
       <div className="text-center mb-8">
@@ -105,11 +152,11 @@ const Pricing = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {paymentPlanData?.data?.map((plan: PaymentPlanType) => (
+        {paymentPlanData?.paymentPlans?.map((plan) => (
           <Card
-            key={plan._id}
+            key={plan.id}
             className={`relative cursor-pointer transition-all duration-300 hover:shadow-lg ${
-              selectedPaymentPlan?._id === plan._id
+              selectedPaymentPlan?.id === plan.id
                 ? "ring-2 ring-blue-500 shadow-lg"
                 : "hover:shadow-md"
             } ${isPopularPlan(plan) ? "border-blue-200" : ""}`}
@@ -129,7 +176,7 @@ const Pricing = () => {
               <div className="flex items-center justify-center gap-1 mt-2">
                 <span className="text-sm text-gray-500">{plan.currency}</span>
                 <span className="text-3xl font-bold text-gray-900">
-                  {formatNumber(plan.amount)}
+                  {formatNumber(plan.price)}
                 </span>
                 <span className="text-sm text-gray-500">/month</span>
               </div>
@@ -152,12 +199,12 @@ const Pricing = () => {
               <div className="flex items-center justify-center">
                 <div
                   className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    selectedPaymentPlan?._id === plan._id
+                    selectedPaymentPlan?.id === plan.id
                       ? "border-blue-500 bg-blue-500"
                       : "border-gray-300"
                   }`}
                 >
-                  {selectedPaymentPlan?._id === plan._id && (
+                  {selectedPaymentPlan?.id === plan.id && (
                     <CheckCircle className="w-3 h-3 text-white" />
                   )}
                 </div>
@@ -174,39 +221,52 @@ const Pricing = () => {
           </p>
         )}
 
-        <Button
-          onClick={handleSubmit}
-          disabled={!selectedPaymentPlan || paymentPending}
-          size="lg"
-          className="min-w-[200px] bg-blue-600 hover:bg-blue-700"
-        >
-          {paymentPending ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Processing...
-            </>
-          ) : selectedPaymentPlan?.name?.toLowerCase() === "enterprise" ? (
-            <>
-              <Mail className="w-4 h-4 mr-2" />
-              Contact Us
-            </>
-          ) : (
-            "Proceed to Payment"
-          )}
-        </Button>
+        {!selectedPaymentPlan ? null : selectedPaymentPlan?.name ===
+          "Free Plan" ? (
+          <Button
+            className="min-w-[200px] bg-blue-600 hover:bg-blue-700"
+            disabled={organizationIsPending}
+            onClick={handleFreePlan}
+          >
+            {organizationIsPending && <Loader2Icon className="animate-spin" />}
+            Proceed
+          </Button>
+        ) : (
+          <>
+            <Button
+              onClick={handleSubmit}
+              disabled={!selectedPaymentPlan || paymentPending}
+              size="lg"
+              className="min-w-[200px] bg-blue-600 hover:bg-blue-700"
+            >
+              {paymentPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : selectedPaymentPlan?.name?.toLowerCase() === "enterprise" ? (
+                <>
+                  <Mail className="w-4 h-4 mr-2" />
+                  Contact Us
+                </>
+              ) : (
+                "Proceed to Payment"
+              )}
+            </Button>
 
-        {selectedPaymentPlan && (
-          <div className="text-center text-sm text-gray-500 max-w-md">
-            <p>
-              You've selected the <strong>{selectedPaymentPlan.name}</strong>{" "}
-              plan.
-            </p>
-            {selectedPaymentPlan?.name?.toLowerCase() !== "enterprise" && (
-              <p className="mt-1">
-                You'll be redirected to Paystack for secure payment processing.
+            <div className="text-center text-sm text-gray-500 max-w-md">
+              <p>
+                You've selected the <strong>{selectedPaymentPlan!.name}</strong>{" "}
+                plan.
               </p>
-            )}
-          </div>
+              {selectedPaymentPlan?.name?.toLowerCase() !== "enterprise" && (
+                <p className="mt-1">
+                  You'll be redirected to Paystack for secure payment
+                  processing.
+                </p>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

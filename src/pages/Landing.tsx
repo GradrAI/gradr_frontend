@@ -15,6 +15,9 @@ import {
   Menu,
   X,
   DollarSign,
+  Twitter, 
+  Linkedin, 
+  Github,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -564,6 +567,23 @@ const Landing = () => {
                   <Mail className="h-5 w-5" />
                 </Button>
               </div>
+              {/* supported by */}
+              <span className="text-gray-500 text-xs font-semibold uppercase tracking-widest mb-6">
+                Supported By
+              </span>
+              
+              <div className="flex flex-wrap justify-center md:justify-start items-center gap-8 md:gap-12">
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" 
+                  alt="Google" 
+                  className="h-6 md:h-7 transition-transform duration-300 hover:scale-110 cursor-pointer" 
+                />
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" 
+                  alt="MongoDB" 
+                  className="h-7 md:h-8 transition-transform duration-300 hover:scale-110 cursor-pointer" 
+                />
+              </div>
             </div>
 
             <div>
@@ -600,47 +620,75 @@ const Landing = () => {
                 </li>
               </ul>
             </div>
-
             <div>
               <h3 className="text-white font-semibold mb-4">Support</h3>
-              <ul className="space-y-2">
-                <li>
-                  <button
+              <div className="flex items-start gap-6">
+                {/* Support Links */}
+                <ul className="space-y-2">
+                  <li>
+                    <button
+                      className="text-gray-400 hover:text-white transition-colors"
+                      onClick={() => window.open("mailto:contact@gradrai.com?subject=Help Request", "_blank")}
+                    >
+                      Help Center
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="text-gray-400 hover:text-white transition-colors"
+                      onClick={() => scrollToSection(contactRef)}
+                    >
+                      Contact Us
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="text-gray-400 hover:text-white transition-colors"
+                      onClick={() => window.open("mailto:contact@gradrai.com?subject=Demo Request", "_blank")}
+                    >
+                      Book Demo
+                    </button>
+                  </li>
+                </ul>
+
+                {/* Social Icons - Now positioned beside the links */}
+                <div className="flex flex-col gap-4 pl-6 border-l border-gray-800">
+                  <a 
+                    href="https://x.com/gradrai" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
                     className="text-gray-400 hover:text-white transition-colors"
-                    onClick={() =>
-                      window.open(
-                        "mailto:contact@gradrai.com?subject=Help Request",
-                        "_blank"
-                      )
-                    }
+                    title="Follow on X"
                   >
-                    Help Center
-                  </button>
-                </li>
-                <li>
-                  <button
+                    <Twitter size={18} /> 
+                  </a>
+                  <a 
+                    href="https://www.linkedin.com/company/gradrai/posts/?feedView=all" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-[#0A66C2] transition-colors"
+                    title="Connect on LinkedIn"
+                  >
+                    <Linkedin size={18} />
+                  </a>
+                  <a 
+                    href="" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
                     className="text-gray-400 hover:text-white transition-colors"
-                    onClick={() => scrollToSection(contactRef)}
+                    title="View GitHub"
                   >
-                    Contact Us
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="text-gray-400 hover:text-white transition-colors"
-                    onClick={() =>
-                      window.open(
-                        "mailto:contact@gradrai.com?subject=Demo Request",
-                        "_blank"
-                      )
-                    }
-                  >
-                    Book Demo
-                  </button>
-                </li>
-              </ul>
+                    <Github size={18} />
+                  </a>
+                </div>
+              </div>
             </div>
+            
+            
           </div>
+
+
+      
 
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
