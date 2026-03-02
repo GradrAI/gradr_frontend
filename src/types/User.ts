@@ -12,4 +12,5 @@ export type User = {
   updatedAt: Date | null;
   refresh_token: string;
   __v: number | null;
+  role?: 'Student' | 'Organization' | 'Individual';
 };
