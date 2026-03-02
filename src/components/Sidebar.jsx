@@ -16,7 +16,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 const Sidebar = () => {
   const nav = useNavigate();
   const { pathname } = useLocation();
-  const { user, saveUser } = useStore();
+  const { user, reset } = useStore();
   const currPath = pathname.split("/").at(-1);
 
   return (
@@ -109,11 +109,11 @@ const Sidebar = () => {
         <p
           className="cursor-pointer text-white"
           onClick={() => {
-            saveUser({});
+            reset();
             window.location.reload();
           }}
         >
-          Log out
+          Log Out
         </p>
 
         <div className="w-full p-2 flex gap-2 items-center justify-start">

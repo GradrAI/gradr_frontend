@@ -36,7 +36,7 @@ interface AppSidebarProps {
 export function AppSidebar({ items }: AppSidebarProps) {
   const nav = useNavigate();
   const location = useLocation();
-  const { user, saveUser } = useStore();
+  const { user, reset } = useStore();
 
   return (
     <Sidebar collapsible="icon" className="">
@@ -92,7 +92,7 @@ export function AppSidebar({ items }: AppSidebarProps) {
                         if (item.title === "Log Out") {
                           toast.success("Logging you out...");
                           setTimeout(() => {
-                            saveUser(undefined as any);
+                            reset();
                             nav("/");
                           }, 1000);
                         }
