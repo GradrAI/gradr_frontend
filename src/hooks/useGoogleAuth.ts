@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useStore from "@/state";
+import api from "@/lib/axios";
 import { User } from "@/types/User";
 
 type GoogleAuthResponse = {
@@ -20,35 +20,42 @@ export function useGoogleAuth(code: string | null) {
   const mutation = useMutation<GoogleAuthResponse, Error, string>({
     mutationKey: ["profileData"],
     mutationFn: async (code: string) => {
-      const res = await axios.get<GoogleAuthResponse>(
-        `/getGoogleUser?code=${code}`
+      const res = await api.get<GoogleAuthResponse>(
+        `getGoogleUser?code=${code}&accountType=${accountType}`
       );
       return res.data;
     },
-    onSuccess: ({ data: { token, user } }) => {
+    onSuccess: (response) => {
+      const { data: { token, user } } = response;
+
       localStorage.setItem("token", token);
       saveUser(user);
       if (code) setCode(code);
-
       // Navigation logic directly after storing user
-      switch (accountType) {
-        case "student":
-          if (studentData?.courseId && studentData?.uniqueCode) {
-            navigate(`/link/${studentData.courseId}/${studentData.uniqueCode}`);
-          }
-          break;
-        case "organization":
-          if (user.organization)
-            navigate("/app/assessments", { replace: true });
-          else navigate("/auth/kyc");
-          break;
-        case "individual":
-          navigate("/app/assessments", { replace: true });
-          break;
+
+      if (user?.role === "Student" || accountType === "student") {
+        if (studentData?.courseId && studentData?.uniqueCode) {
+          navigate(`/student/quiz`, {
+            state: {
+              courseId: studentData.courseId,
+              uniqueCode: studentData.uniqueCode
+            }
+          });
+        } else {
+          navigate("/student/dashboard");
+        }
+      } else if (user?.role === "Organization" || accountType === "organization") {
+        if (user.organization) navigate("/app/assessments", { replace: true });
+        else navigate("/auth/kyc");
+      } else if (user?.role === "Individual" || accountType === "individual") {
+        navigate("/app/assessments", { replace: true });
       }
     },
     onError: (err: any) => {
-      console.error("Google auth failed:", err);
+      console.error("Google auth mutation failed:", err);
+      if (err.response) {
+        console.error("Error response data:", err.response.data);
+      }
     },
   });
 
