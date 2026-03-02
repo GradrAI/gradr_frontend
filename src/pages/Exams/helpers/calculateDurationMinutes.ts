@@ -9,13 +9,14 @@ const calculateDurationMinutes = (
   if (!startDate || !endDate || !startTime || !endTime) return null;
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const startLocal = DateTime.fromISO(
-    `${startDate.toISOString().split("T")[0]}T${startTime}`,
+    `${DateTime.fromJSDate(startDate).toISODate()}T${startTime}`,
     { zone: tz }
   );
   const endLocal = DateTime.fromISO(
-    `${endDate.toISOString().split("T")[0]}T${endTime}`,
+    `${DateTime.fromJSDate(endDate).toISODate()}T${endTime}`,
     { zone: tz }
   );
+
   const diffMinutes = endLocal.diff(startLocal, "minutes").minutes;
   return diffMinutes > 0 ? Math.floor(diffMinutes) : null;
 };
