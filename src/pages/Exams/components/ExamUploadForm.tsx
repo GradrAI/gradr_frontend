@@ -52,6 +52,7 @@ import {
 import useDrivePicker from "react-google-drive-picker";
 import { Resource } from "@/types/Resource";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ExamUploadFormProps {
   setAddNew: (value: boolean) => void;
@@ -256,8 +257,6 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
   };
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("clicked");
-    console.log("data: ", data);
     if (!data.resourceIds?.length) {
       toast.error("Please upload or select at least one resource.");
       return;
@@ -268,7 +267,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
 
     if (data.startDate && data.startTime) {
       const startLocal = DateTime.fromISO(
-        `${data.startDate.toISOString().split("T")[0]}T${data.startTime}`,
+        `${DateTime.fromJSDate(data.startDate).toISODate()}T${data.startTime}`,
         { zone: tz }
       );
       payload.availabilityStartAt = startLocal.toUTC().toISO();
@@ -276,11 +275,12 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
 
     if (data.endDate && data.endTime) {
       const endLocal = DateTime.fromISO(
-        `${data.endDate.toISOString().split("T")[0]}T${data.endTime}`,
+        `${DateTime.fromJSDate(data.endDate).toISODate()}T${data.endTime}`,
         { zone: tz }
       );
       payload.availabilityEndAt = endLocal.toUTC().toISO();
     }
+
 
     // Clean up payload
     delete payload.file;
@@ -559,7 +559,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
           )}
         />
 
-        {topicPriorities.length > 0 && (
+
           <div className="space-y-4 p-4 border rounded-lg bg-blue-50/30">
             <h3 className="text-sm font-medium flex items-center gap-2">
               Topic Prioritization
@@ -571,7 +571,14 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
               Adjust the weights to prioritize specific topics in the generated exam. Uncheck a topic to exclude it.
             </p>
             <div className="space-y-3">
-              {topicPriorities.map((tp, index) => (
+              {topicPriorities.length===0 ?
+                <div className="space-y-4"> 
+                  <Skeleton className="w-full h-12" />
+                  <Skeleton className="w-full h-12" />
+                  <Skeleton className="w-full h-12" />
+                </div>
+              :
+              topicPriorities.map((tp, index) => (
                 <div key={tp.topic} className="flex items-center gap-4 bg-white p-2 rounded-md border shadow-sm">
                   <Checkbox 
                     checked={tp.selected} 
@@ -606,7 +613,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
               ))}
             </div>
           </div>
-        )}
+        
 
         <div className="flex gap-4 flex-wrap justify-between items-center">
           <FormField
