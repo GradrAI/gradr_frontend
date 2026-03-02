@@ -15,9 +15,6 @@ import {
   Menu,
   X,
   DollarSign,
-  Twitter, 
-  Linkedin, 
-  Github,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -555,7 +552,7 @@ const Landing = () => {
                 Revolutionizing education with AI-powered grading solutions.
                 Helping educators save time and improve student outcomes.
               </p>
-              <div className="flex space-x-4">
+              <div className="flex flex-row items-center gap-5 pl-6">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -566,8 +563,32 @@ const Landing = () => {
                 >
                   <Mail className="h-5 w-5" />
                 </Button>
+                 <div className="flex items-center gap-5">
+                  <a href="https://x.com/gradrai" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                    <img 
+                      src="https://about.x.com/content/dam/about-twitter/x/brand-toolkit/logo-black.png.twimg.1920.png" 
+                      className="h-5 w-5 invert object-contain" 
+                      alt="X"
+                    />
+                  </a>
+                  <a href="https://www.linkedin.com/company/gradrai" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                    <img 
+                      src="https://content.linkedin.com/content/dam/me/business/en-us/amp/xbu/linkedin-revised-brand-guidelines/downloads/fg/brandg-business-in-logo-dsk-v03.png/jcr:content/renditions/brandg-business-in-logo-dsk-v03-2x.png"
+                      className="h-5 w-5 object-contain" 
+                      alt="LinkedIn"
+                    />
+                  </a>
+                  <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                    <img 
+                      src="https://facebook.com/images/fb_icon_325x325.png" 
+                      className="h-5 w-5 object-contain" 
+                      alt="Facebook"
+                    />
+                  </a>
+                </div>
               </div>
               {/* supported by */}
+              
               <span className="text-gray-500 text-xs font-semibold uppercase tracking-widest mb-6">
                 Supported By
               </span>
@@ -651,36 +672,6 @@ const Landing = () => {
                   </li>
                 </ul>
 
-                {/* Social Icons - Now positioned beside the links */}
-                <div className="flex flex-col gap-4 pl-6 border-l border-gray-800">
-                  <a 
-                    href="https://x.com/gradrai" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-white transition-colors"
-                    title="Follow on X"
-                  >
-                    <Twitter size={18} /> 
-                  </a>
-                  <a 
-                    href="https://www.linkedin.com/company/gradrai/posts/?feedView=all" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-[#0A66C2] transition-colors"
-                    title="Connect on LinkedIn"
-                  >
-                    <Linkedin size={18} />
-                  </a>
-                  <a 
-                    href="" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-white transition-colors"
-                    title="View GitHub"
-                  >
-                    <Github size={18} />
-                  </a>
-                </div>
               </div>
             </div>
             
