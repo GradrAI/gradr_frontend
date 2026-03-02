@@ -26,8 +26,8 @@ const formSchema = z.object({
 
 const SignInForm = () => {
   const nav = useNavigate();
-  const { user } = useStore();
-
+  const { user, accountType } = useStore();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,7 +50,7 @@ const SignInForm = () => {
   const { mutate: loginMutate, isPending } = useMutation({
     mutationKey: ["login"],
     mutationFn: (data: z.infer<typeof formSchema>) =>
-      axios.post(`/auth/login`, data),
+      axios.post(`/auth/login`, { ...data, accountType }),
   });
 
   const handleGoogleSignIn = () => {
@@ -59,11 +59,21 @@ const SignInForm = () => {
   };
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("expired") && params.get("expired") === "true") {
+      toast.error("Session expired, please login again", { id: "session-expired" });
+      // Clear the query param without refreshing the page
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  useEffect(() => {
     if (googleIsPending) toast.success("Signing you in...");
     if (googleIsError)
       toast.error(googleError?.message || "An error occurred. Please retry");
     if (googleData) window.location.href = googleData?.data?.authorizationUrl;
   }, [googleIsPending, googleIsError, googleError, googleData]);
+
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     loginMutate(values, {
