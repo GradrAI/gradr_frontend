@@ -43,7 +43,7 @@ const Details = () => {
     state: {
       categoryData,
       fileUrl,
-      result: { score, explanation, feedback, _id },
+      result: { score, explanation, feedback, results, _id },
     },
   } = useLocation();
 
@@ -204,33 +204,60 @@ const Details = () => {
         </p>
       </div>
 
-      <div className="w-full h-full flex flex-col gap-8 justify-start text-black border rounded-xl cursor-pointer text-justify p-4">
+      <div className="w-full h-full flex flex-col gap-8 justify-start text-black border rounded-xl cursor-pointer text-justify p-6 bg-white overflow-y-auto">
         <div className="flex flex-col justify-start">
-          <p className="text-xl m-0 font-bold">Score</p>
-          <div className="flex items-center justify-start gap-4 ">
-            <p className="m-0">
+          <p className="text-xl m-0 font-bold text-slate-500 uppercase text-xs tracking-widest mb-2">Overall Score</p>
+          <div className="flex items-center justify-start gap-4">
+            <p className="m-0 text-3xl font-black text-slate-900">
               {isFetchingResult ? (
-                <Loader2Icon className="animate-spin" />
+                <Loader2Icon className="animate-spin text-primary" />
               ) : (
                 displayScore
               )}
             </p>
-            <Pencil
-              size="15"
-              className="hover:text-green-500"
-              onClick={editScore}
-            />
+            <Button variant="ghost" size="icon" onClick={editScore} className="rounded-full hover:bg-slate-100">
+              <Pencil size="16" className="text-slate-400" />
+            </Button>
           </div>
         </div>
 
-        <div className="flex flex-col justify-start">
-          <p className="text-xl m-0 font-bold">Explanation</p>
-          <p className="leading-relaxed">{explanation}</p>
-        </div>
+        {/* Detailed Breakdown */}
+        {((latestResult?.result?.results || results) && (latestResult?.result?.results?.length > 0 || results?.length > 0)) && (
+          <div className="flex flex-col justify-start gap-4">
+            <p className="text-xl m-0 font-bold text-slate-500 uppercase text-xs tracking-widest border-b pb-2">Question Breakdown</p>
+            <div className="grid grid-cols-1 gap-4">
+              {(latestResult?.result?.results || results).map((res: any, index: number) => (
+                <div key={index} className="p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-primary/20 transition-colors shadow-sm">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-bold text-slate-800 text-sm">{res.questionId || `Question ${index + 1}`}</span>
+                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                      Marks: {res.score}
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm leading-relaxed"><span className="font-bold text-slate-500 text-[10px] uppercase block mb-1">AI Explanation</span>{res.explanation}</p>
+                    {res.feedback && (
+                      <p className="text-sm leading-relaxed italic border-l-2 border-green-500 pl-3"><span className="font-bold text-slate-500 text-[10px] uppercase block not-italic mb-1">AI Feedback</span>{res.feedback}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col justify-start">
-          <p className="text-xl m-0 font-bold">Feedback</p>
-          <p className="leading-relaxed">{feedback}</p>
+          <p className="text-xl m-0 font-bold text-slate-500 uppercase text-xs tracking-widest border-b pb-2 mb-4">Summary & Feedback</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-tighter">AI Justification</p>
+              <p className="leading-relaxed text-slate-700">{latestResult?.result?.explanation || explanation}</p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-tighter">AI General Feedback</p>
+              <p className="leading-relaxed text-slate-700 italic">{latestResult?.result?.feedback || feedback}</p>
+            </div>
+          </div>
         </div>
       </div>
 
