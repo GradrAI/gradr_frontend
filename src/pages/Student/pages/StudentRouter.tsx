@@ -1,9 +1,7 @@
 // src/pages/Student/components/StudentRouter.tsx
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
-import StudentUpload from "../pages/StudentUpload"; // Adjust path as needed
 import { useCourseInfo } from "../hooks/useCourseInfo";
-import ExamComponent from "./ExamComponent";
 import { useEffect } from "react";
 import useStore from "@/state";
 import SignInPrompt from "../components/SignInPrompt";
@@ -26,9 +24,11 @@ const StudentRouter = () => {
       const isExam = uniqueCode === category.uniqueCodes?.exam;
 
       if (isExam) {
-        nav("quiz");
+        nav("/student/quiz");
       } else if (isGrading) {
-        nav("grading");
+        nav("/student/grading");
+      }else{
+        nav("/student/dashboard");
       }
     }
   }, [courseData, uniqueCode, nav, user]);
