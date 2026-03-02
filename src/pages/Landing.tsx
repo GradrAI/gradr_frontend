@@ -552,7 +552,7 @@ const Landing = () => {
                 Revolutionizing education with AI-powered grading solutions.
                 Helping educators save time and improve student outcomes.
               </p>
-              <div className="flex space-x-4">
+              <div className="flex flex-row items-center gap-5 pl-6">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -563,6 +563,47 @@ const Landing = () => {
                 >
                   <Mail className="h-5 w-5" />
                 </Button>
+                 <div className="flex items-center gap-5">
+                  <a href="https://x.com/gradrai" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                    <img 
+                      src="https://about.x.com/content/dam/about-twitter/x/brand-toolkit/logo-black.png.twimg.1920.png" 
+                      className="h-5 w-5 invert object-contain" 
+                      alt="X"
+                    />
+                  </a>
+                  <a href="https://www.linkedin.com/company/gradrai" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                    <img 
+                      src="https://content.linkedin.com/content/dam/me/business/en-us/amp/xbu/linkedin-revised-brand-guidelines/downloads/fg/brandg-business-in-logo-dsk-v03.png/jcr:content/renditions/brandg-business-in-logo-dsk-v03-2x.png"
+                      className="h-5 w-5 object-contain" 
+                      alt="LinkedIn"
+                    />
+                  </a>
+                  <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="opacity-60 hover:opacity-100 transition-opacity">
+                    <img 
+                      src="https://facebook.com/images/fb_icon_325x325.png" 
+                      className="h-5 w-5 object-contain" 
+                      alt="Facebook"
+                    />
+                  </a>
+                </div>
+              </div>
+              {/* supported by */}
+              
+              <span className="text-gray-500 text-xs font-semibold uppercase tracking-widest mb-6">
+                Supported By
+              </span>
+              
+              <div className="flex flex-wrap justify-center md:justify-start items-center gap-8 md:gap-12">
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" 
+                  alt="Google" 
+                  className="h-6 md:h-7 transition-transform duration-300 hover:scale-110 cursor-pointer" 
+                />
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" 
+                  alt="MongoDB" 
+                  className="h-7 md:h-8 transition-transform duration-300 hover:scale-110 cursor-pointer" 
+                />
               </div>
             </div>
 
@@ -600,47 +641,45 @@ const Landing = () => {
                 </li>
               </ul>
             </div>
-
             <div>
               <h3 className="text-white font-semibold mb-4">Support</h3>
-              <ul className="space-y-2">
-                <li>
-                  <button
-                    className="text-gray-400 hover:text-white transition-colors"
-                    onClick={() =>
-                      window.open(
-                        "mailto:contact@gradrai.com?subject=Help Request",
-                        "_blank"
-                      )
-                    }
-                  >
-                    Help Center
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="text-gray-400 hover:text-white transition-colors"
-                    onClick={() => scrollToSection(contactRef)}
-                  >
-                    Contact Us
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="text-gray-400 hover:text-white transition-colors"
-                    onClick={() =>
-                      window.open(
-                        "mailto:contact@gradrai.com?subject=Demo Request",
-                        "_blank"
-                      )
-                    }
-                  >
-                    Book Demo
-                  </button>
-                </li>
-              </ul>
+              <div className="flex items-start gap-6">
+                {/* Support Links */}
+                <ul className="space-y-2">
+                  <li>
+                    <button
+                      className="text-gray-400 hover:text-white transition-colors"
+                      onClick={() => window.open("mailto:contact@gradrai.com?subject=Help Request", "_blank")}
+                    >
+                      Help Center
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="text-gray-400 hover:text-white transition-colors"
+                      onClick={() => scrollToSection(contactRef)}
+                    >
+                      Contact Us
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="text-gray-400 hover:text-white transition-colors"
+                      onClick={() => window.open("mailto:contact@gradrai.com?subject=Demo Request", "_blank")}
+                    >
+                      Book Demo
+                    </button>
+                  </li>
+                </ul>
+
+              </div>
             </div>
+            
+            
           </div>
+
+
+      
 
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
