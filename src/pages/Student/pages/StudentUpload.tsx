@@ -54,7 +54,7 @@ const StudentUpload = () => {
         ],
       });
     }
-  }, [userInfo]);
+  }, [userInfo, courseData]);
 
   return (
     <>
