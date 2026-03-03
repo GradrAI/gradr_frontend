@@ -31,7 +31,7 @@ interface StudentUploadFormProps {
     isError: boolean;
     error: any;
   };
-  user: User;
+  user: User | null;
   setMatricNo: (matricNo: string) => void;
 }
 
