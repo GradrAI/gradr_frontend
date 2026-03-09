@@ -10,7 +10,9 @@ export type QuestionResult = {
 export type Result = MongoDBDefault & {
   courseId?: string;
   categoryId?: string;
-  studentId: string;
+  studentId: string; // Matric number
+  studentRef?: string; // Student document ID
+  linkedUserId?: string; // Associated User ID
   score: string;
   results: QuestionResult[];
   explanation: string;
