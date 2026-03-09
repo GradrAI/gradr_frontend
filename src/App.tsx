@@ -33,6 +33,7 @@ import "./App.css";
 import ExamComponent from "./pages/Student/pages/ExamComponent";
 import StudentUpload from "./pages/Student/pages/StudentUpload";
 import StudentDashboard from "./pages/Student/pages/StudentDashboard";
+import StudentResultDetails from "./pages/Student/pages/StudentResultDetails";
 
 function App() {
   const nav = useNavigate();
@@ -67,6 +68,7 @@ function App() {
         <Route path="student" element={<StudentLayout />}>
           <Route index element={<StudentRouter />} />
           <Route path="dashboard" element={<StudentDashboard />} />
+          <Route path="results/:resultId" element={<StudentResultDetails />} />
           <Route path="quiz" element={<ExamComponent />} />
           <Route path="grading" element={<StudentUpload />} />
         </Route>

@@ -1,8 +1,18 @@
 import api from "@/lib/axios";
 // import useStore from "@/state";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const StudentDashboard = () => {
+    const navigate = useNavigate();
     const { data: resultsResponse, isLoading, isError, error } = useQuery({
         queryKey: ["results"],
         queryFn: async () => await api.get(`/results/all`),
@@ -46,29 +56,49 @@ const StudentDashboard = () => {
             {results.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {results.map((result: any) => (
-                        <div key={result._id} className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                            <div className="flex justify-between items-start mb-4">
-                                <h3 className="font-bold text-lg text-slate-800 line-clamp-1">
-                                    {result.courseId?.name || "Unknown Course"}
-                                </h3>
-                                <span className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-bold">
-                                    {result.score}
-                                </span>
-                            </div>
+                        <Card 
+                            key={result._id} 
+                            className="bg-white border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1 overflow-hidden"
+                            onClick={() => navigate(`/student/results/${result._id}`)}
+                        >
+                            <CardHeader className="pb-4">
+                                <div className="flex justify-between items-start">
+                                    <div className="space-y-1">
+                                        <CardTitle className="text-lg font-bold text-slate-800 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+                                            {result.courseId?.name || "Unknown Course"}
+                                        </CardTitle>
+                                        <CardDescription className="text-xs uppercase tracking-wider font-semibold text-slate-400">
+                                            {result.categoryId?.name || "Quiz"}
+                                        </CardDescription>
+                                    </div>
+                                    <div className="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-xl text-sm font-black shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                        {result.score}
+                                    </div>
+                                </div>
+                            </CardHeader>
                             
-                            {result.explanation && (
-                                <p className="text-slate-600 text-sm line-clamp-3 mb-4">
-                                    {result.explanation}
-                                </p>
-                            )}
+                            <CardContent>
+                                {result.explanation && (
+                                    <p className="text-slate-600 text-sm line-clamp-2 mb-4 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 italic">
+                                        "{result.explanation}"
+                                    </p>
+                                )}
+                            </CardContent>
 
-                            <div className="flex items-center text-xs text-slate-400">
-                                <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                {new Date(result.createdAt).toLocaleDateString()}
-                            </div>
-                        </div>
+                            <CardFooter className="pt-0 flex items-center justify-between">
+                                <div className="flex items-center text-[10px] text-slate-400 font-medium uppercase tracking-widest">
+                                    <svg className="w-3.5 h-3.5 mr-1.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    {new Date(result.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </div>
+                                <div className="text-indigo-400 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                    </svg>
+                                </div>
+                            </CardFooter>
+                        </Card>
                     ))}
                 </div>
             )}
