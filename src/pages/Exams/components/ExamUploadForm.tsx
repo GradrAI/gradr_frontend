@@ -53,6 +53,7 @@ import useDrivePicker from "react-google-drive-picker";
 import { Resource } from "@/types/Resource";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Slider } from "@/components/ui/slider"
 
 interface ExamUploadFormProps {
   setAddNew: (value: boolean) => void;
@@ -67,7 +68,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
   const [resourceOpen, setResourceOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
-  const form = useForm<FormSchemaType>({
+    const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       file: undefined,
@@ -88,6 +89,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
       resourceIds: [],
       standard: "GENERIC",
       topicPriorities: [],
+      hybridCount: 0,
     },
   });
 
@@ -100,6 +102,8 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
   const standard = form.watch("standard");
   const examType = form.watch("type");
   const topicPriorities = form.watch("topicPriorities") || [];
+  const totalQuestions = form.watch("totalQuizQuestions");
+  const hybridCount = form.watch("hybridCount") || 0;
 
   const { data: resourceData, refetch: refetchResources } = useQuery({
     queryKey: ["resourceData", courseId, user?._id, type],
@@ -247,7 +251,11 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
       form.setValue("numberOfOptions", 4);
       // WASSCE allows hybrid, so we don't force type
     }
-  }, [standard, form]);
+
+    if (examType === "hybrid" && hybridCount > totalQuestions) {
+      form.setValue("hybridCount", Math.floor(totalQuestions / 2));
+    }
+  }, [standard, form, examType, totalQuestions, hybridCount]);
 
   const handleSelectCourse = (selection: string) => {
     if (selection === "addNew") {
@@ -279,6 +287,11 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
         { zone: tz }
       );
       payload.availabilityEndAt = endLocal.toUTC().toISO();
+    }
+
+    if (data.type === "hybrid") {
+      payload.mcqCount = data.totalQuizQuestions - (data.hybridCount || 0);
+      payload.essayCount = data.hybridCount || 0;
     }
 
 
@@ -682,13 +695,49 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                   type="number"
                   {...field}
                   className="bg-white"
-                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    field.onChange(val);
+                    if (examType === "hybrid" && (form.getValues("hybridCount") || 0) > val) {
+                      form.setValue("hybridCount", Math.floor(val / 2));
+                    }
+                  }}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {examType === "hybrid" && (
+          <FormField
+            control={form.control}
+            name="hybridCount"
+            render={({ field }) => (
+              <FormItem className="space-y-4 p-4 border rounded-lg bg-orange-50/30">
+                <div className="flex justify-between items-center">
+                  <FormLabel>Theory/Essay Ratio</FormLabel>
+                  <span className="text-xs font-semibold text-primary bg-white px-2 py-1 rounded-md border">
+                    {totalQuestions - (field.value || 0)} MCQ / {field.value || 0} Essay
+                  </span>
+                </div>
+                <FormControl>
+                  <Slider
+                    min={0}
+                    max={totalQuestions}
+                    step={1}
+                    value={[field.value || 0]}
+                    onValueChange={(vals) => field.onChange(vals[0])}
+                  />
+                </FormControl>
+                <FormDescription className="text-[11px]">
+                  Slide to adjust the balance between multiple-choice and theory questions.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-4">

@@ -57,6 +57,7 @@ const formSchema = z
       weight: z.number().min(0).max(100),
       selected: z.boolean().default(true),
     })).optional(),
+    hybridCount: z.number().min(0).optional(),
   })
   .refine(
     (data) => {
