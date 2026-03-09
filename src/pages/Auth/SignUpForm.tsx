@@ -35,7 +35,7 @@ const formSchema = z
 
 const SignUpForm = () => {
   const nav = useNavigate();
-  const { saveUser } = useStore();
+  const { saveUser, accountType } = useStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -60,6 +60,7 @@ const SignUpForm = () => {
     mutationFn: (data: z.infer<typeof formSchema>) =>
       axios.post(`/auth/register`, {
         ...data,
+        accountType,
         confirmPassword: undefined, // exclude confirmPassword before sending
       }),
   });

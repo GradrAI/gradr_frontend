@@ -31,7 +31,7 @@ interface StudentGradeProps {
     isError: boolean;
     error: any;
   };
-  user: User;
+  user: User | null;
   matricNo: string;
   uniqueCode?: string;
 }
@@ -133,7 +133,7 @@ const StudentGrade: React.FC<StudentGradeProps> = ({
     <Button
       onClick={handleGrade}
       type="button"
-      //   disabled={postResultsIsPending} //disables while fetching previous student record for this exam and while grading
+      // disabled={postResultsIsPending} //disables while fetching previous student record for this exam and while grading
       className="w-[250px]"
     >
       {postResultsIsPending && <Loader2Icon className="animate-spin" />}

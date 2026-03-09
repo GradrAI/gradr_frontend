@@ -23,12 +23,13 @@ interface State {
   appendOrganizationData: (data: OrganizationData) => void;
   expandedRowId: number | null;
   setExpandedRowId: (id: number) => void;
+  reset: () => void;
 }
 
 const useStore = create<State>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get, store) => ({
         accountType: "",
         setAccountType: (accountType) => set({ accountType }),
         user: null,
@@ -51,6 +52,7 @@ const useStore = create<State>()(
           })),
         expandedRowId: null,
         setExpandedRowId: (id) => set({ expandedRowId: id }),
+        reset: () => {set(store.getInitialState())},
       }),
       {
         name: "storage",

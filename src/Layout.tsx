@@ -1,9 +1,8 @@
 import { createContext, useState } from "react";
-import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import { Outlet } from "react-router-dom";
 import useStore from "./state";
-import { Folder, Scan, Settings, Upload } from "lucide-react";
+import { Folder, Scan, Settings, Upload, Blocks } from "lucide-react";
 
 export const ModalContext = createContext<any>(null);
 
@@ -30,6 +29,11 @@ export default function Layout() {
       title: "Uploads",
       url: "/app/uploads",
       icon: Upload,
+    },
+    {
+      title: "Exams",
+      url: "/app/exams",
+      icon: Blocks,
     },
     {
       title: "Settings",

@@ -25,11 +25,12 @@ import { Loader2Icon } from "lucide-react";
 
 const postResults = async (data: any) =>
   await api.post<Result[]>(`/results`, data);
+//! TODO: replace LLM endpoint call with Agentic endpoint
 
 const Grader = () => {
   const nav = useNavigate();
   const queryClient = new QueryClient();
-  const { user, code } = useStore();
+  const { user } = useStore();
 
   const [selectedSubRows, setSelectedSubRows] = useState<any[]>([]);
   const [selectedCourse, setSelectedCourse] = useState("");
@@ -80,7 +81,7 @@ const Grader = () => {
 
   const handleSelect = (selection: string) => {
     setSelectedCourse(selection);
-    queryClient.invalidateQueries({ queryKey: ["students"] });
+    queryClient.invalidateQueries({ queryKey: ["singleCourse", selectedCourse] });
   };
 
   const handleExport = () => {
@@ -100,23 +101,14 @@ const Grader = () => {
       },
       onError: (error: any, variables: any, context: any) => {
         console.log("error", error);
-        // if (
-        //   (exportError as AxiosError<ErrorResponse>)?.response?.data?.message
-        // ) {
-        //   const message = (exportError as AxiosError<ErrorResponse>)?.response
-        //     ?.data?.message;
-
-        //   toast.error(message || "An error occurred");
-        //   if (message === "Unauthorized") nav("/app");
-        // } else {
         toast.error("An error occurred");
-        // }
         setExportButtonText("Retry");
       },
     });
   };
 
   useEffect(() => {
+    console.log("selectedCourse changed: ", selectedCourse);
     refetch();
   }, [selectedCourse]);
 
@@ -127,9 +119,10 @@ const Grader = () => {
     const sheetsData: string[][] = [header];
 
     selectedRows.forEach((category: Category) => {
-      category.students?.forEach((student) => {
-        const studentId = student?.result?._id ?? "N/A";
-        const score = student?.result?.score ?? "N/A";
+      category.students?.forEach((item: any) => {
+        const studentId =
+          item?.student?.studentId || item?.studentId || "N/A";
+        const score = item?.result?.score || item?.score || "N/A";
         sheetsData.push([String(studentId), String(score)]);
       });
     });
@@ -158,15 +151,16 @@ const Grader = () => {
       result: item.result || null,
     }));
 
-    //! TO-DO: first check if user hasn't passed limit based on their payment plan
+    //! TODO: first check if user hasn't passed limit based on their payment plan
 
     mutate(
-      { resultData: normalizedResultData, courseData: {} }, //! TO-DO: pass courseData: { maxScoreAttainable, guide, question } to reduce work done at the backend
+      { resultData: normalizedResultData, courseData: {} }, //! TODO: pass courseData: { maxScoreAttainable, guide, question } to reduce work done at the backend
       {
         onSuccess: (data: any, variables: any, context: any) => {
           console.log("data: ", data);
           toast.success(notifications.GRADE.SUCCESS);
           queryClient.invalidateQueries({ queryKey: ["students"] });
+          queryClient.invalidateQueries({ queryKey: ["singleCourse"] });
         },
         onError: (error: any, variables: any, context: any) => {
           console.log("error", error);
@@ -248,7 +242,7 @@ const Grader = () => {
             </div>
           )}
 
-          {data && Boolean(Object.keys(data)?.length) && (
+          {data && Boolean(Object.keys(data?.data?.data ?? {})?.length) && (
             <>
               <DataTable<Partial<any>, any>
                 columns={columns}
