@@ -60,7 +60,7 @@ interface ExamUploadFormProps {
 }
 
 const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
-  const { user } = useStore();
+  const { user, saveUser } = useStore();
   const [courses, setCourses] = useState<CourseData[]>([]);
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
@@ -311,6 +311,12 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
       onSuccess: (res: any) => {
         if (res.data?.success) {
           toast.success(notifications.QUIZ.SUCCESS);
+          
+          if (user && user.organization && typeof user.organization === "object") {
+             user.organization.generatedExamsCount = (user.organization.generatedExamsCount || 0) + 1;
+             saveUser({...user});
+          }
+          
           form.reset();
         } else {
           toast.error(res.data?.message || notifications.QUIZ.FAILURE);
@@ -321,6 +327,13 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
       },
     });
   }
+
+  const org = user?.organization;
+  const plan = typeof org === "object" ? org?.paymentPlan : null;
+  const maxGen = plan?.maxGeneratableExams || 0;
+  const genCount = org?.generatedExamsCount || 0;
+  const remainingGen = Math.max(0, maxGen - genCount);
+  const isOverLimit = remainingGen <= 0;
 
   return (
     <Form {...form}>
@@ -844,10 +857,33 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
           />
         )}
 
-        <Button type="submit" className="w-full md:w-[250px]" disabled={examIsPending}>
-          {examIsPending && <Loader2Icon className="animate-spin mr-2" />}
-          Generate Quiz
-        </Button>
+        <div className="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-4 rounded-lg border mt-8">
+           <div className="text-sm">
+             {maxGen > 0 ? (
+               <p className={isOverLimit ? "text-red-500 font-semibold" : "text-gray-700"}>
+                 Generation Quota: {remainingGen} exams remaining (Used: {genCount}/{maxGen})
+               </p>
+             ) : (
+               <p className="text-red-500 font-semibold">
+                 Your current plan doesn't include exam generation limit or is exhausted.
+               </p>
+             )}
+             {isOverLimit && (
+                <p className="text-xs text-red-500 mt-1">
+                   You have reached your limit and cannot generate more exams.
+                </p>
+             )}
+           </div>
+
+           <Button
+             type="submit"
+             disabled={examIsPending || isOverLimit}
+             className="w-full md:w-auto mt-4 md:mt-0"
+           >
+             {examIsPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+             Generate Exam
+           </Button>
+        </div>
       </form>
     </Form>
   );

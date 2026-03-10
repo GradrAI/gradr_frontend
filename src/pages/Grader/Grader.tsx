@@ -30,7 +30,7 @@ const postResults = async (data: any) =>
 const Grader = () => {
   const nav = useNavigate();
   const queryClient = new QueryClient();
-  const { user } = useStore();
+  const { user, saveUser } = useStore();
 
   const [selectedSubRows, setSelectedSubRows] = useState<any[]>([]);
   const [selectedCourse, setSelectedCourse] = useState("");
@@ -161,14 +161,28 @@ const Grader = () => {
           toast.success(notifications.GRADE.SUCCESS);
           queryClient.invalidateQueries({ queryKey: ["students"] });
           queryClient.invalidateQueries({ queryKey: ["singleCourse"] });
+          
+          // Optimistically update local store count or force a re-fetch of user
+          if (user && user.organization && typeof user.organization === "object") {
+             user.organization.gradedExamsCount += normalizedResultData.length;
+             saveUser({...user});
+          }
         },
         onError: (error: any, variables: any, context: any) => {
           console.log("error", error);
-          toast.error(notifications.GRADE.FAILURE);
+          toast.error(error?.response?.data?.message || notifications.GRADE.FAILURE);
         },
       }
     );
   };
+
+  const org = user?.organization;
+  const plan = typeof org === "object" ? org?.paymentPlan : null;
+  const maxGradable = plan?.maxGradableExams || 0;
+  const gradedCount = org?.gradedExamsCount || 0;
+  const remainingGradable = Math.max(0, maxGradable - gradedCount);
+
+  const isOverLimit = selectedSubRows.length > remainingGradable;
 
   return (
     <div className="w-full p-4 flex flex-col justify-between gap-2">
@@ -252,17 +266,36 @@ const Grader = () => {
                 getSubRows={(row: Partial<Category>) => row?.students ?? []}
               />
 
-              <Button
-                className="w-[180px]"
-                disabled={!Boolean(selectedSubRows?.length) || gradeIsPending}
-                onClick={handleGrade}
-              >
-                {gradeIsPending ? (
-                  <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
-                ) : (
-                  "Grade"
-                )}
-              </Button>
+              <div className="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-4 rounded-lg border">
+                <div className="text-sm">
+                  {maxGradable > 0 ? (
+                    <p className={isOverLimit ? "text-red-500 font-semibold" : "text-gray-700"}>
+                      Grading Quota: {remainingGradable} scripts remaining (Used: {gradedCount}/{maxGradable})
+                    </p>
+                  ) : (
+                   <p className="text-red-500 font-semibold">
+                      Your current plan doesn't include grading limit or is exhausted.
+                   </p>
+                  )}
+                  {isOverLimit && (
+                     <p className="text-xs text-red-500 mt-1">
+                        You are trying to grade {selectedSubRows.length} scripts, which exceeds your quota.
+                     </p>
+                  )}
+                </div>
+                
+                <Button
+                  className="w-[180px] mt-4 md:mt-0"
+                  disabled={!Boolean(selectedSubRows?.length) || gradeIsPending || isOverLimit}
+                  onClick={handleGrade}
+                >
+                  {gradeIsPending ? (
+                    <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
+                  ) : (
+                    "Grade"
+                  )}
+                </Button>
+              </div>
             </>
           )}
         </>
