@@ -7,7 +7,7 @@ export type User = {
   password: string | null;
   provider: string;
   picture: string;
-  organization?: string;
+  organization?: any;
   createdAt: Date | null;
   updatedAt: Date | null;
   refresh_token: string;
