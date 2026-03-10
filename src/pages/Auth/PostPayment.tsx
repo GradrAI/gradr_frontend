@@ -23,9 +23,11 @@ import {
 
 const PostPayment = () => {
   const nav = useNavigate();
-  const { selectedPaymentPlan, organizationData } = useStore();
+  const { user, saveUser, selectedPaymentPlan, organizationData } = useStore();
   const [searchParams] = useSearchParams();
   const reference = searchParams.get("reference");
+
+  const isFreePlan = !reference && selectedPaymentPlan && selectedPaymentPlan.amount === 0;
 
   const { data, isSuccess, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["verifyPayment", reference],
@@ -44,8 +46,13 @@ const PostPayment = () => {
     mutate: organizationMutate,
   } = useMutation({
     mutationKey: ["organization"],
-    mutationFn: async (data: OrganizationData) =>
-      await api.post("/organizations", data),
+    mutationFn: async (data: OrganizationData) => {
+      const orgId = typeof user?.organization === "object" ? user?.organization?._id : user?.organization;
+      if (orgId) {
+        return await api.put(`/organizations/${orgId}`, data);
+      }
+      return await api.post("/organizations", data);
+    },
   });
 
   useEffect(() => {
@@ -55,10 +62,16 @@ const PostPayment = () => {
       });
     }
 
-    if (isSuccess && data) {
-      toast.success("Payment verified successfully!", {
-        id: "payment-verification",
-      });
+    if ((isSuccess && data) || isFreePlan) {
+      if (reference) {
+        toast.success("Payment verified successfully!", {
+          id: "payment-verification",
+        });
+      } else {
+        toast.success("Free plan activated!", {
+          id: "payment-verification",
+        });
+      }
       toast.loading("Setting up your organization...", { id: "org-creation" });
 
       organizationMutate({
@@ -81,6 +94,8 @@ const PostPayment = () => {
     organizationData,
     selectedPaymentPlan,
     organizationMutate,
+    isFreePlan,
+    reference
   ]);
 
   useEffect(() => {
@@ -96,18 +111,27 @@ const PostPayment = () => {
       toast.success("Organization created successfully!", {
         id: "org-creation",
       });
+      
+      // Update store with new organization data
+      if (user) {
+        saveUser({
+          ...user,
+          organization: orgData.data?.data || user.organization
+        });
+      }
+
       setTimeout(() => {
-        nav("/app/settings");
+        nav("/app/assessments");
       }, 2000);
     }
-  }, [orgIsSuccess, orgIsError, orgIsPending, orgData, nav]);
+  }, [orgIsSuccess, orgIsError, orgIsPending, orgData, nav, user, saveUser]);
 
   const handleRetry = () => {
     refetch();
   };
 
   const handleGoToDashboard = () => {
-    nav("/app/settings");
+    nav("/app/assessments");
   };
 
   const handleGoBack = () => {
@@ -123,9 +147,11 @@ const PostPayment = () => {
             <div className="mx-auto mb-4 w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
             </div>
-            <CardTitle>Verifying Payment</CardTitle>
+            <CardTitle>{isFreePlan ? "Setting Up Your Account" : "Verifying Payment"}</CardTitle>
             <CardDescription>
-              Please wait while we confirm your payment...
+              {isFreePlan 
+                ? "Please wait while we set up your free account..." 
+                : "Please wait while we confirm your payment..."}
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
@@ -182,18 +208,18 @@ const PostPayment = () => {
   }
 
   // Organization creation pending
-  if (isSuccess && orgIsPending) {
+  if ((isSuccess || isFreePlan) && orgIsPending) {
     return (
       <div className="w-full min-h-[600px] flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="mx-auto mb-4 w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+              <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
             </div>
-            <CardTitle className="text-green-600">
-              Payment Successful!
-            </CardTitle>
-            <CardDescription>Setting up your organization...</CardDescription>
+            <CardTitle>{isFreePlan ? "Setting Up Your Account" : "Payment Successful!"}</CardTitle>
+            <CardDescription>
+              {isFreePlan ? "Creating your account..." : "Setting up your organization..."}
+            </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
             <div className="space-y-4">
@@ -217,7 +243,7 @@ const PostPayment = () => {
   }
 
   // Organization creation error
-  if (isSuccess && orgIsError) {
+  if ((isSuccess || isFreePlan) && orgIsError) {
     return (
       <div className="w-full min-h-[600px] flex items-center justify-center">
         <Card className="w-full max-w-md">
@@ -227,15 +253,15 @@ const PostPayment = () => {
             </div>
             <CardTitle className="text-yellow-600">Setup Issue</CardTitle>
             <CardDescription>
-              Payment was successful, but we encountered an issue setting up
-              your organization.
+              {isFreePlan 
+                ? "We encountered an issue setting up your account." 
+                : "Payment was successful, but we encountered an issue setting up your organization."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600 text-center">
               <p>
-                Don't worry - your payment was processed successfully. Our team
-                will resolve this shortly.
+                Don't worry - our team will resolve this shortly.
               </p>
             </div>
             <Button
@@ -253,7 +279,7 @@ const PostPayment = () => {
   }
 
   // Success state
-  if (isSuccess && orgIsSuccess) {
+  if ((isSuccess || isFreePlan) && orgIsSuccess) {
     return (
       <div className="w-full min-h-[600px] flex items-center justify-center">
         <Card className="w-full max-w-md">

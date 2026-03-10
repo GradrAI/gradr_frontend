@@ -24,6 +24,7 @@ import AssessmentDetails from "./pages/Assessments/AssessmentDetails";
 import SignInForm from "./pages/Auth/SignInForm";
 import SignUpForm from "./pages/Auth/SignUpForm";
 import AuthLayout from "./pages/Auth/AuthLayout";
+import SetPassword from "./pages/Auth/SetPassword";
 import StudentLayout from "./pages/Student/components/StudentLayout";
 import StudentRouter from "./pages/Student/pages/StudentRouter";
 import ExamCreate from "./pages/Exams/pages/ExamCreate";
@@ -56,6 +57,7 @@ function App() {
         <Route path="auth" element={<AuthLayout />}>
           <Route path="sign-in" element={<SignInForm />} />
           <Route path="sign-up" element={<SignUpForm />} />
+          <Route path="set-password" element={<SetPassword />} />
           <Route path="kyc" element={<KYC />} />
           <Route path="pricing" element={<Pricing />} />
           <Route path="confirmation" element={<PostPayment />} />

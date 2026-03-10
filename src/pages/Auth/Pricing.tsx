@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,15 +8,13 @@ import toast from "react-hot-toast";
 import useStore from "@/state";
 import PaystackPop from "@paystack/inline-js";
 import type { PaymentPlan as PaymentPlanType } from "@/types/PaymentPlan";
-import { OrganizationData } from "@/types/OrganizationData";
 import api from "@/lib/axios";
 import { formatNumber } from "@/lib/formatNumber";
 import { PayStackResponse } from "@/types/PayStackResponse";
 
 const Pricing = () => {
   const nav = useNavigate();
-  const { state } = useLocation();
-  const { user, token, selectedPaymentPlan, setSelectedPaymentPlan } =
+  const { user, selectedPaymentPlan, setSelectedPaymentPlan } =
     useStore();
 
   const { data: paymentPlanData, isLoading: plansLoading } = useQuery({
@@ -28,7 +26,7 @@ const Pricing = () => {
 
   const { mutate: paymentMutate, isPending: paymentPending } = useMutation({
     mutationKey: ["payment"],
-    mutationFn: async (data: { email: string; amount: string }) =>
+    mutationFn: async (data: { email: string; amount: number }) =>
       await api.post("/payment", data),
     // select:res=>res.data.data
   });
@@ -45,6 +43,12 @@ const Pricing = () => {
 
     if (!user?.email || !selectedPaymentPlan) {
       toast.error("Please select a payment plan");
+      return;
+    }
+
+    // Handle free plans
+    if (selectedPaymentPlan.amount === 0) {
+      nav("../confirmation");
       return;
     }
 
@@ -147,6 +151,19 @@ const Pricing = () => {
                     <span>{feat}</span>
                   </li>
                 ))}
+                
+                {plan.maxGradableExams !== undefined && (
+                  <li className="flex items-start gap-2 text-sm text-muted-foreground font-medium text-blue-700">
+                    <CheckCircle className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
+                    <span>Grade up to {plan.maxGradableExams === 0 ? "Unlimited" : formatNumber(String(plan.maxGradableExams))} exams</span>
+                  </li>
+                )}
+                {plan.maxGeneratableExams !== undefined && (
+                  <li className="flex items-start gap-2 text-sm text-muted-foreground font-medium text-blue-700">
+                    <CheckCircle className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
+                    <span>Generate up to {plan.maxGeneratableExams === 0 ? "Unlimited" : formatNumber(String(plan.maxGeneratableExams))} exams</span>
+                  </li>
+                )}
               </ul>
 
               <div className="flex items-center justify-center">
@@ -190,6 +207,8 @@ const Pricing = () => {
               <Mail className="w-4 h-4 mr-2" />
               Contact Us
             </>
+          ) : selectedPaymentPlan?.amount === 0 ? (
+            "Get Started"
           ) : (
             "Proceed to Payment"
           )}

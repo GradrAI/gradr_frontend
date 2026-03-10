@@ -83,16 +83,20 @@ const SignUpForm = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     registerMutate(values, {
       onSuccess: (data: any, variables: any, context: any) => {
-        toast.success("Account created! You can now sign in.");
         if (data.data.success) {
           const {
             data: {
-              data: { token, user },
+              data: { token, user, needsKYC, needsPayment },
             },
           } = data;
           localStorage.setItem("token", token);
           saveUser(user);
-          nav("/auth/sign-in");
+          
+          toast.success("Account created successfully!");
+          
+          if (needsKYC) nav("/auth/kyc");
+          else if (needsPayment) nav("/auth/pricing");
+          else nav("/app/assessments");
         }
       },
       onError: (error: any) => {

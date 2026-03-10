@@ -26,7 +26,7 @@ const formSchema = z.object({
 
 const SignInForm = () => {
   const nav = useNavigate();
-  const { user, accountType } = useStore();
+  const { user, accountType, saveUser } = useStore();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,8 +77,16 @@ const SignInForm = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     loginMutate(values, {
-      onSuccess: (data) => {
-        console.log("data: ", data);
+      onSuccess: (response) => {
+        const { token, user, needsKYC, needsPayment } = response.data;
+        localStorage.setItem("token", token);
+        saveUser(user);
+        
+        toast.success("Welcome back!");
+        
+        if (needsKYC) nav("/auth/kyc");
+        else if (needsPayment) nav("/auth/pricing");
+        else nav("/app/assessments");
       },
       onError: (error) => {
         console.log("error", error);

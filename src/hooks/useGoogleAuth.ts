@@ -26,14 +26,13 @@ export function useGoogleAuth(code: string | null) {
       return res.data;
     },
     onSuccess: (response) => {
-      const { data: { token, user } } = response;
+      const { data: { token, user, needsPassword, needsKYC, needsPayment } } = response as any;
 
       localStorage.setItem("token", token);
       saveUser(user);
       if (code) setCode(code);
-      // Navigation logic directly after storing user
-
-      if (user?.role === "Student" || accountType === "student") {
+      
+      if (user?.role === "Student") {
         if (studentData?.courseId && studentData?.uniqueCode) {
           navigate(`/student/quiz`, {
             state: {
@@ -44,10 +43,17 @@ export function useGoogleAuth(code: string | null) {
         } else {
           navigate("/student/dashboard");
         }
-      } else if (user?.role === "Organization" || accountType === "organization") {
-        if (user.organization) navigate("/app/assessments", { replace: true });
-        else navigate("/auth/kyc");
-      } else if (user?.role === "Individual" || accountType === "individual") {
+        return;
+      }
+
+      // Handle Admin/Lecturer/Individual onboarding
+      if (needsPassword) {
+        navigate("/auth/set-password");
+      } else if (needsKYC) {
+        navigate("/auth/kyc");
+      } else if (needsPayment) {
+        navigate("/auth/pricing");
+      } else {
         navigate("/app/assessments", { replace: true });
       }
     },
