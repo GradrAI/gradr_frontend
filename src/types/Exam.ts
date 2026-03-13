@@ -26,6 +26,7 @@ export interface Question {
   description: string;
   type: "multiple-choice" | "essay";
   options?: Option[];
+  maxMarks?: number;
 }
 
 export interface Option {
