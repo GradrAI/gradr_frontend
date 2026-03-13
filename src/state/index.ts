@@ -52,7 +52,19 @@ const useStore = create<State>()(
           })),
         expandedRowId: null,
         setExpandedRowId: (id) => set({ expandedRowId: id }),
-        reset: () => {set(store.getInitialState())},
+        reset: () => {
+          set({
+            accountType: "",
+            user: null,
+            token: "",
+            code: "",
+            studentData: null,
+            selectedPaymentPlan: null,
+            organizationData: {} as OrganizationData,
+            expandedRowId: null,
+          });
+          localStorage.removeItem("storage");
+        },
       }),
       {
         name: "storage",
