@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import formSchema, { FormSchemaType } from "../helpers/formSchema";
-import { ChevronDownIcon, Loader2Icon } from "lucide-react";
+import { ChevronDownIcon, Loader2Icon, RefreshCcw } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import {
@@ -107,8 +107,9 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
 
   const { data: resourceData, refetch: refetchResources } = useQuery({
     queryKey: ["resourceData", courseId, user?._id, type],
-    queryFn: async () =>
-      await api.get(`/resources/lecturer/${courseId}/${type}`),
+    queryFn: async () => {
+      return await api.get(`/resources/${user?.role || 'lecturer'}/${courseId}/${type}`);
+    },
     enabled: Boolean(courseId && user?._id && type),
     refetchOnWindowFocus: false,
   });
@@ -135,12 +136,25 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
   });
 
   useEffect(() => {
-    if (selectedResourceIds.length > 0) {
-      extractTopicsMutation.mutate(selectedResourceIds);
-    } else {
+    const handler = setTimeout(() => {
+      if (selectedResourceIds.length > 0) {
+        extractTopicsMutation.mutate(selectedResourceIds);
+      } else {
+        form.setValue("topicPriorities", []);
+      }
+    }, 1000); // 1s debounce to allow multiple selections
+
+    return () => clearTimeout(handler);
+  }, [JSON.stringify(selectedResourceIds)]);
+
+  // Reset resources and topics when course changes to avoid cross-course resource selection
+  useEffect(() => {
+    const currentResources = form.getValues("resourceIds");
+    if (currentResources && currentResources.length > 0) {
+      form.setValue("resourceIds", []);
       form.setValue("topicPriorities", []);
     }
-  }, [selectedResourceIds.length]);
+  }, [courseId, form]);
 
   const uploadMutation = useMutation({
     mutationFn: async (formData: FormData) => {
@@ -587,23 +601,40 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
 
 
           <div className="space-y-4 p-4 border rounded-lg bg-blue-50/30">
-            <h3 className="text-sm font-medium flex items-center gap-2">
+            <h3 className="text-sm font-medium flex items-center gap-2 w-full">
               Topic Prioritization
               <span className="text-[10px] font-normal text-muted-foreground bg-white px-2 py-0.5 rounded-full border">
                 AI Extracted
               </span>
+              {selectedResourceIds.length > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 text-[10px] ml-auto gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                  onClick={() => extractTopicsMutation.mutate(selectedResourceIds)}
+                  disabled={extractTopicsMutation.isPending}
+                >
+                  <RefreshCcw className={`w-3 h-3 ${extractTopicsMutation.isPending ? 'animate-spin' : ''}`} />
+                  Refetch
+                </Button>
+              )}
             </h3>
             <p className="text-[11px] text-muted-foreground">
               Adjust the weights to prioritize specific topics in the generated exam. Uncheck a topic to exclude it.
             </p>
             <div className="space-y-3">
-              {topicPriorities.length===0 ?
+              {extractTopicsMutation.isPending || (selectedResourceIds.length > 0 && topicPriorities.length === 0) ?
                 <div className="space-y-4"> 
                   <Skeleton className="w-full h-12" />
                   <Skeleton className="w-full h-12" />
                   <Skeleton className="w-full h-12" />
                 </div>
-              :
+              : selectedResourceIds.length === 0 ? (
+                <div className="text-center py-6 border-2 border-dashed rounded-md bg-white/50">
+                    <p className="text-xs text-muted-foreground italic">No resources selected. Select or upload resources to extract topics.</p>
+                </div>
+              ) :
               topicPriorities.map((tp, index) => (
                 <div key={tp.topic} className="flex items-center gap-4 bg-white p-2 rounded-md border shadow-sm">
                   <Checkbox 

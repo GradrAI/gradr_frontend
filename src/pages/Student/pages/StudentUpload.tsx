@@ -44,15 +44,8 @@ const StudentUpload = () => {
   });
 
   useEffect(() => {
-    if (courseData?.category._id && userInfo?.data?.studentId) {
+    if (courseData?.course?._id && userInfo?.data?.studentId) {
       setMatricNo(userInfo.data.studentId);
-      queryClient.invalidateQueries({
-        queryKey: [
-          "getResources",
-          courseData?.category._id,
-          userInfo.data.studentId,
-        ],
-      });
     }
   }, [userInfo, courseData]);
 
