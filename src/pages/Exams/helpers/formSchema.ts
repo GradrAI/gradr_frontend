@@ -75,13 +75,13 @@ const formSchema = z
           data.startTime,
           data.endTime
         );
-        return diffMinutes !== null && data.durationMinutes >= diffMinutes;
+        return diffMinutes !== null && data.durationMinutes <= diffMinutes;
       }
       return true; // Skip validation if fields are missing
     },
     {
       message:
-        "Duration cannot be less than the time between start and end dates/times.",
+        "Duration cannot exceed the total time window between start and end dates/times.",
       path: ["durationMinutes"], // Targets the error to this field
     }
   );
