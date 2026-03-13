@@ -105,7 +105,7 @@ const Settings = () => {
         </div>
       </div>
 
-      {user?.role === "Lecturer" && (
+      {user?.role === "lecturer" && (
         <div className="w-full border-t pt-8">
           <p className="font-semibold text-2xl text-slate-800 mb-4">Exam Preferences</p>
           <div className="space-y-6">
@@ -152,15 +152,47 @@ const Settings = () => {
           Organization Details
         </p>
         {user?.organization && organizationData ? (
-          <div className="space-y-1">
-            <p>
-              <span className="text-blue-600 font-medium">Name:</span>{" "}
-              {organizationData?.name}
-            </p>
-            <p>
-              <span className="text-blue-600 font-medium">Contact Number:</span>{" "}
-              {organizationData?.phoneNumber}
-            </p>
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <p>
+                <span className="text-blue-600 font-medium">
+                  {organizationData.organizationType === "individual" ? "Account Name:" : "Name:"}
+                </span>{" "}
+                {organizationData?.name}
+              </p>
+              <p>
+                <span className="text-blue-600 font-medium">Contact Number:</span>{" "}
+                {organizationData?.phoneNumber}
+              </p>
+              {organizationData.organizationType === "individual" && (
+                <p>
+                  <span className="text-blue-600 font-medium">Account Type:</span> Individual
+                </p>
+              )}
+            </div>
+            
+            {organizationData.organizationType === "individual" && (
+              <div className="pt-4 mt-4 border-t border-slate-200">
+                <p className="text-sm text-slate-600 mb-4">
+                  Want to switch to an institution? Connect your account to an organization below.
+                </p>
+                <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+                  <Input
+                    placeholder="Enter Organization Code"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    className="bg-white border-slate-300 max-w-sm"
+                  />
+                  <Button onClick={() => connectOrg(code)} disabled={isConnecting}>
+                    {isConnecting ? (
+                      <div className="h-5 w-5 border-2 rounded-full border-solid border-white border-e-transparent animate-spin transition-all ease-in-out"></div>
+                    ) : (
+                      "Connect Organization"
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div>

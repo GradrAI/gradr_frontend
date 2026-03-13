@@ -4,4 +4,5 @@ export type OrganizationData = {
   email: string;
   phoneNumber: string;
   paymentPlan: string;
+  organizationType?: "institution" | "individual";
 };

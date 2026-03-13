@@ -32,7 +32,7 @@ export function useGoogleAuth(code: string | null) {
       saveUser(user);
       if (code) setCode(code);
       
-      if (user?.role === "Student") {
+      if (user?.role === "student") {
         if (studentData?.courseId && studentData?.uniqueCode) {
           navigate(`/student/quiz`, {
             state: {
@@ -46,7 +46,7 @@ export function useGoogleAuth(code: string | null) {
         return;
       }
 
-      // Handle Admin/Lecturer/Individual onboarding
+      // Handle Admin/Lecturer onboarding
       if (needsPassword) {
         navigate("/auth/set-password");
       } else if (needsKYC) {

@@ -34,14 +34,17 @@ const formSchema = z.object({
 
 const KYC = () => {
   const nav = useNavigate();
-  const { appendOrganizationData } = useStore();
+  const { user, appendOrganizationData } = useStore();
+  
+  const isLecturer = user?.role === "lecturer";
+  const isIndividual = user?.role === "lecturer";
 
   const form = useForm<OrganizationData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      name: isLecturer ? `${user?.first_name || ""} ${user?.last_name || ""}`.trim() : "",
       physicalAddress: "",
-      email: "",
+      email: isLecturer ? user?.email || "" : "",
       phoneNumber: "",
     },
   });
@@ -57,10 +60,13 @@ const KYC = () => {
         <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
           🧾
         </div>
-        <h2 className="text-3xl font-bold text-gray-800">Organization KYC</h2>
+        <h2 className="text-3xl font-bold text-gray-800">
+          {isIndividual ? "Personal Information" : "Organization KYC"}
+        </h2>
         <p className="text-gray-500 max-w-md">
-          Tell us about your institution so we can tailor your grading
-          experience.
+          {isIndividual
+            ? "Tell us a bit about yourself so we can tailor your grading experience."
+            : "Tell us about your institution so we can tailor your grading experience."}
         </p>
       </div>
 
@@ -71,12 +77,12 @@ const KYC = () => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Organization Name</FormLabel>
+                <FormLabel>{isIndividual ? "Display Name" : "Organization Name"}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Amazing University" {...field} />
+                  <Input placeholder={isIndividual ? "John Doe" : "Amazing University"} {...field} />
                 </FormControl>
                 <FormDescription>
-                  This is your organization's name.
+                  {isIndividual ? "This is how you will be identified." : "This is your organization's name."}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -87,12 +93,12 @@ const KYC = () => {
             name="physicalAddress"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Physical Address</FormLabel>
+                <FormLabel>{isIndividual ? "Location" : "Physical Address"}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Campus Road" {...field} />
+                  <Input placeholder={isIndividual ? "City, Country" : "Campus Road"} {...field} />
                 </FormControl>
                 <FormDescription>
-                  Your head office or campus address.
+                  {isIndividual ? "Your general location." : "Your head office or campus address."}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -105,7 +111,7 @@ const KYC = () => {
               <FormItem>
                 <FormLabel>Email Address</FormLabel>
                 <FormControl>
-                  <Input placeholder="contact@yourorg.edu.ng" {...field} />
+                  <Input placeholder={isIndividual ? "you@example.com" : "contact@yourorg.edu.ng"} {...field} />
                 </FormControl>
                 <FormDescription>
                   We'll send updates and notifications here.
@@ -124,7 +130,7 @@ const KYC = () => {
                   <Input placeholder="+234 123 456 7890" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Organization’s official contact number.
+                  {isIndividual ? "Your contact number." : "Organization’s official contact number."}
                 </FormDescription>
                 <FormMessage />
               </FormItem>

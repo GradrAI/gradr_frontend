@@ -37,7 +37,7 @@ const Content = () => {
     },
   ];
 
-  const isOrganization = accountType?.toLowerCase() === "organization";
+  const isOrganization = accountType?.toLowerCase() === "institution";
   const isIndividual = accountType?.toLowerCase() === "individual";
   const features = isOrganization ? organizationFeatures : individualFeatures;
 

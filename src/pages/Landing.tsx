@@ -234,7 +234,7 @@ const Landing = () => {
                 <DropdownMenuContent className="">
                   <DropdownMenuItem
                     onClick={() => {
-                      setAccountType("individual");
+                      setAccountType("lecturer");
                       nav("auth/sign-up");
                     }}
                   >
@@ -242,7 +242,7 @@ const Landing = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
-                      setAccountType("organization");
+                      setAccountType("institution");
                       nav("auth/sign-up");
                     }}
                   >
