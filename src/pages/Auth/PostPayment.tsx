@@ -40,6 +40,7 @@ const PostPayment = () => {
   const {
     isSuccess: orgIsSuccess,
     isPending: orgIsPending,
+    isIdle: orgIsIdle,
     isError: orgIsError,
     error: orgError,
     data: orgData,
@@ -62,7 +63,7 @@ const PostPayment = () => {
       });
     }
 
-    if ((isSuccess && data) || isFreePlan) {
+    if (((isSuccess && data) || isFreePlan) && orgIsIdle) {
       if (reference) {
         toast.success("Payment verified successfully!", {
           id: "payment-verification",
@@ -77,6 +78,7 @@ const PostPayment = () => {
       organizationMutate({
         ...organizationData,
         paymentPlan: String(selectedPaymentPlan?._id),
+        organizationType: user?.role === "lecturer" ? "individual" : "institution",
       });
     }
 
@@ -95,7 +97,8 @@ const PostPayment = () => {
     selectedPaymentPlan,
     organizationMutate,
     isFreePlan,
-    reference
+    reference,
+    orgIsIdle
   ]);
 
   useEffect(() => {
