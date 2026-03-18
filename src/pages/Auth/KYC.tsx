@@ -130,7 +130,7 @@ const KYC = () => {
                   <Input placeholder="+234 123 456 7890" {...field} />
                 </FormControl>
                 <FormDescription>
-                  {isIndividual ? "Your contact number." : "Organization’s official contact number."}
+                  {isIndividual ? "Your contact number." : "Organization's official contact number."}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
