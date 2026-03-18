@@ -173,9 +173,9 @@ const StudentUploadForm: React.FC<StudentUploadFormProps> = ({
         });
         window.location.reload();
       },
-      onError: (error: any, variables: any, context: any) => {
+      onError: (error: any) => {
         console.log("error", error);
-        toast.error(notifications.UPLOAD.FAILURE);
+        toast.error(error?.response?.data?.error || notifications.UPLOAD.FAILURE);
       },
     });
   }
