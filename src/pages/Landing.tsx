@@ -15,7 +15,20 @@ import {
   Menu,
   X,
   DollarSign,
+  FileText,
+  Globe,
+  Building2,
+  MonitorCheck,
+  PieChart,
+  Lock,
+  CheckCircle2,
+  ArrowRight,
+  Search,
+  School,
+  Briefcase,
+  GraduationCap,
 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +48,8 @@ const Landing = () => {
 
   const featuresRef = useRef<HTMLDivElement>(null);
   const howItWorksRef = useRef<HTMLDivElement>(null);
+  const audienceRef = useRef<HTMLDivElement>(null);
+  const pricingRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
 
@@ -42,6 +57,99 @@ const Landing = () => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
     setMobileMenuOpen(false);
   };
+
+  const audiences = [
+    {
+      id: "schools",
+      icon: School,
+      title: "Schools & Universities",
+      description: "Complete digital transformation for institutional assessments.",
+      points: ["Bulk grading of paper scripts", "Class performance tracking", "LMS integration"],
+    },
+    {
+      id: "corporate",
+      icon: Briefcase,
+      title: "Corporate Organisations",
+      description: "Streamline recruitment and internal certification testing.",
+      points: ["Proctored online assessments", "Instant candidate screening", "Knowledge, Skills, and Aptitude Testing"],
+    },
+    {
+      id: "professional",
+      icon: GraduationCap,
+      title: "Professional Bodies",
+      description: "Secure, large-scale certification exam delivery and grading.",
+      points: ["Standardised exam delivery", "Hybrid paper/digital workflows", "High-integrity proctoring"],
+    },
+    {
+      id: "solo",
+      icon: Users,
+      title: "Solo Tutors & TAs",
+      description: "Save time and provide better feedback to your students.",
+      points: ["Quick affordable grading", "Detailed student feedback", "Personalised analytics"],
+    },
+  ];
+
+  const solutions = [
+    {
+      icon: Scan,
+      title: "AI Paper Grading",
+      description: "Upload scanned handwritten scripts and get instant AI-powered grades and feedback.",
+      color: "from-blue-500 to-indigo-600",
+    },
+    {
+      icon: FileText,
+      title: "CBT Generation",
+      description: "Create, distribute, and manage digital assessments with ease.",
+      color: "from-emerald-500 to-teal-600",
+    },
+    {
+      icon: MonitorCheck,
+      title: "Online Proctoring",
+      description: "AI-monitored sessions to ensure examiner integrity and prevent malpractice.",
+      color: "from-purple-500 to-pink-600",
+    },
+    {
+      icon: PieChart,
+      title: "Advanced Analytics",
+      description: "Real-time performance reports for students, educators, and administrators.",
+      color: "from-orange-500 to-amber-600",
+    },
+  ];
+
+  const pricingTiers = [
+    {
+      name: "Freemium",
+      price: { ngn: "0", usd: "0" },
+      description: "Perfect for trying out GradrAI",
+      features: ["50 scans / month", "Standard AI grading", "Basic analytics", "Email support"],
+      cta: "Get Started Free",
+      highlight: false,
+    },
+    {
+      name: "Individual",
+      price: { ngn: "12,000", usd: "7" },
+      description: "Ideal for solo tutors and lecturers",
+      features: ["300 scans / month", "Advanced AI feedback", "Detailed reports", "Priority support"],
+      cta: "Start Individual Trial",
+      highlight: true,
+    },
+    {
+      name: "Organisation",
+      price: { ngn: "55,000", usd: "32" },
+      description: "Best for schools and small departments",
+      features: ["1,500 scans / month", "5-10 user accounts", "Bulk uploads", "CBT distribution"],
+      cta: "Join as Organisation",
+      highlight: false,
+    },
+    {
+      name: "Enterprise",
+      price: { ngn: "Custom", usd: "Custom" },
+      description: "For large institutions and corporates",
+      features: ["Unlimited scans", "Full LMS integration", "Custom proctoring", "Dedicated account manager"],
+      cta: "Contact Sales",
+      highlight: false,
+    },
+  ];
 
   const features = [
     {
@@ -186,19 +294,19 @@ const Landing = () => {
                   onClick={() => scrollToSection(featuresRef)}
                   className="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
                 >
-                  Features
+                  Solutions
                 </button>
                 <button
-                  onClick={() => scrollToSection(howItWorksRef)}
+                  onClick={() => scrollToSection(audienceRef)}
                   className="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
                 >
-                  How it Works
+                  Who it's for
                 </button>
                 <button
-                  onClick={() => scrollToSection(faqRef)}
+                  onClick={() => scrollToSection(pricingRef)}
                   className="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
                 >
-                  FAQ
+                  Pricing
                 </button>
                 <button
                   onClick={() => scrollToSection(contactRef)}
@@ -272,19 +380,19 @@ const Landing = () => {
                 onClick={() => scrollToSection(featuresRef)}
                 className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary w-full text-left"
               >
-                Features
+                Solutions
               </button>
               <button
-                onClick={() => scrollToSection(howItWorksRef)}
+                onClick={() => scrollToSection(audienceRef)}
                 className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary w-full text-left"
               >
-                How it Works
+                Who it's for
               </button>
               <button
-                onClick={() => scrollToSection(faqRef)}
+                onClick={() => scrollToSection(pricingRef)}
                 className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary w-full text-left"
               >
-                FAQ
+                Pricing
               </button>
               <button
                 onClick={() => scrollToSection(contactRef)}
@@ -309,35 +417,34 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/50 via-background to-purple-50/50 dark:from-blue-950/20 dark:via-background dark:to-purple-950/20">
+      <section className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/50 via-background to-purple-50/50 dark:from-blue-950/20 dark:via-background dark:to-purple-950/20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
-            {/* <Badge className="mb-4 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 hover:from-blue-100 hover:to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 dark:text-blue-300 border-0">
-              🚀 Now in Beta - Join Early Access
-            </Badge> */}
-            <h1 className="text-4xl sm:text-5xl py-6 lg:text-6xl font-bold text-foreground mb-6">
-              Break Free From{" "}
+            <Badge className="mb-4 bg-blue-100 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 border-0 px-4 py-1">
+              End-to-End Assessment Platform
+            </Badge>
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-foreground mb-8 tracking-tight">
+              Generate, Deliver, Grade,{" "}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Manual Grading
+                Analyse.
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-              Save hours of tedious grading with AI-powered automation. Focus on
-              what matters most—teaching, mentoring, and fostering innovation in
-              your classroom.
+            <p className="text-xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
+              Empowering educators, schools, and organisations with a unified infrastructure for 
+              paper-based and digital assessments. Trusted by institutions across Africa.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-6 text-xl rounded-full shadow-lg shadow-blue-500/20 transition-all hover:scale-105"
                 onClick={() => nav(`auth/sign-in`)}
               >
-                Get Started
+                Start Free Trial
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-950/20 px-8 py-3 text-lg"
+                className="border-2 border-primary text-primary hover:bg-primary/5 px-10 py-6 text-xl rounded-full transition-all hover:scale-105"
                 onClick={() =>
                   window.open(
                     "mailto:contact@gradrai.com?subject=Demo Request",
@@ -345,7 +452,7 @@ const Landing = () => {
                   )
                 }
               >
-                Request Demo
+                Book a Demo
               </Button>
             </div>
           </div>
@@ -371,39 +478,94 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section ref={featuresRef} className="py-20 px-4 sm:px-6 lg:px-8">
+      {/* Problem Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/10">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6 leading-tight">
+                Traditional Assessments are <br />
+                <span className="text-primary">Broken and Disconnected.</span>
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                From manual grading bottlenecks to high-cost digital infrastructure, maintaining 
+                assessment integrity and speed has never been harder for modern institutions.
+              </p>
+              <div className="space-y-4">
+                {[
+                  "Inconsistent manual grading and feedback",
+                  "Lack of proctoring for online assessments",
+                  "Poor student performance insights",
+                  "High operational costs for CBT infrastructure",
+                  "Disconnected tools for paper and digital",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <X className="h-5 w-5 text-red-500" />
+                    <span className="text-foreground font-medium">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-3xl" />
+              <Card className="relative border-2 border-border/50 shadow-2xl overflow-hidden">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                      <Clock className="h-6 w-6 text-red-600 dark:text-red-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-foreground">Manual Bottleneck</h4>
+                      <p className="text-sm text-muted-foreground">Average 15 mins per script</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full w-[85%] bg-red-500 rounded-full" />
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Admin Overload</span>
+                      <span className="font-bold text-red-500">85% High</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Solution / Product Overview Section */}
+      <section ref={featuresRef} className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Revolutionize Your Grading Process
+            <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
+              One Platform, <span className="text-primary">Every Assessment.</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Discover how GradrAI transforms traditional assessment workflows
-              with cutting-edge AI technology
+              GradrAI provides the infrastructure you need to generate, deliver, and grade 
+              assessments across the entire lifecycle.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {solutions.map((solution, index) => (
               <Card
                 key={index}
-                className="p-6 hover:shadow-lg transition-all duration-300 border-0 bg-card shadow-md hover:scale-[1.02]"
+                className="group p-8 hover:shadow-xl transition-all duration-300 border-border/50 bg-card hover:border-primary/50"
               >
-                <CardContent className="p-0">
-                  <div className="flex items-center mb-4">
-                    <div
-                      className={`p-3 bg-gradient-to-r ${feature.color} rounded-lg mr-4 shadow-md`}
-                    >
-                      <feature.icon className="h-6 w-6 text-white" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-foreground">
-                      {feature.title}
-                    </h3>
+                <CardContent className="p-0 flex flex-col sm:flex-row gap-6">
+                  <div className={`shrink-0 h-16 w-16 rounded-2xl bg-gradient-to-br ${solution.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                    <solution.icon className="h-8 w-8 text-white" />
                   </div>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {feature.description}
-                  </p>
+                  <div>
+                    <h3 className="text-2xl font-bold text-foreground mb-3">
+                      {solution.title}
+                    </h3>
+                    <p className="text-muted-foreground text-lg leading-relaxed mb-4">
+                      {solution.description}
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -411,74 +573,229 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section
-        ref={howItWorksRef}
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50/50 to-gray-100/50 dark:from-slate-900/20 dark:to-gray-900/20"
-      >
+      {/* Use Case / Audience Section */}
+      <section ref={audienceRef} className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              How GradrAI Works
+            <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
+              Designed for Scale and <span className="text-primary">Impact.</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Get started in three simple steps and transform your grading
-              workflow forever
+              Whether you're a solo tutor or a national institution, GradrAI adapts to your workflow.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {steps.map((step, index) => (
-              <div key={index} className="text-center group">
-                <div className="relative mb-8">
-                  <div
-                    className={`w-20 h-20 bg-gradient-to-r ${step.color} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <step.icon className="h-10 w-10 text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {audiences.map((audience, index) => (
+              <Card key={index} className="border-none shadow-md hover:shadow-lg transition-all h-full">
+                <CardContent className="p-6 flex flex-col h-full">
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                    <audience.icon className="h-6 w-6 text-primary" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
-                    {index + 1}
-                  </div>
-                </div>
-                <h3 className="text-xl font-semibold text-foreground mb-4">
-                  {step.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">{audience.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-6 flex-grow">{audience.description}</p>
+                  <ul className="space-y-3">
+                    {audience.points.map((point, pIdx) => (
+                      <li key={pIdx} className="flex items-start gap-2 text-sm text-foreground/80">
+                        <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-700">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-            Ready to Transform Your Grading?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 leading-relaxed">
-            Join hundreds of educators who are already using AI-assisted grading
-            to save time and improve their assessment process.
+      {/* How It Works Section */}
+      <section ref={howItWorksRef} className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
+              Streamlined <span className="text-primary">Workflows.</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Choose the workflow that fits your assessment needs.
+            </p>
+          </div>
+
+          <Tabs defaultValue="paper" className="max-w-5xl mx-auto">
+            <TabsList className="grid w-full grid-cols-2 mb-12 h-14 p-1 gap-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
+              <TabsTrigger value="paper" className="text-lg font-semibold rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary dark:data-[state=active]:bg-slate-700">
+                Paper-based Grading
+              </TabsTrigger>
+              <TabsTrigger value="digital" className="text-lg font-semibold rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary dark:data-[state=active]:bg-slate-700">
+                Computer-based (CBT)
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="paper">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                {[
+                  { icon: Scan, title: "Scan", desc: "Scan handwritten scripts using any scanner or mobile app." },
+                  { icon: Upload, title: "Upload", desc: "Upload PDFs or images to our secure portal." },
+                  { icon: Brain, title: "AI Grade", desc: "AI reads handwriting and applies your marking scheme." },
+                  { icon: FileText, title: "Export", desc: "Review results and export to Sheets or LMS." },
+                ].map((step, i) => (
+                  <div key={i} className="text-center px-4">
+                    <div className="h-16 w-16 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
+                      <step.icon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h4 className="font-bold text-lg mb-2">{step.title}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+            <TabsContent value="digital">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                {[
+                  { icon: FileText, title: "Create", desc: "Generate quiz questions using AI or manual entry." },
+                  { icon: Globe, title: "Distribute", desc: "Share assessment links with students securely." },
+                  { icon: MonitorCheck, title: "Proctor", desc: "Monitor attempts with AI-powered integrity tools." },
+                  { icon: PieChart, title: "Analyse", desc: "Instant auto-grading and performance analytics." },
+                ].map((step, i) => (
+                  <div key={i} className="text-center px-4">
+                    <div className="h-16 w-16 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
+                      <step.icon className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <h4 className="font-bold text-lg mb-2">{step.title}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
+
+      {/* Competitive Differentiation Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-3xl sm:text-5xl font-bold mb-8 leading-tight">
+                Built for the <span className="text-blue-400">Future of Education</span> in Africa.
+              </h2>
+              <div className="space-y-8">
+                {[
+                  { title: "Affordable & Accessible", desc: "Pricing designed for local realities, with global-scale technology." },
+                  { title: "Hybrid Workflow", desc: "The only platform that handles both paper scripts and digital tests seamlessly." },
+                  { title: "Mobile-First", desc: "Optimised for scenarios with limited high-end hardware infrastructure." },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="shrink-0 h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center mt-1">
+                      <CheckCircle2 className="h-4 w-4 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-xl mb-2">{item.title}</h4>
+                      <p className="text-slate-400">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-2xl">
+              <h3 className="text-2xl font-bold mb-6">Why GradrAI?</h3>
+              <div className="space-y-4">
+                <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center group cursor-default">
+                  <span>Hybrid SaaS Model</span>
+                  <Badge variant="outline" className="text-blue-400 border-blue-400">Unique</Badge>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center">
+                  <span>Fraction of Global Competitor Cost</span>
+                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                </div>
+                <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center">
+                  <span>Local Context Support</span>
+                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section ref={pricingRef} className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
+              Modern Pricing for <span className="text-primary">Modern Educators.</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Simple, transparent pricing that scales with your needs.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {pricingTiers.map((tier, index) => (
+              <Card key={index} className={`relative flex flex-col h-full border-2 ${tier.highlight ? 'border-primary shadow-xl scale-105 z-10' : 'border-border shadow-md'}`}>
+                {tier.highlight && (
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
+                    Most Popular
+                  </div>
+                )}
+                <CardContent className="p-8 flex flex-col h-full">
+                  <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-6 h-10">{tier.description}</p>
+                  <div className="mb-8">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-3xl font-bold">₦{tier.price.ngn}</span>
+                      <span className="text-muted-foreground text-sm">/mo</span>
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      (~${tier.price.usd}/mo)
+                    </div>
+                  </div>
+                  <ul className="space-y-4 mb-8 flex-grow">
+                    {tier.features.map((feature, fIdx) => (
+                      <li key={fIdx} className="flex items-start gap-3 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button 
+                    className={`w-full py-6 text-lg font-bold rounded-xl ${tier.highlight ? 'bg-primary text-white hover:bg-primary/90' : 'bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white'}`}
+                    onClick={() => nav(`auth/sign-in`)}
+                  >
+                    {tier.cta}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <p className="text-center mt-12 text-muted-foreground">
+            Need more? <button className="text-primary font-bold hover:underline">Add pay-per-scan credits</button> anytime.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold mb-8">
+            Ready to modernise your assessment lifecycle?
+          </h2>
+          <p className="text-xl text-blue-100 mb-12 leading-relaxed">
+            Join the leading institutions across Africa using GradrAI to deliver faster, 
+            fairer, and more consistent grades.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Button
               size="lg"
-              className="bg-white text-blue-600 hover:bg-gray-50 px-8 py-3 text-lg font-semibold shadow-lg"
-              onClick={() =>
-                window.open(
-                  "mailto:contact@gradrai.com?subject=Early Access Request",
-                  "_blank"
-                )
-              }
+              className="bg-white text-blue-600 hover:bg-slate-50 px-10 py-7 text-xl font-bold shadow-2xl rounded-2xl"
+              onClick={() => nav(`auth/sign-up`)}
             >
               Start Free Trial
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-blue-600 hover:bg-white hover:text-blue-600 dark:text-white dark:hover:bg-gray-500 px-8 py-3 text-lg shadow-lg"
+              className="border-2 border-white text-black hover:bg-white/10 px-10 py-7 text-xl font-bold rounded-2xl"
               onClick={() =>
                 window.open(
                   "mailto:contact@gradrai.com?subject=Demo Request",
@@ -486,44 +803,44 @@ const Landing = () => {
                 )
               }
             >
-              Schedule Demo
+              Request Demo
             </Button>
           </div>
         </div>
       </section>
 
       {/* FAQ Section */}
-      <section ref={faqRef} className="py-20 px-4 sm:px-6 lg:px-8">
+      <section ref={faqRef} className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Frequently Asked Questions
+            <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-4">
+              Common Questions
             </h2>
             <p className="text-xl text-muted-foreground">
-              Everything you need to know about GradrAI
+              Everything you need to know about the platform.
             </p>
           </div>
 
           <div className="space-y-4">
             {faqs.map((faq, index) => (
-              <Card key={index} className="overflow-hidden">
+              <Card key={index} className="overflow-hidden border-border/50 shadow-sm">
                 <CardContent className="p-0">
                   <button
-                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                    className="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   >
-                    <span className="font-semibold text-gray-900 dark:text-white pr-8">
+                    <span className="text-lg font-bold text-foreground pr-8">
                       {faq.question}
                     </span>
                     {openFaq === index ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                      <ChevronUp className="h-6 w-6 text-primary flex-shrink-0" />
                     ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                      <ChevronDown className="h-6 w-6 text-muted-foreground flex-shrink-0" />
                     )}
                   </button>
                   {openFaq === index && (
-                    <div className="px-6 pb-4">
-                      <p className="text-gray-600 dark:text-white leading-relaxed">
+                    <div className="px-8 pb-8 animate-in fade-in duration-300">
+                      <p className="text-muted-foreground text-lg leading-relaxed">
                         {faq.answer}
                       </p>
                     </div>
@@ -538,48 +855,43 @@ const Landing = () => {
       {/* Footer */}
       <footer
         ref={contactRef}
-        className="bg-gradient-to-br from-gray-900 to-slate-900 dark:from-gray-950 dark:to-slate-950 py-12 px-4 sm:px-6 lg:px-8"
+        className="bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-900"
       >
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center mb-4">
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="flex items-center mb-6">
+                <span className="text-3xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   GradrAI
                 </span>
               </div>
-              <p className="text-gray-400 mb-6 max-w-md">
-                Revolutionizing education with AI-powered grading solutions.
-                Helping educators save time and improve student outcomes.
+              <p className="text-slate-400 mb-8 max-w-md text-lg leading-relaxed">
+                The next-generation assessment infrastructure for schools, 
+                professional bodies, and corporate organisations. Built for 
+                efficiency, integrity, and scale.
               </p>
-              <div className="flex space-x-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-400 hover:text-white p-2 hover:bg-gray-800"
-                  onClick={() =>
-                    window.open("mailto:contact@gradrai.com", "_blank")
-                  }
-                >
-                  <Mail className="h-5 w-5" />
-                </Button>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 text-slate-400">
+                  <Mail className="h-5 w-5 text-primary text-white" />
+                  <span>contact@gradrai.com</span>
+                </div>
               </div>
             </div>
 
             <div>
-              <h3 className="text-white font-semibold mb-4">Product</h3>
-              <ul className="space-y-2">
+              <h3 className="text-white font-bold mb-6 text-lg">Platform</h3>
+              <ul className="space-y-4">
                 <li>
                   <button
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-slate-400 hover:text-white transition-colors"
                     onClick={() => scrollToSection(featuresRef)}
                   >
-                    Features
+                    Solutions
                   </button>
                 </li>
                 <li>
                   <button
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-slate-400 hover:text-white transition-colors"
                     onClick={() => scrollToSection(howItWorksRef)}
                   >
                     How it Works
@@ -587,13 +899,8 @@ const Landing = () => {
                 </li>
                 <li>
                   <button
-                    className="text-gray-400 hover:text-white transition-colors"
-                    onClick={() =>
-                      window.open(
-                        "mailto:contact@gradrai.com?subject=Pricing Inquiry",
-                        "_blank"
-                      )
-                    }
+                    className="text-slate-400 hover:text-white transition-colors"
+                    onClick={() => scrollToSection(pricingRef)}
                   >
                     Pricing
                   </button>
@@ -602,11 +909,11 @@ const Landing = () => {
             </div>
 
             <div>
-              <h3 className="text-white font-semibold mb-4">Support</h3>
-              <ul className="space-y-2">
+              <h3 className="text-white font-bold mb-6 text-lg">Support</h3>
+              <ul className="space-y-4">
                 <li>
                   <button
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-slate-400 hover:text-white transition-colors"
                     onClick={() =>
                       window.open(
                         "mailto:contact@gradrai.com?subject=Help Request",
@@ -619,45 +926,32 @@ const Landing = () => {
                 </li>
                 <li>
                   <button
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-slate-400 hover:text-white transition-colors"
                     onClick={() => scrollToSection(contactRef)}
                   >
                     Contact Us
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="text-gray-400 hover:text-white transition-colors"
-                    onClick={() =>
-                      window.open(
-                        "mailto:contact@gradrai.com?subject=Demo Request",
-                        "_blank"
-                      )
-                    }
-                  >
-                    Book Demo
                   </button>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} GradrAI. All rights reserved.
+          <div className="border-t border-slate-900 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-slate-500 text-sm">
+              © {new Date().getFullYear()} GradrAI. All rights reserved. Registered for the Nigerian & Global markets.
             </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
+            <div className="flex gap-8">
               <button
-                className="text-gray-400 hover:text-white text-sm transition-colors"
+                className="text-slate-500 hover:text-white text-sm transition-colors"
                 onClick={() => nav("privacy-policy")}
               >
-                Privacy Policy
+                Privacy
               </button>
               <button
-                className="text-gray-400 hover:text-white text-sm transition-colors"
+                className="text-slate-500 hover:text-white text-sm transition-colors"
                 onClick={() => nav("terms-of-service")}
               >
-                Terms of Service
+                Terms
               </button>
             </div>
           </div>
