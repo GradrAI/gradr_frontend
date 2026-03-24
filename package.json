@@ -59,8 +59,6 @@
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.23.0",
     "recharts": "^3.8.0",
-    "semantic-ui-css": "^2.5.0",
-    "semantic-ui-react": "^2.1.5",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8",

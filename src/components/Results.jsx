@@ -1,15 +1,15 @@
 import { useMutationState, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
-  TableRow,
-  TableHeaderCell,
-  TableHeader,
-  TableFooter,
-  TableCell,
-  TableBody,
-  Button,
   Table,
-} from "semantic-ui-react";
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { useEffect, useMemo, useState } from "react";
 import useStore from "@/state";
@@ -86,18 +86,9 @@ const Results = () => {
 
   if (gradingResponse_[0]?.status == "rejected") {
     return (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <div className="w-full h-full flex flex-col items-center justify-center gap-4">
         <p>Oops. An error occurred.</p>
-        <Button primary onClick={() => nav("/assessments")}>
+        <Button onClick={() => nav("/assessments")}>
           Go back
         </Button>
       </div>
@@ -105,7 +96,7 @@ const Results = () => {
   }
 
   return (
-    <div className="w-100 h-screen p-8 flex flex-col gap-6">
+    <div className="w-full h-screen p-8 flex flex-col gap-6">
       {Boolean(sheetsUri) && (
         <div className="w-full h-max flex flex-col gap-0.5 justify-end content-end text-end">
           <p>Google Sheets url:</p>
@@ -120,46 +111,47 @@ const Results = () => {
         </div>
       )}
 
-      <Table columns={3}>
-        <TableHeader>
-          <TableRow>
-            <TableHeaderCell>Student ID</TableHeaderCell>
-            <TableHeaderCell>Grade</TableHeaderCell>
-            <TableHeaderCell>Status</TableHeaderCell>
-          </TableRow>
-        </TableHeader>
+      <div className="border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="font-bold">Student ID</TableHead>
+              <TableHead className="font-bold">Grade</TableHead>
+              <TableHead className="font-bold text-right">Status</TableHead>
+            </TableRow>
+          </TableHeader>
 
-        <TableBody>
-          {gradingResponse_?.map(({ parsedResponse }, id) => (
-            <TableRow key={id}>
-              <TableCell>{id + 1}</TableCell>
-              <TableCell>{parsedResponse.score}</TableCell>
-              <TableCell>
-                <Button secondary onClick={() => nav(`${id}`)}>
-                  Review
-                </Button>
+          <TableBody>
+            {gradingResponse_?.map(({ parsedResponse }, id) => (
+              <TableRow key={id} className="hover:bg-muted/30">
+                <TableCell>{id + 1}</TableCell>
+                <TableCell>{parsedResponse.score}</TableCell>
+                <TableCell className="text-right">
+                  <Button variant="secondary" size="sm" onClick={() => nav(`${id}`)}>
+                    Review
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+
+          <TableFooter className="bg-transparent border-t">
+            <TableRow>
+              <TableCell colSpan={3} className="p-4">
+                <div className="flex justify-end">
+                  <Button
+                    onClick={exportToGoogleSheets}
+                    disabled={Boolean(sheetsUri) || isLoading}
+                    className={Boolean(sheetsUri) ? "cursor-not-allowed opacity-50" : ""}
+                  >
+                    {buttonText}
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-
-        <TableFooter fullWidth>
-          <TableRow>
-            <TableHeaderCell colSpan="6">
-              <Button
-                floated="right"
-                primary
-                size="small"
-                onClick={exportToGoogleSheets}
-                disabled={Boolean(sheetsUri)}
-                className={Boolean(sheetsUri) && "cursor-not-allowed"}
-              >
-                {buttonText}
-              </Button>
-            </TableHeaderCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
+          </TableFooter>
+        </Table>
+      </div>
     </div>
   );
 };
