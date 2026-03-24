@@ -364,7 +364,9 @@ const Landing = () => {
               <ThemeToggle />
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="text-muted-foreground hover:text-primary"
+                className="text-muted-foreground hover:text-primary p-2"
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileMenuOpen}
               >
                 {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
@@ -795,7 +797,7 @@ const Landing = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-white text-black hover:bg-white/10 px-10 py-7 text-xl font-bold rounded-2xl"
+              className="border-2 border-white text-primary-foreground hover:bg-white/10 px-10 py-7 text-xl font-bold rounded-2xl"
               onClick={() =>
                 window.open(
                   "mailto:contact@gradrai.com?subject=Demo Request",
@@ -828,6 +830,8 @@ const Landing = () => {
                   <button
                     className="w-full px-8 py-6 text-left flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                    aria-expanded={openFaq === index}
+                    aria-controls={`faq-answer-${index}`}
                   >
                     <span className="text-lg font-bold text-foreground pr-8">
                       {faq.question}
@@ -839,7 +843,10 @@ const Landing = () => {
                     )}
                   </button>
                   {openFaq === index && (
-                    <div className="px-8 pb-8 animate-in fade-in duration-300">
+                    <div 
+                      id={`faq-answer-${index}`}
+                      className="px-8 pb-8 animate-in fade-in duration-300"
+                    >
                       <p className="text-muted-foreground text-lg leading-relaxed">
                         {faq.answer}
                       </p>
