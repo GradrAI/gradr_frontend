@@ -94,19 +94,19 @@ const Landing = () => {
       icon: Scan,
       title: "AI Paper Grading",
       description: "Upload scanned handwritten scripts and get instant AI-powered grades and feedback.",
-      color: "from-blue-500 to-indigo-600",
+      color: "from-primary to-primary",
     },
     {
       icon: FileText,
       title: "CBT Generation",
       description: "Create, distribute, and manage digital assessments with ease.",
-      color: "from-emerald-500 to-teal-600",
+      color: "from-brand-success-500 to-brand-success-600",
     },
     {
       icon: MonitorCheck,
       title: "Online Proctoring",
       description: "AI-monitored sessions to ensure examiner integrity and prevent malpractice.",
-      color: "from-purple-500 to-pink-600",
+      color: "from-secondary to-secondary",
     },
     {
       icon: PieChart,
@@ -157,21 +157,21 @@ const Landing = () => {
       title: "Save 80% of Grading Time",
       description:
         "Automate hours of manual marking and focus on teaching what matters most.",
-      color: "from-emerald-500 to-teal-600",
+      color: "from-brand-success-500 to-brand-success-600",
     },
     {
       icon: Brain,
       title: "AI-Powered Accuracy",
       description:
         "Advanced AI technology ensures consistent, bias-free grading across all assessments.",
-      color: "from-purple-500 to-indigo-600",
+      color: "from-secondary to-secondary",
     },
     {
       icon: BarChart3,
       title: "Detailed Analytics",
       description:
         "Get insights into student performance with comprehensive reports and analytics.",
-      color: "from-blue-500 to-cyan-600",
+      color: "from-primary to-primary",
     },
     {
       icon: Users,
@@ -185,7 +185,7 @@ const Landing = () => {
       title: "Secure & Private",
       description:
         "Enterprise-grade security ensures your student data remains protected.",
-      color: "from-red-500 to-pink-600",
+      color: "from-brand-danger-500 to-brand-danger-600",
     },
     {
       icon: Zap,
@@ -202,21 +202,21 @@ const Landing = () => {
       title: "Upload Test Papers",
       description:
         "Simply scan and upload student test papers to our secure platform.",
-      color: "from-blue-500 to-purple-600",
+      color: "from-primary to-primary",
     },
     {
       icon: Scan,
       title: "AI Analysis",
       description:
         "Our advanced AI reads and analyzes each response against your marking criteria.",
-      color: "from-purple-500 to-pink-600",
+      color: "from-secondary to-secondary",
     },
     {
       icon: BarChart3,
       title: "Get Results",
       description:
         "Receive detailed grades and feedback reports for each student instantly.",
-      color: "from-green-500 to-blue-600",
+      color: "from-brand-success-500 to-brand-success-600",
     },
   ];
 
@@ -255,12 +255,12 @@ const Landing = () => {
 
   const gradingStats = [
     {
-      icon: <Clock className="w-7 h-7 text-blue-600" />,
+      icon: <Clock className="w-7 h-7 text-primary" />,
       title: "80% Less Grading Time",
       description: "Save up to 50 hrs/month vs. manual marking.",
     },
     {
-      icon: <DollarSign className="w-7 h-7 text-purple-600" />,
+      icon: <DollarSign className="w-7 h-7 text-secondary" />,
       title: "₦50K+ Value Saved",
       description: "Reclaim over ₦50,000 worth of your teaching time.",
     },
@@ -282,7 +282,7 @@ const Landing = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   GradrAI
                 </span>
               </div>
@@ -334,7 +334,7 @@ const Landing = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:text-white"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     Sign Up
                   </Button>
@@ -402,7 +402,7 @@ const Landing = () => {
               </button>
               <div className="pt-4 pb-3 border-t border-border">
                 <Button
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                   onClick={() => {
                     setAccountType("individual");
                     nav(`auth/sign-in`);
@@ -417,15 +417,15 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/50 via-background to-purple-50/50 dark:from-blue-950/20 dark:via-background dark:to-purple-950/20">
+      <section className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-brand-50/50 via-background to-brand-secondary-50/50 dark:from-brand-900/20 dark:via-background dark:to-brand-secondary-900/20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
-            <Badge className="mb-4 bg-blue-100 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 border-0 px-4 py-1">
+            <Badge className="mb-4 bg-brand-100 text-brand-700 hover:bg-brand-100 dark:bg-brand-900/50 dark:text-brand-300 border-0 px-4 py-1">
               End-to-End Assessment Platform
             </Badge>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-foreground mb-8 tracking-tight">
               Generate, Deliver, Grade,{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Analyse.
               </span>
             </h1>
@@ -436,7 +436,7 @@ const Landing = () => {
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-6 text-xl rounded-full shadow-lg shadow-blue-500/20 transition-all hover:scale-105"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6 text-xl rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105"
                 onClick={() => nav(`auth/sign-in`)}
               >
                 Start Free Trial
@@ -500,19 +500,19 @@ const Landing = () => {
                   "Disconnected tools for paper and digital",
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <X className="h-5 w-5 text-red-500" />
+                    <X className="h-5 w-5 text-brand-danger-500" />
                     <span className="text-foreground font-medium">{item}</span>
                   </div>
                 ))}
               </div>
             </div>
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-3xl blur-3xl" />
               <Card className="relative border-2 border-border/50 shadow-2xl overflow-hidden">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                      <Clock className="h-6 w-6 text-red-600 dark:text-red-400" />
+                    <div className="h-12 w-12 rounded-full bg-brand-danger-100 dark:bg-brand-danger-900/30 flex items-center justify-center">
+                      <Clock className="h-6 w-6 text-brand-danger-600 dark:text-brand-danger-400" />
                     </div>
                     <div>
                       <h4 className="font-bold text-foreground">Manual Bottleneck</h4>
@@ -521,11 +521,11 @@ const Landing = () => {
                   </div>
                   <div className="space-y-4">
                     <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                      <div className="h-full w-[85%] bg-red-500 rounded-full" />
+                      <div className="h-full w-[85%] bg-brand-danger-500 rounded-full" />
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Admin Overload</span>
-                      <span className="font-bold text-red-500">85% High</span>
+                      <span className="font-bold text-brand-danger-500">85% High</span>
                     </div>
                   </div>
                 </CardContent>
@@ -639,8 +639,8 @@ const Landing = () => {
                   { icon: FileText, title: "Export", desc: "Review results and export to Sheets or LMS." },
                 ].map((step, i) => (
                   <div key={i} className="text-center px-4">
-                    <div className="h-16 w-16 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
-                      <step.icon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                    <div className="h-16 w-16 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
+                      <step.icon className="h-8 w-8 text-brand-600 dark:text-brand-400" />
                     </div>
                     <h4 className="font-bold text-lg mb-2">{step.title}</h4>
                     <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
@@ -657,8 +657,8 @@ const Landing = () => {
                   { icon: PieChart, title: "Analyse", desc: "Instant auto-grading and performance analytics." },
                 ].map((step, i) => (
                   <div key={i} className="text-center px-4">
-                    <div className="h-16 w-16 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
-                      <step.icon className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+                    <div className="h-16 w-16 rounded-full bg-brand-success-100 dark:bg-brand-success-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
+                      <step.icon className="h-8 w-8 text-brand-success-600 dark:text-brand-success-400" />
                     </div>
                     <h4 className="font-bold text-lg mb-2">{step.title}</h4>
                     <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
@@ -672,12 +672,12 @@ const Landing = () => {
 
       {/* Competitive Differentiation Section */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white overflow-hidden relative">
-        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-3xl sm:text-5xl font-bold mb-8 leading-tight">
-                Built for the <span className="text-blue-400">Future of Education</span> in Africa.
+                Built for the <span className="text-primary">Future of Education</span> in Africa.
               </h2>
               <div className="space-y-8">
                 {[
@@ -686,7 +686,7 @@ const Landing = () => {
                   { title: "Mobile-First", desc: "Optimised for scenarios with limited high-end hardware infrastructure." },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4">
-                    <div className="shrink-0 h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center mt-1">
+                    <div className="shrink-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center mt-1">
                       <CheckCircle2 className="h-4 w-4 text-white" />
                     </div>
                     <div>
@@ -702,15 +702,15 @@ const Landing = () => {
               <div className="space-y-4">
                 <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center group cursor-default">
                   <span>Hybrid SaaS Model</span>
-                  <Badge variant="outline" className="text-blue-400 border-blue-400">Unique</Badge>
+                  <Badge variant="outline" className="text-primary border-primary">Unique</Badge>
                 </div>
                 <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center">
                   <span>Fraction of Global Competitor Cost</span>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                  <CheckCircle2 className="h-5 w-5 text-brand-success-400" />
                 </div>
                 <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center">
                   <span>Local Context Support</span>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                  <CheckCircle2 className="h-5 w-5 text-brand-success-400" />
                 </div>
               </div>
             </div>
@@ -775,19 +775,19 @@ const Landing = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-primary text-primary-foreground">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl sm:text-5xl font-bold mb-8">
             Ready to modernise your assessment lifecycle?
           </h2>
-          <p className="text-xl text-blue-100 mb-12 leading-relaxed">
+          <p className="text-xl text-primary-foreground/80 mb-12 leading-relaxed">
             Join the leading institutions across Africa using GradrAI to deliver faster, 
             fairer, and more consistent grades.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Button
               size="lg"
-              className="bg-white text-blue-600 hover:bg-slate-50 px-10 py-7 text-xl font-bold shadow-2xl rounded-2xl"
+              className="bg-background text-primary hover:bg-background/90 px-10 py-7 text-xl font-bold rounded-2xl"
               onClick={() => nav(`auth/sign-up`)}
             >
               Start Free Trial
@@ -861,7 +861,7 @@ const Landing = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center mb-6">
-                <span className="text-3xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <span className="text-3xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   GradrAI
                 </span>
               </div>

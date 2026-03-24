@@ -82,7 +82,7 @@ export default function CategoryRow({
             <div key={resource._id}>
               <p className="m-0">{resource?.type?.toUpperCase()}</p>
               <p
-                className="truncate max-w-xl text-sm text-blue-400 hover:text-blue-600 cursor-pointer"
+                className="truncate max-w-xl text-sm text-primary/80 hover:text-primary cursor-pointer"
                 onClick={() => window.open(resource?.fileUrl, "_blank")}
               >
                 {resource?.fileUrl}

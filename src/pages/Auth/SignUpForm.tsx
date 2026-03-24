@@ -57,12 +57,14 @@ const SignUpForm = () => {
     data,
   } = useMutation({
     mutationKey: ["register"],
-    mutationFn: (data: z.infer<typeof formSchema>) =>
-      axios.post(`/auth/register`, {
-        ...data,
+    mutationFn: (data: z.infer<typeof formSchema>) => {
+      const validatedData = formSchema.parse(data);
+      return axios.post(`/auth/register`, {
+        ...validatedData,
         accountType,
         confirmPassword: undefined, // exclude confirmPassword before sending
-      }),
+      });
+    }
   });
 
   const {
@@ -224,7 +226,7 @@ const SignUpForm = () => {
           <Button
             type="submit"
             disabled={isPending}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-2 rounded-xl"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 rounded-xl"
           >
             {isPending && <Loader2Icon className="animate-spin mr-2" />}
             Sign Up
@@ -252,7 +254,7 @@ const SignUpForm = () => {
         Already have an account?{" "}
         <Link
           to="../sign-in"
-          className="text-blue-600 hover:underline font-medium"
+          className="text-primary hover:underline font-medium"
         >
           Sign in
         </Link>

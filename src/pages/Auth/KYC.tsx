@@ -57,7 +57,7 @@ const KYC = () => {
   return (
     <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-6 animate-fade-in space-y-6 border border-gray-200">
       <div className="flex flex-col items-center text-center space-y-2">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white text-2xl font-bold shadow-lg">
           🧾
         </div>
         <h2 className="text-3xl font-bold text-gray-800">
@@ -138,7 +138,7 @@ const KYC = () => {
           />
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg font-medium py-2 rounded-xl transition-all duration-200"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-medium py-2 rounded-xl transition-all duration-200"
           >
             Proceed
           </Button>

@@ -90,7 +90,7 @@ const Pricing = () => {
     return (
       <div className="w-full flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-gray-600">Loading payment plans...</p>
         </div>
       </div>
@@ -116,11 +116,11 @@ const Pricing = () => {
               selectedPaymentPlan?._id === plan._id
                 ? "ring-2 ring-blue-500 shadow-lg"
                 : "hover:shadow-md"
-            } ${isPopularPlan(plan) ? "border-blue-200" : ""}`}
+            } ${isPopularPlan(plan) ? "border-brand-200" : ""}`}
             onClick={() => setSelectedPaymentPlan(plan)}
           >
             {isPopularPlan(plan) && (
-              <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-blue-500 hover:bg-blue-600">
+              <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary hover:bg-primary/90">
                 <Star className="w-3 h-3 mr-1" />
                 Popular
               </Badge>
@@ -153,13 +153,13 @@ const Pricing = () => {
                 ))}
                 
                 {plan.maxGradableExams !== undefined && (
-                  <li className="flex items-start gap-2 text-sm text-muted-foreground font-medium text-blue-700">
+                  <li className="flex items-start gap-2 text-sm text-muted-foreground font-medium text-brand-700">
                     <CheckCircle className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
                     <span>Grade up to {plan.maxGradableExams === 0 ? "Unlimited" : formatNumber(String(plan.maxGradableExams))} exams</span>
                   </li>
                 )}
                 {plan.maxGeneratableExams !== undefined && (
-                  <li className="flex items-start gap-2 text-sm text-muted-foreground font-medium text-blue-700">
+                  <li className="flex items-start gap-2 text-sm text-muted-foreground font-medium text-brand-700">
                     <CheckCircle className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
                     <span>Generate up to {plan.maxGeneratableExams === 0 ? "Unlimited" : formatNumber(String(plan.maxGeneratableExams))} exams</span>
                   </li>
@@ -170,7 +170,7 @@ const Pricing = () => {
                 <div
                   className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                     selectedPaymentPlan?._id === plan._id
-                      ? "border-blue-500 bg-blue-500"
+                      ? "border-primary bg-primary"
                       : "border-gray-300"
                   }`}
                 >
@@ -195,7 +195,7 @@ const Pricing = () => {
           onClick={handleSubmit}
           disabled={!selectedPaymentPlan || paymentPending}
           size="lg"
-          className="min-w-[200px] bg-blue-600 hover:bg-blue-700"
+          className="min-w-[200px] bg-primary hover:bg-primary/90"
         >
           {paymentPending ? (
             <>

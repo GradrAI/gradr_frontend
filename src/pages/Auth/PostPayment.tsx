@@ -147,8 +147,8 @@ const PostPayment = () => {
       <div className="w-full min-h-[600px] flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+            <div className="mx-auto mb-4 w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center">
+              <Loader2 className="w-8 h-8 text-primary animate-spin" />
             </div>
             <CardTitle>{isFreePlan ? "Setting Up Your Account" : "Verifying Payment"}</CardTitle>
             <CardDescription>
@@ -175,10 +175,10 @@ const PostPayment = () => {
       <div className="w-full min-h-[600px] flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-              <XCircle className="w-8 h-8 text-red-600" />
+            <div className="mx-auto mb-4 w-16 h-16 bg-brand-danger-100 rounded-full flex items-center justify-center">
+              <XCircle className="w-8 h-8 text-brand-danger-600" />
             </div>
-            <CardTitle className="text-red-600">
+            <CardTitle className="text-brand-danger-600">
               Payment Verification Failed
             </CardTitle>
             <CardDescription>
@@ -216,8 +216,8 @@ const PostPayment = () => {
       <div className="w-full min-h-[600px] flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+            <div className="mx-auto mb-4 w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center">
+              <Loader2 className="w-8 h-8 text-primary animate-spin" />
             </div>
             <CardTitle>{isFreePlan ? "Setting Up Your Account" : "Payment Successful!"}</CardTitle>
             <CardDescription>
@@ -227,7 +227,7 @@ const PostPayment = () => {
           <CardContent className="text-center">
             <div className="space-y-4">
               <div className="flex items-center justify-center">
-                <Loader2 className="w-6 h-6 text-blue-600 animate-spin mr-2" />
+                <Loader2 className="w-6 h-6 text-primary animate-spin mr-2" />
                 <span className="text-sm text-gray-600">
                   Creating your workspace
                 </span>

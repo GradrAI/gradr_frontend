@@ -86,16 +86,16 @@ const Settings = () => {
         <p className="font-semibold text-2xl text-slate-800 mb-4">User Details</p>
         <div className="space-y-1">
           <p className="m-0">
-            <span className="text-blue-600 font-medium">Name: </span> {user?.first_name}{" "}{user?.last_name}
+            <span className="text-primary font-medium">Name: </span> {user?.first_name}{" "}{user?.last_name}
           </p>
           <p>
-            <span className="text-blue-600 font-medium">Email: </span> {user?.email}
+            <span className="text-primary font-medium">Email: </span> {user?.email}
           </p>
           <p>
-            <span className="text-blue-600 font-medium">Role: </span> {user?.role}
+            <span className="text-primary font-medium">Role: </span> {user?.role}
           </p>
           <p>
-            <span className="text-blue-600 font-medium">Registration Date: </span>
+            <span className="text-primary font-medium">Registration Date: </span>
             {user?.createdAt
               ? new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(
                   new Date(user.createdAt)
@@ -155,18 +155,18 @@ const Settings = () => {
           <div className="space-y-4">
             <div className="space-y-1">
               <p>
-                <span className="text-blue-600 font-medium">
+                <span className="text-primary font-medium">
                   {organizationData.organizationType === "individual" ? "Account Name:" : "Name:"}
                 </span>{" "}
                 {organizationData?.name}
               </p>
               <p>
-                <span className="text-blue-600 font-medium">Contact Number:</span>{" "}
+                <span className="text-primary font-medium">Contact Number:</span>{" "}
                 {organizationData?.phoneNumber}
               </p>
               {organizationData.organizationType === "individual" && (
                 <p>
-                  <span className="text-blue-600 font-medium">Account Type:</span> Individual
+                  <span className="text-primary font-medium">Account Type:</span> Individual
                 </p>
               )}
             </div>
@@ -196,7 +196,7 @@ const Settings = () => {
           </div>
         ) : (
           <div>
-            <p className="text-red-500 mb-4">
+            <p className="text-brand-danger-500 mb-4">
               You are not part of any organization.
             </p>
             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">

@@ -49,8 +49,10 @@ const SignInForm = () => {
 
   const { mutate: loginMutate, isPending } = useMutation({
     mutationKey: ["login"],
-    mutationFn: (data: z.infer<typeof formSchema>) =>
-      axios.post(`/auth/login`, { ...data, accountType }),
+    mutationFn: (data: z.infer<typeof formSchema>) => {
+      const validatedData = formSchema.parse(data);
+      return axios.post(`/auth/login`, { ...validatedData, accountType });
+    }
   });
 
   const handleGoogleSignIn = () => {
@@ -136,7 +138,7 @@ const SignInForm = () => {
           <Button
             type="submit"
             disabled={isPending}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-2 rounded-xl"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 rounded-xl"
           >
             {isPending && <Loader2Icon className="animate-spin" />}
             Sign In
@@ -164,7 +166,7 @@ const SignInForm = () => {
         Don't have an account?{" "}
         <Link
           to="../sign-up"
-          className="text-blue-600 hover:underline font-medium"
+          className="text-primary hover:underline font-medium"
         >
           Create one
         </Link>

@@ -8,7 +8,7 @@ const AuthLayout = () => {
   return (
     <div className="w-dvw h-dvh flex flex-col justify-between bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <header className="w-full p-4 shadow-md bg-white flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold text-blue-600">
+        <Link to="/" className="text-2xl font-bold text-primary">
           GradrAI
         </Link>
 

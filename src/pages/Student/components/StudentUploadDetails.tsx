@@ -22,7 +22,7 @@ const StudentUploadDetails: React.FC<StudentUploadDetailsProps> = ({
       <div className="flex flex-col md:flex-row gap-1 md:gap-2">
         <p>File URL:</p>
         <p
-          className="cursor-pointer text-blue-500 hover:text-blue-600 truncate max-w-sm"
+          className="cursor-pointer text-primary hover:text-primary/80 truncate max-w-sm"
           onClick={() => {
             window.open(`${data.fileUrl}`, "_blank", "noopener,noreferrer");
           }}
