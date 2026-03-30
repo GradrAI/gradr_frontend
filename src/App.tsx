@@ -50,7 +50,12 @@ function App() {
   const { user } = useStore();
 
   useEffect(() => {
-    if (pathname === "/app/" && user && Object.keys(user)?.length)
+    if (
+      pathname === "/app/" &&
+      user &&
+      Object.keys(user)?.length &&
+      user.role !== "student"
+    )
       nav("/app/assessments");
   }, [user]);
 

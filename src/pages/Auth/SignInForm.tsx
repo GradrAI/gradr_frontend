@@ -56,8 +56,12 @@ const SignInForm = () => {
   });
 
   const handleGoogleSignIn = () => {
-    if (user && Object.keys(user)?.length) nav("/app/assessments");
-    else googleMutate();
+    if (user && Object.keys(user)?.length) {
+      if (user.role === "student") nav("/student/dashboard");
+      else nav("/app/assessments");
+    } else {
+      googleMutate();
+    }
   };
 
   useEffect(() => {
@@ -88,6 +92,7 @@ const SignInForm = () => {
         
         if (needsKYC) nav("/auth/kyc");
         else if (needsPayment) nav("/auth/pricing");
+        else if (user.role === "student") nav("/student/dashboard");
         else nav("/app/assessments");
       },
       onError: (error) => {
