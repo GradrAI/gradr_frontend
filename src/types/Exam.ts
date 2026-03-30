@@ -26,6 +26,7 @@ export interface Question {
   description: string;
   type: "multiple-choice" | "essay";
   options?: Option[];
+  correctOptionId?: number; // Present in lecturer views, stripped for student exam attempts
   maxMarks?: number;
 }
 
