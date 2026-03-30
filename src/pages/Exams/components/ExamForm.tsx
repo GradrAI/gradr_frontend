@@ -247,8 +247,8 @@ export default function ExamForm() {
             Generating your quiz...
           </h2>
           <p className="text-slate-500 text-center max-w-md px-6">
-            Our AI is analyzing your resources to craft high-quality questions.
-            This usually takes 30–60 seconds.
+            Analyzing your resources to craft high-quality questions.
+            This usually takes 30-60 seconds.
           </p>
         </div>
       ) : latestData ? (
