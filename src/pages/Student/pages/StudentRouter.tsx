@@ -24,7 +24,7 @@ const StudentRouter = () => {
       const isExam = uniqueCode === category.uniqueCodes?.exam;
 
       if (isExam) {
-        nav("/student/quiz");
+        nav("/student/quiz", { state: { courseId, uniqueCode } });
       } else if (isGrading) {
         nav("/student/grading");
       }else{
