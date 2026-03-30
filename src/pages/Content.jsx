@@ -88,7 +88,7 @@ const Content = () => {
       </div>
 
       <Button
-        onClick={() => nav("../sign-up")}
+        onClick={() => nav("/auth/sign-up")}
         className="self-start bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 py-6 px-12 text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Get Started
