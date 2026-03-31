@@ -156,10 +156,23 @@ const Exams = () => {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>
-                          Are you absolutely sure?
+                          Delete "{exam.topic}"?
                         </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone.
+                        <AlertDialogDescription asChild>
+                          <div className="space-y-3 text-sm">
+                            <p>
+                              This is a <strong>permanent, irreversible</strong> action.
+                              The following data will be deleted immediately:
+                            </p>
+                            <ul className="list-disc list-inside space-y-1 text-destructive font-medium">
+                              <li>All student exam attempts</li>
+                              <li>All graded results &amp; scores</li>
+                              <li>The marking guide PDF</li>
+                            </ul>
+                            <p className="text-muted-foreground">
+                              The uploaded exam resource (question paper) will <strong>not</strong> be deleted.
+                            </p>
+                          </div>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -168,7 +181,7 @@ const Exams = () => {
                           className="bg-red-600 hover:bg-red-700"
                           onClick={() => deleteExamMutate(exam._id)}
                         >
-                          Delete
+                          Yes, delete exam
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
