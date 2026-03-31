@@ -78,6 +78,11 @@ const ExamComponent = () => {
   const hasTriggeredLockdown = useRef(false);
 
   const handleSubmit = useCallback(() => {
+    // if already triggered by anti-cheat lockdown, or a submission is already in-flight / completed, do nothing.
+    if (hasTriggeredLockdown.current || submitExamMutation.isPending || submitExamMutation.isSuccess) {
+      return;
+    }
+    hasTriggeredLockdown.current = true;
     submitExamMutation.mutate(answersRef.current);
   }, [submitExamMutation]);
 
