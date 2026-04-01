@@ -231,7 +231,7 @@ const Details = () => {
                   <div className="flex justify-between items-center mb-3">
                     <span className="font-bold text-slate-800 text-sm">{res.questionId || `Question ${index + 1}`}</span>
                     <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                      Marks: {res.score}
+                      Marks: {res.score} / {res.maxScore}
                     </span>
                   </div>
                   <div className="space-y-2">

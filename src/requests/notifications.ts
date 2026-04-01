@@ -12,6 +12,7 @@ const notifications = {
   },
   GRADE: {
     SUCCESS: "Grading successful",
+    QUEUED: "Grading queued. Results will appear shortly.",
     FAILURE: "Grading failed",
   },
   RESULT: {

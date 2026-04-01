@@ -125,7 +125,7 @@ const StudentResultDetails = () => {
                                         Question {index + 1}
                                     </CardTitle>
                                     <div className="bg-slate-100 text-slate-700 font-bold px-3 py-1 rounded-lg text-sm">
-                                        Score: {item.score}
+                                        Score: {item.score} / {item.maxScore}
                                     </div>
                                 </CardHeader>
                                 <CardContent className="space-y-4">

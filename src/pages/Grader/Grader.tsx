@@ -156,9 +156,13 @@ const Grader = () => {
     mutate(
       { resultData: normalizedResultData, courseData: {} }, //! TODO: pass courseData: { maxScoreAttainable, guide, question } to reduce work done at the backend
       {
-        onSuccess: (data: any, variables: any, context: any) => {
-          console.log("data: ", data);
-          toast.success(notifications.GRADE.SUCCESS);
+        onSuccess: (response: any) => {
+          console.log("data: ", response);
+          if (response.status === 202) {
+            toast.success(notifications.GRADE.QUEUED);
+          } else {
+            toast.success(notifications.GRADE.SUCCESS);
+          }
           queryClient.invalidateQueries({ queryKey: ["students"] });
           queryClient.invalidateQueries({ queryKey: ["singleCourse"] });
           
