@@ -63,7 +63,7 @@ export function DataTable<TData, TValue>({
     pageSize: 5, //default page size
   });
   const [expanded, setExpanded] = useState({});
-  const [globalFilter, setGlobalFilter] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState("");
   const [subRowSelection, setSubRowSelection] = useState<
     Record<string, Set<string>>
   >({});
@@ -128,6 +128,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
       pagination,
       expanded,
+      globalFilter,
     },
   });
 
