@@ -57,11 +57,8 @@ const PostPayment = () => {
   });
 
   useEffect(() => {
-    if (isLoading) {
-      toast.loading("Verifying your payment...", {
-        id: "payment-verification",
-      });
-    }
+    // Guards to ensure all data is ready
+    if (isLoading || !selectedPaymentPlan || !user) return;
 
     if (((isSuccess && data) || isFreePlan) && orgIsIdle) {
       if (reference) {
@@ -73,13 +70,24 @@ const PostPayment = () => {
           id: "payment-verification",
         });
       }
+      
+      console.log("Starting organization setup...");
       toast.loading("Setting up your organization...", { id: "org-creation" });
 
-      organizationMutate({
+      const finalOrgData = {
+        organizationType: user?.role === "lecturer" ? "individual" : "institution",
         ...organizationData,
         paymentPlan: String(selectedPaymentPlan?._id),
-        organizationType: user?.role === "lecturer" ? "individual" : "institution",
-      });
+      };
+
+      // Ensure we have at least the basic required fields if organizationData is sparse
+      // This helps when users skip KYC or navigate directly
+      if (!finalOrgData.name) finalOrgData.name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username;
+      if (!finalOrgData.email) finalOrgData.email = user.email;
+      if (!finalOrgData.phoneNumber) finalOrgData.phoneNumber = "N/A";
+      if (!finalOrgData.physicalAddress) finalOrgData.physicalAddress = "N/A";
+      
+      organizationMutate(finalOrgData as OrganizationData);
     }
 
     if (isError) {
@@ -98,7 +106,8 @@ const PostPayment = () => {
     organizationMutate,
     isFreePlan,
     reference,
-    orgIsIdle
+    orgIsIdle,
+    user
   ]);
 
   useEffect(() => {

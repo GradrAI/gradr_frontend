@@ -166,9 +166,12 @@ const Grader = () => {
           queryClient.invalidateQueries({ queryKey: ["students"] });
           queryClient.invalidateQueries({ queryKey: ["singleCourse"] });
           
-          // Optimistically update local store count or force a re-fetch of user
+          // Optimistically deduct credits from local store
           if (user && user.organization && typeof user.organization === "object") {
-             user.organization.gradedExamsCount += normalizedResultData.length;
+             const planName = user.organization.paymentPlan?.name?.toLowerCase();
+             if (planName !== "enterprise") {
+               user.organization.creditsBalance = Math.max(0, (user.organization.creditsBalance || 0) - normalizedResultData.length);
+             }
              saveUser({...user});
           }
         },
@@ -181,12 +184,11 @@ const Grader = () => {
   };
 
   const org = user?.organization;
-  const plan = typeof org === "object" ? org?.paymentPlan : null;
-  const maxGradable = plan?.maxGradableExams || 0;
-  const gradedCount = org?.gradedExamsCount || 0;
-  const remainingGradable = Math.max(0, maxGradable - gradedCount);
+  const isEnterprise = typeof org === "object" && org?.paymentPlan?.name?.toLowerCase() === "enterprise";
+  const remainingCredits = typeof org === "object" ? (org?.creditsBalance || 0) : 0;
+  const requiredCredits = selectedSubRows.length; // 1 credit per script
 
-  const isOverLimit = selectedSubRows.length > remainingGradable;
+  const isOverLimit = !isEnterprise && requiredCredits > remainingCredits;
 
   return (
     <div className="w-full p-4 flex flex-col justify-between gap-2">
@@ -272,18 +274,22 @@ const Grader = () => {
 
               <div className="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-4 rounded-lg border">
                 <div className="text-sm">
-                  {maxGradable > 0 ? (
+                  {isEnterprise ? (
+                    <p className="text-gray-700">
+                      Grading Quota: Unlimited (Enterprise)
+                    </p>
+                  ) : remainingCredits > 0 ? (
                     <p className={isOverLimit ? "text-red-500 font-semibold" : "text-gray-700"}>
-                      Grading Quota: {remainingGradable} scripts remaining (Used: {gradedCount}/{maxGradable})
+                      Credit Balance: {remainingCredits} credits available
                     </p>
                   ) : (
                    <p className="text-red-500 font-semibold">
-                      Your current plan doesn't include grading limit or is exhausted.
+                      Your credit balance is exhausted. Please top up to grade scripts.
                    </p>
                   )}
                   {isOverLimit && (
                      <p className="text-xs text-red-500 mt-1">
-                        You are trying to grade {selectedSubRows.length} scripts, which exceeds your quota.
+                        You are trying to grade {requiredCredits} scripts, but only have {remainingCredits} credits.
                      </p>
                   )}
                 </div>

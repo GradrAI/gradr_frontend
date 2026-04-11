@@ -1,11 +1,18 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/axios";
+import { formatNumber } from "@/lib/formatNumber";
+import type { PaymentPlan } from "@/types/PaymentPlan";
 import {
   Clock,
   Users,
   Brain,
   Shield,
   Zap,
+  Loader2,
+  CreditCard,
+  Package,
   Upload,
   Scan,
   BarChart3,
@@ -116,40 +123,23 @@ const Landing = () => {
     },
   ];
 
-  const pricingTiers = [
-    {
-      name: "Freemium",
-      price: { ngn: "0", usd: "0" },
-      description: "Perfect for trying out GradrAI",
-      features: ["50 scans / month", "Standard AI grading", "Basic analytics", "Email support"],
-      cta: "Get Started Free",
-      highlight: false,
-    },
-    {
-      name: "Individual",
-      price: { ngn: "12,000", usd: "7" },
-      description: "Ideal for solo tutors and lecturers",
-      features: ["300 scans / month", "Advanced AI feedback", "Detailed reports", "Priority support"],
-      cta: "Start Individual Trial",
-      highlight: true,
-    },
-    {
-      name: "Organisation",
-      price: { ngn: "55,000", usd: "32" },
-      description: "Best for schools and small departments",
-      features: ["1,500 scans / month", "5-10 user accounts", "Bulk uploads", "CBT distribution"],
-      cta: "Join as Organisation",
-      highlight: false,
-    },
-    {
-      name: "Enterprise",
-      price: { ngn: "Custom", usd: "Custom" },
-      description: "For large institutions and corporates",
-      features: ["Unlimited scans", "Full LMS integration", "Custom proctoring", "Dedicated account manager"],
-      cta: "Contact Sales",
-      highlight: false,
-    },
-  ];
+  const { data: paymentPlanData, isLoading: plansLoading } = useQuery({
+    queryKey: ["paymentPlan"],
+    queryFn: async () => await api.get(`/paymentPlans`),
+    retry: false,
+    select: (data) => data.data,
+  });
+
+  const [pricingTab, setPricingTab] = useState<"subscriptions" | "credit_packs">("subscriptions");
+
+  const subscriptionPlans = useMemo(
+    () => (paymentPlanData?.data as PaymentPlan[] || []).filter((p) => p.planType === "subscription"),
+    [paymentPlanData]
+  );
+  const creditPacks = useMemo(
+    () => (paymentPlanData?.data as PaymentPlan[] || []).filter((p) => p.planType === "credit_pack"),
+    [paymentPlanData]
+  );
 
   const features = [
     {
@@ -732,47 +722,208 @@ const Landing = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {pricingTiers.map((tier, index) => (
-              <Card key={index} className={`relative flex flex-col h-full border-2 ${tier.highlight ? 'border-primary shadow-xl scale-105 z-10' : 'border-border shadow-md'}`}>
-                {tier.highlight && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-                    Most Popular
-                  </div>
-                )}
-                <CardContent className="p-8 flex flex-col h-full">
-                  <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-6 h-10">{tier.description}</p>
-                  <div className="mb-8">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-bold">₦{tier.price.ngn}</span>
-                      <span className="text-muted-foreground text-sm">/mo</span>
-                    </div>
-                    <div className="text-sm text-muted-foreground mt-1">
-                      (~${tier.price.usd}/mo)
-                    </div>
-                  </div>
-                  <ul className="space-y-4 mb-8 flex-grow">
-                    {tier.features.map((feature, fIdx) => (
-                      <li key={fIdx} className="flex items-start gap-3 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button 
-                    className={`w-full py-6 text-lg font-bold rounded-xl ${tier.highlight ? 'bg-primary text-white hover:bg-primary/90' : 'bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white'}`}
-                    onClick={() => nav(`auth/sign-in`)}
-                  >
-                    {tier.cta}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+          {/* Pricing Tab Switcher */}
+          <div className="flex justify-center mb-12">
+            <div className="inline-flex items-center p-1 gap-2 rounded-xl bg-slate-100 dark:bg-slate-800">
+              <button
+                onClick={() => setPricingTab("subscriptions")}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold transition-all ${
+                  pricingTab === "subscriptions"
+                    ? "bg-white dark:bg-slate-700 text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <CreditCard className="h-4 w-4" />
+                Subscriptions
+              </button>
+              <button
+                onClick={() => setPricingTab("credit_packs")}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold transition-all ${
+                  pricingTab === "credit_packs"
+                    ? "bg-white dark:bg-slate-700 text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Package className="h-4 w-4" />
+                Credit Packs
+              </button>
+            </div>
           </div>
-          <p className="text-center mt-12 text-muted-foreground">
-            Need more? <button className="text-primary font-bold hover:underline">Add pay-per-scan credits</button> anytime.
-          </p>
+
+          {plansLoading ? (
+            <div className="flex justify-center items-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : pricingTab === "subscriptions" ? (
+            /* Subscription Plans */
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {subscriptionPlans.map((plan) => (
+                  <Card
+                    key={plan._id}
+                    className={`relative flex flex-col h-full border-2 transition-all duration-300 ${
+                      plan.highlight
+                        ? "border-primary shadow-xl scale-105 z-10"
+                        : "border-border shadow-md hover:shadow-lg hover:border-primary/30"
+                    }`}
+                  >
+                    {plan.highlight && (
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
+                        Most Popular
+                      </div>
+                    )}
+                    <CardContent className="p-8 flex flex-col h-full">
+                      <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-6 h-10">
+                        {plan.description}
+                      </p>
+                      <div className="mb-6">
+                        {plan.name.toLowerCase() === "enterprise" ? (
+                          <span className="text-3xl font-bold">Custom</span>
+                        ) : (
+                          <>
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-3xl font-bold">
+                                ₦{formatNumber(plan.amount)}
+                              </span>
+                              <span className="text-muted-foreground text-sm">/mo</span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      {plan.credits > 0 && (
+                        <div className="mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
+                          <span className="text-sm font-semibold text-primary">
+                            {plan.credits} credits{plan.duration === "lifetime" ? " (lifetime)" : "/mo"}
+                          </span>
+                        </div>
+                      )}
+                      <ul className="space-y-3 mb-8 flex-grow">
+                        {plan.features.map((feature, fIdx) => (
+                          <li key={fIdx} className="flex items-start gap-3 text-sm">
+                            <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                        {plan.maxUsers > 1 && (
+                          <li className="flex items-start gap-3 text-sm">
+                            <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                            <span>Up to {plan.maxUsers} user seats</span>
+                          </li>
+                        )}
+                      </ul>
+                      <Button
+                        className={`w-full py-6 text-lg font-bold rounded-xl ${
+                          plan.highlight
+                            ? "bg-primary text-white hover:bg-primary/90"
+                            : "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white"
+                        }`}
+                        onClick={() =>
+                          plan.name.toLowerCase() === "enterprise"
+                            ? window.open("mailto:contact@gradrai.com?subject=Enterprise Plan Enquiry", "_blank")
+                            : nav(`auth/sign-in`)
+                        }
+                      >
+                        {plan.name.toLowerCase() === "enterprise"
+                          ? "Contact Sales"
+                          : plan.amount === 0
+                          ? "Get Started Free"
+                          : "Start Free Trial"}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <p className="text-center mt-12 text-muted-foreground">
+                Need more flexibility?{" "}
+                <button
+                  className="text-primary font-bold hover:underline"
+                  onClick={() => setPricingTab("credit_packs")}
+                >
+                  Browse credit packs
+                </button>{" "}
+                for pay-as-you-go grading.
+              </p>
+            </>
+          ) : (
+            /* Credit Packs */
+            <>
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-8">
+                  <p className="text-muted-foreground">
+                    One-time credit packs — no subscription required. Buy credits
+                    and use them at your own pace.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {creditPacks.map((pack) => (
+                    <Card
+                      key={pack._id}
+                      className={`relative flex flex-col h-full border-2 transition-all duration-300 ${
+                        pack.highlight
+                          ? "border-primary shadow-xl scale-105 z-10"
+                          : "border-border shadow-md hover:shadow-lg hover:border-primary/30"
+                      }`}
+                    >
+                      {pack.highlight && (
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
+                          Best Value
+                        </div>
+                      )}
+                      <CardContent className="p-8 flex flex-col h-full">
+                        <h3 className="text-xl font-bold mb-2">{pack.name}</h3>
+                        <p className="text-sm text-muted-foreground mb-6">
+                          {pack.description}
+                        </p>
+                        <div className="mb-4">
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-3xl font-bold">
+                              ₦{formatNumber(pack.amount)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
+                          <span className="text-sm font-semibold text-primary">
+                            {pack.credits} credits
+                          </span>
+                          <span className="text-xs text-muted-foreground ml-2">
+                            Valid for {pack.creditExpiry}
+                          </span>
+                        </div>
+                        <ul className="space-y-3 mb-8 flex-grow">
+                          {pack.features.map((feature, fIdx) => (
+                            <li key={fIdx} className="flex items-start gap-3 text-sm">
+                              <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <Button
+                          className={`w-full py-6 text-lg font-bold rounded-xl ${
+                            pack.highlight
+                              ? "bg-primary text-white hover:bg-primary/90"
+                              : "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white"
+                          }`}
+                          onClick={() => nav(`auth/sign-in`)}
+                        >
+                          Buy {pack.name}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+              <p className="text-center mt-12 text-muted-foreground">
+                Want monthly credits instead?{" "}
+                <button
+                  className="text-primary font-bold hover:underline"
+                  onClick={() => setPricingTab("subscriptions")}
+                >
+                  View subscription plans
+                </button>.
+              </p>
+            </>
+          )}
         </div>
       </section>
 

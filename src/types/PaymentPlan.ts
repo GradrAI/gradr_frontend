@@ -1,11 +1,18 @@
 export type PaymentPlan = {
-  _id: number;
+  _id: string;
+  name: string;
+  description: string;
+  planType: "subscription" | "credit_pack";
   amount: number;
-  createdAt: string;
+  amountUsd: number;
   currency: string;
   features: string[];
+  credits: number;
+  creditExpiry: string;
   duration: string;
-  name: string;
-  maxGradableExams?: number;
-  maxGeneratableExams?: number;
+  maxUsers: number;
+  overageRate: string;
+  highlight: boolean;
+  sortOrder: number;
+  createdAt: string;
 };

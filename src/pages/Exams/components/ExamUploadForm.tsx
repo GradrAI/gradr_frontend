@@ -327,7 +327,10 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
           toast.success(notifications.QUIZ.SUCCESS);
           
           if (user && user.organization && typeof user.organization === "object") {
-             user.organization.generatedExamsCount = (user.organization.generatedExamsCount || 0) + 1;
+             const planName = user.organization.paymentPlan?.name?.toLowerCase();
+             if (planName !== "enterprise") {
+               user.organization.creditsBalance = Math.max(0, (user.organization.creditsBalance || 0) - 5);
+             }
              saveUser({...user});
           }
           
@@ -343,11 +346,11 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
   }
 
   const org = user?.organization;
-  const plan = typeof org === "object" ? org?.paymentPlan : null;
-  const maxGen = plan?.maxGeneratableExams || 0;
-  const genCount = org?.generatedExamsCount || 0;
-  const remainingGen = Math.max(0, maxGen - genCount);
-  const isOverLimit = remainingGen <= 0;
+  const isEnterprise = typeof org === "object" && org?.paymentPlan?.name?.toLowerCase() === "enterprise";
+  const remainingCredits = typeof org === "object" ? (org?.creditsBalance || 0) : 0;
+  const requiredCredits = 5; // 5 credits to generate an exam
+
+  const isOverLimit = !isEnterprise && requiredCredits > remainingCredits;
 
   return (
     <Form {...form}>
@@ -890,19 +893,18 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
 
         <div className="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-4 rounded-lg border mt-8">
            <div className="text-sm">
-             {maxGen > 0 ? (
-               <p className={isOverLimit ? "text-red-500 font-semibold" : "text-gray-700"}>
-                 Generation Quota: {remainingGen} exams remaining (Used: {genCount}/{maxGen})
+             {isEnterprise ? (
+               <p className="text-gray-700">
+                 Generation Quota: Unlimited (Enterprise)
+               </p>
+             ) : remainingCredits >= requiredCredits ? (
+               <p className="text-gray-700">
+                 Credit Balance: {remainingCredits} credits available (Cost: {requiredCredits} credits)
                </p>
              ) : (
                <p className="text-red-500 font-semibold">
-                 Your current plan doesn't include exam generation limit or is exhausted.
+                 Your credit balance is exhausted. You need {requiredCredits} credits to generate an exam.
                </p>
-             )}
-             {isOverLimit && (
-                <p className="text-xs text-red-500 mt-1">
-                   You have reached your limit and cannot generate more exams.
-                </p>
              )}
            </div>
 
