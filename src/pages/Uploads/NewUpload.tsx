@@ -28,10 +28,12 @@ import useStore from "@/state";
 import api from "@/lib/axios";
 import { Category, CourseData } from "@/types/CourseData";
 import categories from "@/data/categories";
+import { usePostHog } from '@posthog/react'
 
 const NewUpload = () => {
   const queryClient = useQueryClient();
   const { user } = useStore();
+  const posthog = usePostHog()
   const [courses, setCourses] = useState<CourseData[]>([]);
 
   const [uploadData, setUploadData] = useState<Partial<UploadData>>({
@@ -122,6 +124,7 @@ const NewUpload = () => {
           context: any
         ) => {
           if (data?.status === 201) {
+            posthog.capture("course_created", { course_name: data.data.name });
             toast.success("Added course successfully");
             queryClient.invalidateQueries({ queryKey: ["courses"] });
             setCourses((prev) => [...prev, data.data]);
@@ -131,6 +134,7 @@ const NewUpload = () => {
         },
         onError: (error: any, variables: any, context: any) => {
           console.log("error", error);
+          posthog.capture("course_creation_failed", { error: error.message });
         },
       }
     );

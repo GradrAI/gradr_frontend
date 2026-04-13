@@ -18,6 +18,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import useStore from "@/state";
+import { usePostHog } from '@posthog/react'
 
 const formSchema = z
   .object({
@@ -35,6 +36,7 @@ const formSchema = z
 
 const SignUpForm = () => {
   const nav = useNavigate();
+  const posthog = usePostHog()
   const { saveUser, accountType } = useStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -79,6 +81,7 @@ const SignUpForm = () => {
   });
 
   const handleGoogleSignUp = async () => {
+    posthog.capture("google_auth_initiated", { method: "sign_up" });
     googleMutate();
   };
 
@@ -88,13 +91,27 @@ const SignUpForm = () => {
         if (data.data.success) {
           const {
             data: {
-              data: { token, user, needsKYC, needsPayment },
+              data: { user, needsKYC, needsPayment },
             },
           } = data;
           saveUser(user);
-          
+
+          posthog.identify(user._id, { 
+            email: user.email, 
+            name: `${user.first_name} ${user.last_name}`, 
+            role: user.role, 
+            $set_once: { account_created_at: new Date().toISOString() } 
+          });
+          posthog.capture("user_signed_up", { 
+            method: "email", 
+            role: user.role, 
+            account_type: accountType, 
+            needs_kyc: needsKYC, 
+            needs_payment: needsPayment 
+          });
+
           toast.success("Account created successfully!");
-          
+
           if (needsKYC) nav("/auth/kyc");
           else if (needsPayment) nav("/auth/pricing");
           else nav("/app/assessments");
@@ -103,6 +120,7 @@ const SignUpForm = () => {
       onError: (error: any) => {
         const msg =
           error?.response?.data?.error || "Something went wrong. Try again.";
+        posthog.capture("registration_failed", { error: msg });
         toast.error(msg);
       },
     });

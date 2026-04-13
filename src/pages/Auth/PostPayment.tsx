@@ -20,9 +20,11 @@ import {
   ArrowRight,
   RefreshCw,
 } from "lucide-react";
+import { usePostHog } from '@posthog/react'
 
 const PostPayment = () => {
   const nav = useNavigate();
+  const posthog = usePostHog()
   const { user, saveUser, selectedPaymentPlan, organizationData } = useStore();
   const [searchParams] = useSearchParams();
   const reference = searchParams.get("reference");
@@ -112,6 +114,7 @@ const PostPayment = () => {
 
   useEffect(() => {
     if (orgIsError) {
+      posthog.capture("org_creation_failed", { error: orgError?.message });
       toast.error("Failed to create organization", { id: "org-creation" });
     }
 
@@ -123,9 +126,22 @@ const PostPayment = () => {
       toast.success("Organization created successfully!", {
         id: "org-creation",
       });
-      
-      // Update store with new organization data
+
       if (user) {
+        if (isFreePlan) {
+          posthog.capture("free_plan_activated", { 
+            plan_name: selectedPaymentPlan?.name, 
+            plan_type: selectedPaymentPlan?.planType 
+          });
+        } else {
+          posthog.capture("payment_completed", { 
+            plan_name: selectedPaymentPlan?.name, 
+            plan_type: selectedPaymentPlan?.planType, 
+            plan_amount: selectedPaymentPlan?.amount, 
+            payment_reference: reference 
+          });
+        }
+
         saveUser({
           ...user,
           organization: orgData.data?.data || user.organization

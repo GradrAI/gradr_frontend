@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import useStore from "@/state";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader2Icon } from "lucide-react";
+import { usePostHog } from '@posthog/react'
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -26,8 +27,9 @@ const formSchema = z.object({
 
 const SignInForm = () => {
   const nav = useNavigate();
+  const posthog = usePostHog()
   const { user, accountType, saveUser } = useStore();
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,6 +62,7 @@ const SignInForm = () => {
       if (user.role === "student") nav("/student/dashboard");
       else nav("/app/assessments");
     } else {
+      posthog.capture("google_auth_initiated", { method: "sign_in" });
       googleMutate();
     }
   };
@@ -84,11 +87,24 @@ const SignInForm = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     loginMutate(values, {
       onSuccess: (response) => {
-        const { token, user, needsKYC, needsPayment } = response.data;
+        const { user, needsKYC, needsPayment } = response.data;
         saveUser(user);
-        
+
+        posthog.identify(user._id, { 
+          email: user.email, 
+          name: `${user.first_name} ${user.last_name}`, 
+          role: user.role, 
+          $set_once: { first_sign_in: new Date().toISOString() } 
+        });
+        posthog.capture("user_signed_in", { 
+          method: "email", 
+          role: user.role, 
+          needs_kyc: needsKYC, 
+          needs_payment: needsPayment 
+        });
+
         toast.success("Welcome back!");
-        
+
         if (needsKYC) nav("/auth/kyc");
         else if (needsPayment) nav("/auth/pricing");
         else if (user.role === "student") nav("/student/dashboard");
@@ -96,6 +112,7 @@ const SignInForm = () => {
       },
       onError: (error) => {
         console.log("error", error);
+        posthog.capture("login_failed", { error: (error as any)?.message });
         toast.error("Invalid credentials");
       },
     });

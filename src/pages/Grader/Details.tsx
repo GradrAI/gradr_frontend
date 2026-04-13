@@ -29,6 +29,8 @@ import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import notifications from "@/requests/notifications";
 import { convertGCSUrlToPublicUrl } from "@/lib/convertGCSUrlToPublicUrl";
+import useStore from "@/state";
+import { usePostHog } from '@posthog/react'
 
 const formSchema = z.object({
   score: z.string(),
@@ -37,7 +39,9 @@ const formSchema = z.object({
 
 const Details = () => {
   const nav = useNavigate();
+  const posthog = usePostHog()
   const queryClient = useQueryClient();
+  const { user } = useStore();
   const [openDialog, setOpenDialog] = useState(false);
   const {
     state: {
@@ -120,6 +124,15 @@ const Details = () => {
     editResultMutate(values, {
       onSuccess: (data: any, variables: any, context: any) => {
         if (data.success) {
+          posthog.capture("score_edited", { 
+            result_id: _id, 
+            new_score: values.score, 
+            max_score: categoryData.maxScoreAttainable, 
+            course_id: courseId, 
+            category_id: categoryId, 
+            student_id: studentId, 
+            has_comment: Boolean(values.lecturerComment) 
+          });
           queryClient.invalidateQueries({
             queryKey: ["singleCourse", courseId],
           });
@@ -132,6 +145,7 @@ const Details = () => {
       },
       onError: (error: any, variables: any, context: any) => {
         console.log("error", error);
+        posthog.capture("score_edit_failed", { error: error.message });
         toast.error(notifications.RESULT.FAILURE);
       },
     });

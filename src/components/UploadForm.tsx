@@ -22,6 +22,7 @@ import { ACCEPTED_FILE_TYPES, MAX_FILE_SIZE } from "@/requests/constants";
 import { useEffect } from "react";
 import api from "@/lib/axios";
 import { Loader2Icon } from "lucide-react";
+import { usePostHog } from '@posthog/react'
 
 const formSchema = z.object({
   file: z
@@ -42,6 +43,7 @@ const formSchema = z.object({
 
 const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
   const nav = useNavigate();
+  const posthog = usePostHog()
   const { user } = useStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -98,13 +100,20 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
       formData.append("file", val);
     }
     mutate(formData, {
-      onSuccess: (data: any, variables: any, context: any) => {
+      onSuccess: (data: any) => {
         console.log("data: ", data);
+        posthog.capture("file_uploaded", { 
+          file_type: uploadData.fileType, 
+          category_type: uploadData.categoryType, 
+          course_name: uploadData.name, 
+          category_name: uploadData.categoryName 
+        });
         toast.success(notifications.UPLOAD.SUCCESS);
         form.reset();
       },
-      onError: (error: any, variables: any, context: any) => {
+      onError: (error: any) => {
         console.log("error", error);
+        posthog.capture("upload_failed", { error: error.message });
         toast.error(notifications.UPLOAD.FAILURE);
       },
     });

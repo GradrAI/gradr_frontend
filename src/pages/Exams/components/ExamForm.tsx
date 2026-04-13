@@ -31,6 +31,7 @@ import { CourseData } from "@/types/CourseData";
 import { AxiosResponse } from "axios";
 import useStore from "@/state";
 import { useNavigate } from "react-router-dom";
+import { usePostHog } from '@posthog/react'
 
 import ExamUploadForm from "./ExamUploadForm";
 
@@ -116,6 +117,7 @@ function ScoreBudgetBar({
 // ─────────────────────────────────────────────
 export default function ExamForm() {
   const nav = useNavigate();
+  const posthog = usePostHog()
   const queryClient = useQueryClient();
   const { user } = useStore();
   const [addNew, setAddNew] = useState(false);
@@ -177,6 +179,12 @@ export default function ExamForm() {
       return api.patch(`/exam/${examId}/question-marks`, { questionMarks });
     },
     onSuccess: () => {
+      posthog.capture("exam_marks_saved", { 
+        exam_id: examId, 
+        question_count: fetchedQuestions.length, 
+        total_allocated: totalAllocated, 
+        max_score: maxScoreAttainable 
+      });
       toast.success("Marks saved successfully.");
       setMarksDirty(false);
       queryClient.invalidateQueries({ queryKey: ["exam", examId] });
@@ -195,11 +203,21 @@ export default function ExamForm() {
     mutationFn: async () =>
       await api.post("/exam/publish", { examId }),
     onMutate: () => toast.success("Publishing exam..."),
-    onSuccess: () => setOpen(true),
-    onError: (err: any) =>
+    onSuccess: (data: any) => {
+      posthog.capture("exam_published", { 
+        exam_id: examId, 
+        question_count: fetchedQuestions.length, 
+        max_score: maxScoreAttainable, 
+        share_link: data?.data?.data?.uploadLink 
+      });
+      setOpen(true);
+    },
+    onError: (err: any) => {
+      posthog.capture("exam_publish_failed", { error: err?.message });
       toast.error(
         err?.response?.data?.message || err?.message || "Unable to publish exam"
-      ),
+      );
+    },
   });
 
   // ── Course mutation ──

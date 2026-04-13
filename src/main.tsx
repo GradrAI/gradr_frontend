@@ -12,6 +12,11 @@ import { BASE_URL } from "./requests/constants";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "./components/ThemeProvider";
 // import { Toaster } from "@/components/ui/toaster";
+import { PostHogProvider } from '@posthog/react'
+
+const options = {
+  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+} as const
 
 const queryClient = new QueryClient();
 axios.defaults.baseURL = BASE_URL;
@@ -24,7 +29,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <Toaster />
         <ErrorBoundary fallback={<Error />}>
           <ThemeProvider>
-            <App />
+            <PostHogProvider apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN} options={options}>
+              <App />
+            </PostHogProvider>
             <Analytics />
             {/* <Toaster /> */}
           </ThemeProvider>

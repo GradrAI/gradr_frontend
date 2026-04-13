@@ -12,9 +12,11 @@ import api from "@/lib/axios";
 import { formatNumber } from "@/lib/formatNumber";
 import { PayStackResponse } from "@/types/PayStackResponse";
 import { useState, useMemo } from "react";
+import { usePostHog } from '@posthog/react'
 
 const Pricing = () => {
   const nav = useNavigate();
+  const posthog = usePostHog()
   const { user, selectedPaymentPlan, setSelectedPaymentPlan } =
     useStore();
 
@@ -46,6 +48,12 @@ const Pricing = () => {
 
   const handleSubmit = () => {
     if (selectedPaymentPlan?.name?.toLowerCase() === "enterprise") {
+      posthog.capture("payment_plan_selected", { 
+        plan_name: selectedPaymentPlan.name, 
+        plan_type: selectedPaymentPlan.planType, 
+        plan_amount: selectedPaymentPlan.amount, 
+        is_enterprise: true 
+      });
       window.open(
         "mailto:support@gradrai.com?subject=Request for Enterprise plan&body=Hello there, I would like to request for an Enterprise plan on your platform",
         "_blank",
@@ -59,11 +67,24 @@ const Pricing = () => {
       return;
     }
 
+    posthog.capture("payment_plan_selected", { 
+      plan_name: selectedPaymentPlan.name, 
+      plan_type: selectedPaymentPlan.planType, 
+      plan_amount: selectedPaymentPlan.amount, 
+      plan_credits: selectedPaymentPlan.credits 
+    });
+
     // Handle free plans
     if (selectedPaymentPlan.amount === 0) {
       nav("../confirmation");
       return;
     }
+
+    posthog.capture("payment_initiated", { 
+      plan_name: selectedPaymentPlan.name, 
+      plan_type: selectedPaymentPlan.planType, 
+      amount: selectedPaymentPlan.amount 
+    });
 
     paymentMutate(
       {
@@ -86,6 +107,7 @@ const Pricing = () => {
           }
         },
         onError: (error: any) => {
+          posthog.capture("payment_init_failed", { error: error.message });
           toast.error("Payment initialization failed. Please try again.");
         },
       }
