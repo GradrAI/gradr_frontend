@@ -31,6 +31,12 @@ const StudentRouter = lazy(() => import("./pages/Student/pages/StudentRouter"));
 const ExamCreate = lazy(() => import("./pages/Exams/pages/ExamCreate"));
 const Exams = lazy(() => import("./pages/Exams/pages/Exams"));
 
+// Blog pages
+const BlogIndex = lazy(() => import("./pages/blog/BlogIndex"));
+const BlogPost = lazy(() => import("./pages/blog/BlogPost"));
+const Changelog = lazy(() => import("./pages/blog/Changelog"));
+
+
 import "./App.css";
 const ExamComponent = lazy(() => import("./pages/Student/pages/ExamComponent"));
 const StudentUpload = lazy(() => import("./pages/Student/pages/StudentUpload"));
@@ -75,6 +81,12 @@ function App() {
             <Route path="kyc" element={<KYC />} />
             <Route path="pricing" element={<Pricing />} />
             <Route path="confirmation" element={<PostPayment />} />
+          </Route>
+
+          <Route path="blog">
+            <Route index element={<BlogIndex />} />
+            <Route path="changelog" element={<Changelog />} />
+            <Route path=":slug" element={<BlogPost />} />
           </Route>
 
           <Route path="link/:courseId/:uniqueCode" element={<StudentLayout />}>
