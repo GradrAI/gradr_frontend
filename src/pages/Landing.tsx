@@ -828,7 +828,7 @@ const Landing = () => {
                           ? "Contact Sales"
                           : plan.amount === 0
                           ? "Get Started Free"
-                          : "Start Free Trial"}
+                          : "Get Started"}
                       </Button>
                     </CardContent>
                   </Card>
@@ -948,7 +948,7 @@ const Landing = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-white text-primary-foreground hover:bg-white/10 px-10 py-7 text-xl font-bold rounded-2xl"
+              className="border-2 border-white text-primary-foreground bg-transparent hover:bg-white/10 px-10 py-7 text-xl font-bold rounded-2xl"
               onClick={() =>
                 window.open(
                   "mailto:contact@gradrai.com?subject=Demo Request",
