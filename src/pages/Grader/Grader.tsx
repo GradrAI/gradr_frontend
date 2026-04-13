@@ -154,7 +154,7 @@ const Grader = () => {
     //! TODO: first check if user hasn't passed limit based on their payment plan
 
     mutate(
-      { resultData: normalizedResultData, courseData: {} }, //! TODO: pass courseData: { maxScoreAttainable, guide, question } to reduce work done at the backend
+      { resultData: normalizedResultData },
       {
         onSuccess: (response: any) => {
           console.log("data: ", response);

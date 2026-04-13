@@ -90,26 +90,9 @@ const StudentGrade: React.FC<StudentGradeProps> = ({
         },
       ];
 
-      // Normalize courseData structure
-      const normalizedCourseData = {
-        maxScoreAttainable: courseData.category.maxScoreAttainable,
-        guide: courseData.category.resources.find(
-          (resource: Resource) => resource.type === "guide"
-        )?.fileUrl,
-        question: courseData.category.resources.find(
-          (resource: Resource) => resource.type === "question"
-        )?.fileUrl,
-      };
-
-      console.log("Normalized payload:", {
-        resultData: normalizedResultData,
-        courseData: normalizedCourseData,
-      });
-
       postResultsMutate(
         {
           resultData: normalizedResultData,
-          courseData: normalizedCourseData,
         },
         {
           onSuccess: (data: any, variables: any, context: any) => {
