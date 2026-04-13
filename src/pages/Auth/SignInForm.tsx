@@ -85,7 +85,6 @@ const SignInForm = () => {
     loginMutate(values, {
       onSuccess: (response) => {
         const { token, user, needsKYC, needsPayment } = response.data;
-        localStorage.setItem("token", token);
         saveUser(user);
         
         toast.success("Welcome back!");

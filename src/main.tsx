@@ -15,6 +15,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 
 const queryClient = new QueryClient();
 axios.defaults.baseURL = BASE_URL;
+axios.defaults.withCredentials = true;
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

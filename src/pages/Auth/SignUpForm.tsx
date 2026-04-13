@@ -91,7 +91,6 @@ const SignUpForm = () => {
               data: { token, user, needsKYC, needsPayment },
             },
           } = data;
-          localStorage.setItem("token", token);
           saveUser(user);
           
           toast.success("Account created successfully!");

@@ -28,7 +28,6 @@ export function useGoogleAuth(code: string | null) {
     onSuccess: (response) => {
       const { data: { token, user, needsPassword, needsKYC, needsPayment } } = response as any;
 
-      localStorage.setItem("token", token);
       saveUser(user);
       if (code) setCode(code);
       
