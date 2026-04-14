@@ -12,7 +12,7 @@ const slugify = (text: string) => {
 
 const components: PortableTextComponents = {
   types: {
-    image: ({ value }) => {
+    image: ({ value }: any) => {
       return (
         <figure className="my-8 overflow-hidden rounded-xl border border-slate-200">
           <img
@@ -28,7 +28,7 @@ const components: PortableTextComponents = {
         </figure>
       );
     },
-    code: ({ value }) => {
+    code: ({ value }: any) => {
       return (
         <div className="my-6 relative rounded-lg overflow-hidden bg-slate-900 border border-slate-800 shadow-lg">
           {value.language && (
@@ -48,7 +48,7 @@ const components: PortableTextComponents = {
     },
   },
   block: {
-    h2: ({ children }) => {
+    h2: ({ children }: any) => {
       const id = slugify(String(children));
       return (
         <h2 id={id} className="text-3xl font-bold text-slate-900 mt-12 mb-6 font-fraunces scroll-mt-24">
@@ -56,7 +56,7 @@ const components: PortableTextComponents = {
         </h2>
       );
     },
-    h3: ({ children }) => {
+    h3: ({ children }: any) => {
       const id = slugify(String(children));
       return (
         <h3 id={id} className="text-2xl font-bold text-slate-900 mt-8 mb-4 font-fraunces scroll-mt-24">
@@ -64,12 +64,12 @@ const components: PortableTextComponents = {
         </h3>
       );
     },
-    normal: ({ children }) => (
+    normal: ({ children }: any) => (
       <p className="text-lg text-slate-700 leading-relaxed mb-6 font-dm-sans">
         {children}
       </p>
     ),
-    blockquote: ({ children }) => (
+    blockquote: ({ children }: any) => (
       <blockquote className="border-l-4 border-primary bg-slate-50 pl-6 py-6 pr-6 my-8 italic rounded-r-lg">
         <p className="text-xl text-slate-800 font-medium leading-relaxed">
           {children}
@@ -78,7 +78,7 @@ const components: PortableTextComponents = {
     ),
   },
   marks: {
-    link: ({ children, value }) => {
+    link: ({ children, value }: any) => {
       const rel = !value.href.startsWith('/') ? 'noopener noreferrer' : undefined;
       const target = !value.href.startsWith('/') ? '_blank' : undefined;
       return (
@@ -92,12 +92,12 @@ const components: PortableTextComponents = {
         </a>
       );
     },
-    code: ({ children }) => (
+    code: ({ children }: any) => (
       <code className="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded text-sm font-mono border border-slate-200">
         {children}
       </code>
     ),
-    strong: ({ children }) => <strong className="font-bold text-slate-900">{children}</strong>,
+    strong: ({ children }: any) => <strong className="font-bold text-slate-900">{children}</strong>,
   },
 };
 
