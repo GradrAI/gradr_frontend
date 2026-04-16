@@ -35,10 +35,10 @@ const BlogIndex = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-6 lg:px-12 bg-slate-50 border-b border-slate-200">
+      <section className="pt-24 pb-16 px-6 lg:px-12 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 font-fraunces leading-tight max-w-4xl">
-            EdTech insights, product updates, and <span className="text-primary italic">leadership.</span>
+            EdTech insights and <span className="text-primary italic">product updates.</span>
           </h1>
           <p className="text-xl text-slate-600 max-w-2xl font-dm-sans leading-relaxed">
             Stay informed with the latest from GradrAI—your partner in modernizing assessment grading across Africa.
