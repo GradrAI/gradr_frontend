@@ -9,6 +9,7 @@ import PostTypeBadge from '../../components/blog/PostTypeBadge';
 import PortableTextComponents from '../../components/blog/PortableTextComponents';
 import TableOfContents from '../../components/blog/TableOfContents';
 import PostCard from '../../components/blog/PostCard';
+import { ArrowRight } from 'lucide-react';
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -196,6 +197,32 @@ const BlogPost = () => {
           </aside>
         </div>
       </div>
+
+      {/* CTA Section */}
+      <section className="my-24 px-6 max-w-7xl mx-auto">
+        <div className="bg-gradient-to-br from-primary to-indigo-900 rounded-3xl p-8 md:p-16 text-center text-white shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl" />
+          
+          <div className="relative z-10 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-bold font-fraunces mb-6">
+              Ready to transform your assessment workflow?
+            </h2>
+            <p className="text-white/80 text-lg md:text-xl mb-10 leading-relaxed">
+              Join leading institutions across Africa using GradrAI to save time, increase accuracy, and deliver better student outcomes.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link 
+                to="/" 
+                className="inline-flex items-center gap-2 bg-white text-primary hover:bg-slate-100 px-8 py-4 rounded-full font-bold text-lg transition-all hover:scale-105 shadow-xl group"
+              >
+                Get Started for Free
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
