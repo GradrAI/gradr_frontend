@@ -1,13 +1,15 @@
 import { createClient } from '@sanity/client';
 
-const projectId = import.meta.env.VITE_SANITY_PROJECT_ID;
-const dataset = import.meta.env.VITE_SANITY_DATASET;
-const token = import.meta.env.VITE_SANITY_TOKEN;
+
 
 export const client = createClient({
-  projectId,
-  dataset,
+  projectId: import.meta.env.VITE_SANITY_PROJECT_ID || '',
+  dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
   apiVersion: '2024-01-01',
   useCdn: true,
-  token, // Optional: for private datasets
+  token: import.meta.env.VITE_SANITY_TOKEN, // Only used if provided
 });
+
+if (!import.meta.env.VITE_SANITY_PROJECT_ID) {
+  console.warn('Sanity Project ID is missing. Blog features will not work.');
+}
