@@ -25,7 +25,11 @@ const AssessmentDetails = lazy(() => import("./pages/Assessments/AssessmentDetai
 const SignInForm = lazy(() => import("./pages/Auth/SignInForm"));
 const SignUpForm = lazy(() => import("./pages/Auth/SignUpForm"));
 const AuthLayout = lazy(() => import("./pages/Auth/AuthLayout"));
+const AccountType = lazy(() => import("./pages/Auth/AccountType"));
 const SetPassword = lazy(() => import("./pages/Auth/SetPassword"));
+const VerifyOtp = lazy(() => import("./pages/Auth/VerifyOtp"));
+const ForgotPassword = lazy(() => import("./pages/Auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/Auth/ResetPassword"));
 const StudentLayout = lazy(() => import("./pages/Student/components/StudentLayout"));
 const StudentRouter = lazy(() => import("./pages/Student/pages/StudentRouter"));
 const ExamCreate = lazy(() => import("./pages/Exams/pages/ExamCreate"));
@@ -42,6 +46,9 @@ const ExamComponent = lazy(() => import("./pages/Student/pages/ExamComponent"));
 const StudentUpload = lazy(() => import("./pages/Student/pages/StudentUpload"));
 const StudentDashboard = lazy(() => import("./pages/Student/pages/StudentDashboard"));
 const StudentResultDetails = lazy(() => import("./pages/Student/pages/StudentResultDetails"));
+const PracticeDashboard = lazy(() => import("./pages/Student/pages/Practice/PracticeDashboard"));
+const PracticeSetup = lazy(() => import("./pages/Student/pages/Practice/PracticeSetup"));
+const PracticeSession = lazy(() => import("./pages/Student/pages/Practice/PracticeSession"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -75,9 +82,13 @@ function App() {
           <Route path="terms-of-service" element={<TermsOfService />} />
 
           <Route path="auth" element={<AuthLayout />}>
+            <Route path="account-type" element={<AccountType />} />
             <Route path="sign-in" element={<SignInForm />} />
             <Route path="sign-up" element={<SignUpForm />} />
             <Route path="set-password" element={<SetPassword />} />
+            <Route path="verify-otp" element={<VerifyOtp />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
             <Route path="kyc" element={<KYC />} />
             <Route path="pricing" element={<Pricing />} />
             <Route path="confirmation" element={<PostPayment />} />
@@ -99,6 +110,9 @@ function App() {
             <Route path="results/:resultId" element={<StudentResultDetails />} />
             <Route path="quiz" element={<ExamComponent />} />
             <Route path="grading" element={<StudentUpload />} />
+            <Route path="practice" element={<PracticeDashboard />} />
+            <Route path="practice/new" element={<PracticeSetup />} />
+            <Route path="practice/:sessionId" element={<PracticeSession />} />
           </Route>
 
           <Route path="app" element={<Layout />}>

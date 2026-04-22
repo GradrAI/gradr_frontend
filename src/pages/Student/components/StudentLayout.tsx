@@ -9,15 +9,29 @@ export const ModalContext = createContext<any>(null);
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
+import { LayoutDashboard, BookOpenCheck } from "lucide-react";
 
 export default function StudentLayout() {
   const [showModal, setShowModal] = useState(false);
   const { user } = useStore();
 
+  const studentItems = [
+    {
+      title: "Dashboard",
+      url: "/student/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "SmartPrep",
+      url: "/student/practice",
+      icon: BookOpenCheck,
+    },
+  ];
+
   return (
     <ModalContext.Provider value={{ showModal, setShowModal }}>
       <SidebarProvider>
-        {user && Object.keys(user)?.length && <AppSidebar />}
+        {user && Object.keys(user)?.length && <AppSidebar items={studentItems} />}
         <main className="w-screen h-screen">
           {user && <StudentHeader user={user} />}
 

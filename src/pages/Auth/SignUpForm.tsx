@@ -37,7 +37,7 @@ const formSchema = z
 const SignUpForm = () => {
   const nav = useNavigate();
   const posthog = usePostHog()
-  const { saveUser, accountType } = useStore();
+  const { saveUser, saveUserToken, accountType } = useStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -89,32 +89,15 @@ const SignUpForm = () => {
     registerMutate(values, {
       onSuccess: (data: any, variables: any, context: any) => {
         if (data.data.success) {
-          const {
-            data: {
-              data: { user, needsKYC, needsPayment },
-            },
-          } = data;
-          saveUser(user);
+          const { email } = data.data.data;
 
-          posthog.identify(user._id, { 
-            email: user.email, 
-            name: `${user.first_name} ${user.last_name}`, 
-            role: user.role, 
-            $set_once: { account_created_at: new Date().toISOString() } 
-          });
           posthog.capture("user_signed_up", { 
             method: "email", 
-            role: user.role, 
-            account_type: accountType, 
-            needs_kyc: needsKYC, 
-            needs_payment: needsPayment 
+            account_type: accountType
           });
 
-          toast.success("Account created successfully!");
-
-          if (needsKYC) nav("/auth/kyc");
-          else if (needsPayment) nav("/auth/pricing");
-          else nav("/app/assessments");
+          toast.success(data.data.message || "Account created! Please verify your email.");
+          nav(`/auth/verify-otp?email=${email}`);
         }
       },
       onError: (error: any) => {

@@ -19,8 +19,8 @@ const AuthLayout = () => {
                 Sign In
               </Link>
             )}
-            {location.pathname !== "/auth/sign-up" && (
-              <Link to="/auth/sign-up" className="hover:underline">
+            {location.pathname !== "/auth/sign-up" && location.pathname !== "/auth/account-type" && (
+              <Link to="/auth/account-type" className="hover:underline">
                 Sign Up
               </Link>
             )}

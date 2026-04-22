@@ -40,12 +40,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import "./customMask.css";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import useStore from "@/state";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -94,6 +88,13 @@ const Landing = () => {
       description: "Save time and provide better feedback to your students.",
       points: ["Quick affordable grading", "Detailed student feedback", "Personalised analytics"],
     },
+    {
+      id: "students",
+      icon: Brain,
+      title: "Students & Learners",
+      description: "Practice for JAMB UTME, WASSCE and more with AI-guided mock tests.",
+      points: ["Smart Mock Exams", "AI Explanations & Concept Tags", "Performance Tracking"],
+    },
   ];
 
   const solutions = [
@@ -114,6 +115,12 @@ const Landing = () => {
       title: "Online Proctoring",
       description: "AI-monitored sessions to ensure examiner integrity and prevent malpractice.",
       color: "from-secondary to-secondary",
+    },
+    {
+      icon: Brain,
+      title: "SmartPrep Mode",
+      description: "AI-powered mock exams providing personalized pedagogical feedback for learners.",
+      color: "from-purple-500 to-indigo-600",
     },
     {
       icon: PieChart,
@@ -214,7 +221,7 @@ const Landing = () => {
     {
       question: "How accurate is AI grading compared to manual grading?",
       answer:
-        "Our AI achieves 95%+ accuracy rates, often more consistent than human graders due to elimination of fatigue and bias factors.",
+        "Our AI achieves 95%+ accuracy rates. Since 6 in 10 human-awarded grades often disagree across different teachers, GradrAI provides a more consistent, bias-free standard for student work.",
     },
     {
       question: "What types of tests can GradrAI handle?",
@@ -246,18 +253,18 @@ const Landing = () => {
   const gradingStats = [
     {
       icon: <Clock className="w-7 h-7 text-primary" />,
-      title: "80% Less Grading Time",
-      description: "Save up to 50 hrs/month vs. manual marking.",
+      title: "Save 20+ Hours / Period",
+      description: "Reclaim over 20 hours worth of your teaching time every exam season.",
     },
     {
-      icon: <DollarSign className="w-7 h-7 text-secondary" />,
-      title: "₦50K+ Value Saved",
-      description: "Reclaim over ₦50,000 worth of your teaching time.",
+      icon: <Brain className="w-7 h-7 text-secondary" />,
+      title: "8% Grade Improvement",
+      description: "Instant feedback prevents learning loss, directly improving exam performance.",
     },
     {
-      icon: <Zap className="w-7 h-7 text-yellow-500" />,
-      title: "500+ Submissions Graded",
-      description: "Automate grading for 500+ papers every month.",
+      icon: <Shield className="w-7 h-7 text-yellow-500" />,
+      title: "100% Fairness & Integrity",
+      description: "Eliminate the 60% variance found in manual, multi-teacher human grading.",
     },
   ];
 
@@ -313,41 +320,18 @@ const Landing = () => {
                 variant="ghost"
                 className="text-muted-foreground hover:text-primary"
                 onClick={() => {
-                  // let user select account type
-                  setAccountType("individual");
                   nav(`auth/sign-in`);
                 }}
               >
                 Sign In
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                  >
-                    Sign Up
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="">
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setAccountType("lecturer");
-                      nav("auth/sign-up");
-                    }}
-                  >
-                    As Individual
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setAccountType("institution");
-                      nav("auth/sign-up");
-                    }}
-                  >
-                    As Organization
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button
+                variant="outline"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                onClick={() => nav("auth/account-type")}
+              >
+                Sign Up
+              </Button>
             </div>
 
             <div className="md:hidden flex items-center space-x-2">
@@ -396,11 +380,18 @@ const Landing = () => {
                 <Button
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                   onClick={() => {
-                    setAccountType("individual");
                     nav(`auth/sign-in`);
                   }}
                 >
                   Sign In
+                </Button>
+                <Button
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2"
+                  onClick={() => {
+                    nav(`auth/account-type`);
+                  }}
+                >
+                  Sign Up
                 </Button>
               </div>
             </div>
@@ -422,14 +413,14 @@ const Landing = () => {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
-              Empowering educators, schools, and organisations with a unified infrastructure for 
-              paper-based and digital assessments. Trusted by institutions across Africa.
+              Empowering educators, schools, and students with a unified infrastructure for 
+              paper-based exams, CBTs, and AI-driven mock tests. Trusted by institutions across Africa. 
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Button
                 size="lg"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6 text-xl rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105"
-                onClick={() => nav(`auth/sign-in`)}
+                onClick={() => nav(`auth/account-type`)}
               >
                 Start Free Trial
               </Button>
@@ -485,11 +476,11 @@ const Landing = () => {
               </p>
               <div className="space-y-4">
                 {[
-                  "Inconsistent manual grading and feedback",
-                  "Lack of proctoring for online assessments",
-                  "Poor student performance insights",
-                  "High operational costs for CBT infrastructure",
-                  "Disconnected tools for paper and digital",
+                  "6 in 10 grades disagree across different human teachers",
+                  "Delayed feedback reduces student performance by 8%",
+                  "High administrative burden (15+ mins per script)",
+                  "Expensive and rigid CBT infrastructure",
+                  "Disconnected tools for paper and digital exams",
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <X className="h-5 w-5 text-brand-danger-500" />
@@ -577,7 +568,7 @@ const Landing = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center">
             {audiences.map((audience, index) => (
               <Card key={index} className="border-none shadow-md hover:shadow-lg transition-all h-full">
                 <CardContent className="p-6 flex flex-col h-full">
@@ -614,11 +605,17 @@ const Landing = () => {
           </div>
 
           <Tabs defaultValue="paper" className="max-w-5xl mx-auto">
-            <TabsList className="grid w-full grid-cols-2 mb-12 h-14 p-1 gap-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
-              <TabsTrigger value="paper" className="text-lg font-semibold rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary dark:data-[state=active]:bg-slate-700">
+            <TabsList className="flex flex-col sm:grid w-full sm:grid-cols-2 mb-12 h-auto sm:h-14 p-1 gap-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
+              <TabsTrigger 
+                value="paper" 
+                className="w-full text-base sm:text-lg font-semibold rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary dark:data-[state=active]:bg-slate-700 py-3 sm:py-0 transition-all duration-200"
+              >
                 Paper-based Grading
               </TabsTrigger>
-              <TabsTrigger value="digital" className="text-lg font-semibold rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary dark:data-[state=active]:bg-slate-700">
+              <TabsTrigger 
+                value="digital" 
+                className="w-full text-base sm:text-lg font-semibold rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary dark:data-[state=active]:bg-slate-700 py-3 sm:py-0 transition-all duration-200"
+              >
                 Computer-based (CBT)
               </TabsTrigger>
             </TabsList>
@@ -715,10 +712,10 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
-              Modern Pricing for <span className="text-primary">Modern Educators.</span>
+              Flexible Pricing for <span className="text-primary">Everyone.</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Simple, transparent pricing that scales with your needs.
+              Simple, transparent subscriptions for institutions and pay-as-you-go SmartPrep credits for students.
             </p>
           </div>
 

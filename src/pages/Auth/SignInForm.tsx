@@ -28,7 +28,7 @@ const formSchema = z.object({
 const SignInForm = () => {
   const nav = useNavigate();
   const posthog = usePostHog()
-  const { user, accountType, saveUser } = useStore();
+  const { user, accountType, saveUser, saveUserToken } = useStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,8 +87,9 @@ const SignInForm = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     loginMutate(values, {
       onSuccess: (response) => {
-        const { user, needsKYC, needsPayment } = response.data;
+        const { user, token, needsKYC, needsPayment } = response.data;
         saveUser(user);
+        saveUserToken(token);
 
         posthog.identify(user._id, { 
           email: user.email, 
@@ -111,6 +112,11 @@ const SignInForm = () => {
         else nav("/app/assessments");
       },
       onError: (error) => {
+        const errorData = (error as any)?.response?.data;
+        if (errorData?.isPending) {
+          toast.error(errorData.error || "Please verify your email.");
+          return nav(`/auth/verify-otp?email=${form.getValues().email}`);
+        }
         console.log("error", error);
         posthog.capture("login_failed", { error: (error as any)?.message });
         toast.error("Invalid credentials");
@@ -147,7 +153,12 @@ const SignInForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="flex justify-between w-full">
+                  <span>Password</span>
+                  <Link to="/auth/forgot-password" className="text-primary hover:underline text-xs font-normal">
+                    Forgot password?
+                  </Link>
+                </FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="••••••••" {...field} />
                 </FormControl>
