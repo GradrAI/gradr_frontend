@@ -59,13 +59,14 @@ const VerifyOtp = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     verifyMutate(values, {
       onSuccess: (response) => {
-        const { user, token, needsKYC, needsPayment } = response.data;
+        const { user, token, needsPassword, needsKYC, needsPayment } = response.data;
         saveUser(user);
         saveUserToken(token);
 
         toast.success("Email verified successfully!");
 
-        if (needsKYC) nav("/auth/kyc");
+        if (needsPassword) nav("/auth/set-password");
+        else if (needsKYC) nav("/auth/kyc");
         else if (needsPayment) nav("/auth/pricing");
         else if (user.role === "student") nav("/student/dashboard");
         else nav("/app/assessments");
