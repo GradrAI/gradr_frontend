@@ -37,14 +37,14 @@ const KYC = () => {
   const { user, appendOrganizationData } = useStore();
   
   const isLecturer = user?.role === "lecturer";
-  const isIndividual = user?.role === "lecturer";
+  const isIndividual = user?.role === "lecturer" || user?.role === "student";
 
   const form = useForm<OrganizationData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: isLecturer ? `${user?.first_name || ""} ${user?.last_name || ""}`.trim() : "",
+      name: isIndividual ? `${user?.first_name || ""} ${user?.last_name || ""}`.trim() : "",
       physicalAddress: "",
-      email: isLecturer ? user?.email || "" : "",
+      email: isIndividual ? user?.email || "" : "",
       phoneNumber: "",
     },
   });

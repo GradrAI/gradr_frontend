@@ -58,11 +58,15 @@ const PostPayment = () => {
     },
   });
 
+
+
+  const isStudent = user?.role === "student";
+
   useEffect(() => {
     // Guards to ensure all data is ready
     if (isLoading || !selectedPaymentPlan || !user) return;
 
-    if (((isSuccess && data) || isFreePlan) && orgIsIdle) {
+    if (((isSuccess && data) || isFreePlan)) {
       if (reference) {
         toast.success("Payment verified successfully!", {
           id: "payment-verification",
@@ -72,24 +76,26 @@ const PostPayment = () => {
           id: "payment-verification",
         });
       }
-      
-      console.log("Starting organization setup...");
-      toast.loading("Setting up your organization...", { id: "org-creation" });
 
-      const finalOrgData = {
-        organizationType: user?.role === "lecturer" ? "individual" : "institution",
-        ...organizationData,
-        paymentPlan: String(selectedPaymentPlan?._id),
-      };
+      if (orgIsIdle) {
+        // All users: create/update organization
+        console.log("Starting organization setup...");
+        toast.loading("Setting up your organization...", { id: "org-creation" });
 
-      // Ensure we have at least the basic required fields if organizationData is sparse
-      // This helps when users skip KYC or navigate directly
-      if (!finalOrgData.name) finalOrgData.name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username;
-      if (!finalOrgData.email) finalOrgData.email = user.email;
-      if (!finalOrgData.phoneNumber) finalOrgData.phoneNumber = "N/A";
-      if (!finalOrgData.physicalAddress) finalOrgData.physicalAddress = "N/A";
-      
-      organizationMutate(finalOrgData as OrganizationData);
+        const finalOrgData = {
+          organizationType: (user?.role === "lecturer" || user?.role === "student") ? "individual" : "institution",
+          ...organizationData,
+          paymentPlan: String(selectedPaymentPlan?._id),
+        };
+
+        // Ensure we have at least the basic required fields if organizationData is sparse
+        if (!finalOrgData.name) finalOrgData.name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username;
+        if (!finalOrgData.email) finalOrgData.email = user.email;
+        if (!finalOrgData.phoneNumber) finalOrgData.phoneNumber = "N/A";
+        if (!finalOrgData.physicalAddress) finalOrgData.physicalAddress = "N/A";
+        
+        organizationMutate(finalOrgData as OrganizationData);
+      }
     }
 
     if (isError) {
@@ -112,7 +118,11 @@ const PostPayment = () => {
     user
   ]);
 
+
+
+  // Handle org creation result (for all users)
   useEffect(() => {
+
     if (orgIsError) {
       posthog.capture("org_creation_failed", { error: orgError?.message });
       toast.error("Failed to create organization", { id: "org-creation" });
@@ -149,17 +159,19 @@ const PostPayment = () => {
       }
 
       setTimeout(() => {
-        nav("/app/assessments");
+        if (isStudent) nav("/student/dashboard");
+        else nav("/app/assessments");
       }, 2000);
     }
-  }, [orgIsSuccess, orgIsError, orgIsPending, orgData, nav, user, saveUser]);
+  }, [orgIsSuccess, orgIsError, orgIsPending, orgData, nav, user, saveUser, isStudent, selectedPaymentPlan, reference, isFreePlan, posthog]);
 
   const handleRetry = () => {
     refetch();
   };
 
   const handleGoToDashboard = () => {
-    nav("/app/assessments");
+    if (isStudent) nav("/student/dashboard");
+    else nav("/app/assessments");
   };
 
   const handleGoBack = () => {
@@ -235,7 +247,7 @@ const PostPayment = () => {
     );
   }
 
-  // Organization creation pending
+  // Setup pending
   if ((isSuccess || isFreePlan) && orgIsPending) {
     return (
       <div className="w-full min-h-[600px] flex items-center justify-center">
@@ -246,7 +258,9 @@ const PostPayment = () => {
             </div>
             <CardTitle>{isFreePlan ? "Setting Up Your Account" : "Payment Successful!"}</CardTitle>
             <CardDescription>
-              {isFreePlan ? "Creating your account..." : "Setting up your organization..."}
+              {isStudent
+                ? (isFreePlan ? "Setting up your account..." : "Activating your plan...")
+                : (isFreePlan ? "Creating your account..." : "Setting up your organization...")}
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
@@ -270,7 +284,7 @@ const PostPayment = () => {
     );
   }
 
-  // Organization creation error
+  // Setup error
   if ((isSuccess || isFreePlan) && orgIsError) {
     return (
       <div className="w-full min-h-[600px] flex items-center justify-center">

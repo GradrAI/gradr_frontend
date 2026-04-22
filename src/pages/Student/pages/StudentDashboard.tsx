@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-// import useStore from "@/state";
+import useStore from "@/state";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -13,9 +13,11 @@ import {
 
 const StudentDashboard = () => {
     const navigate = useNavigate();
+    const { user } = useStore();
     const { data: resultsResponse, isLoading, isError, error } = useQuery({
-        queryKey: ["results"],
+        queryKey: ["results", user?._id],
         queryFn: async () => await api.get(`/results/all`),
+        enabled: !!user?._id,
     });
 
     const results = resultsResponse?.data || [];

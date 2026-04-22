@@ -16,12 +16,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+import { queryClient } from "@/lib/queryClient";
+
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
     if (error.response && error.response.data.message === "Unauthorized") {
+      queryClient.clear();
       useStore.getState().reset();
       window.location.href = "/auth/sign-in?expired=true";
     }

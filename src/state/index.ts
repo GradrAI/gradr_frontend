@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { queryClient } from "@/lib/queryClient";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
 import { User } from "@/types/User";
 import { PaymentPlan } from "@/types/PaymentPlan";
@@ -33,7 +34,14 @@ const useStore = create<State>()(
         accountType: "",
         setAccountType: (accountType) => set({ accountType }),
         user: null,
-        saveUser: (user) => set({ user }),
+        saveUser: (user) => {
+          const currentUser = get().user;
+          // Clear React Query cache when switching users
+          if (currentUser && currentUser._id !== user._id) {
+            queryClient.clear();
+          }
+          set({ user });
+        },
         token: "",
         saveUserToken: (token) =>
           set({
@@ -53,6 +61,8 @@ const useStore = create<State>()(
         expandedRowId: null,
         setExpandedRowId: (id) => set({ expandedRowId: id }),
         reset: () => {
+          // Clear React Query cache to prevent cross-user data leaks
+          queryClient.clear();
           set({
             accountType: "",
             user: null,

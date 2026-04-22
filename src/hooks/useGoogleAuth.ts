@@ -46,7 +46,15 @@ export function useGoogleAuth(code: string | null) {
         saveUserToken(token);
         if (code) setCode(code);
         
-        if (user.role === "student") {
+        // Unified onboarding flow for all roles
+        if (needsPassword) {
+          navigate("/auth/set-password");
+        } else if (needsKYC) {
+          navigate("/auth/kyc");
+        } else if (needsPayment) {
+          navigate("/auth/pricing");
+        } else if (user.role === "student") {
+          // Student is fully onboarded — go to student dashboard or quiz
           if (studentData?.courseId && studentData?.uniqueCode) {
             navigate(`/student/quiz`, {
               state: {
@@ -57,16 +65,6 @@ export function useGoogleAuth(code: string | null) {
           } else {
             navigate("/student/dashboard");
           }
-          return;
-        }
-
-        // Handle Admin/Lecturer onboarding
-        if (needsPassword) {
-          navigate("/auth/set-password");
-        } else if (needsKYC) {
-          navigate("/auth/kyc");
-        } else if (needsPayment) {
-          navigate("/auth/pricing");
         } else {
           navigate("/app/assessments", { replace: true });
         }
