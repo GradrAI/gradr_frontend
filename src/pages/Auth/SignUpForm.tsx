@@ -41,6 +41,12 @@ const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  useEffect(() => {
+    if (!accountType) {
+      nav("../account-type");
+    }
+  }, [accountType, nav]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

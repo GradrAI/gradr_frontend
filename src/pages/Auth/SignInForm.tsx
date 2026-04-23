@@ -197,7 +197,7 @@ const SignInForm = () => {
       <div className="text-center text-sm mt-6 text-gray-600">
         Don't have an account?{" "}
         <Link
-          to="../sign-up"
+          to="../account-type"
           className="text-primary hover:underline font-medium"
         >
           Create one

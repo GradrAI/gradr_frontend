@@ -938,7 +938,7 @@ const Landing = () => {
             <Button
               size="lg"
               className="bg-background text-primary hover:bg-background/90 px-10 py-7 text-xl font-bold rounded-2xl"
-              onClick={() => nav(`auth/sign-up`)}
+              onClick={() => nav(`auth/account-type`)}
             >
               Start Free Trial
             </Button>
