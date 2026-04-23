@@ -53,7 +53,7 @@ const SignInForm = () => {
     mutationKey: ["login"],
     mutationFn: (data: z.infer<typeof formSchema>) => {
       const validatedData = formSchema.parse(data);
-      return axios.post(`/auth/login`, { ...validatedData, accountType });
+      return axios.post(`/auth/login`, validatedData);
     }
   });
 
@@ -113,13 +113,21 @@ const SignInForm = () => {
       },
       onError: (error) => {
         const errorData = (error as any)?.response?.data;
+        
         if (errorData?.isPending) {
           toast.error(errorData.error || "Please verify your email.");
           return nav(`/auth/verify-otp?email=${form.getValues().email}`);
         }
+
+        if (errorData?.useGoogle) {
+          toast.error(errorData.error || "Please log in with Google.");
+          return;
+        }
+
         console.log("error", error);
-        posthog.capture("login_failed", { error: (error as any)?.message });
-        toast.error("Invalid credentials");
+        posthog.capture("login_failed", { error: errorData?.error || (error as any)?.message });
+        
+        toast.error(errorData?.error || "Invalid credentials");
       },
     });
   }
