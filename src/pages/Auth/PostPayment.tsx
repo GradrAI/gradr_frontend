@@ -1,7 +1,6 @@
 import api from "@/lib/axios";
 import useStore from "@/state";
-import { OrganizationData } from "@/types/OrganizationData";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -14,18 +13,18 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  CheckCircle,
   XCircle,
   Loader2,
-  ArrowRight,
   RefreshCw,
+  Mail,
+  ArrowLeft
 } from "lucide-react";
 import { usePostHog } from '@posthog/react'
 
 const PostPayment = () => {
   const nav = useNavigate();
-  const posthog = usePostHog()
-  const { user, saveUser, selectedPaymentPlan, organizationData } = useStore();
+  const posthog = usePostHog();
+  const { user, selectedPaymentPlan } = useStore();
   const [searchParams] = useSearchParams();
   const reference = searchParams.get("reference");
 
@@ -35,210 +34,112 @@ const PostPayment = () => {
     queryKey: ["verifyPayment", reference],
     queryFn: async () => await api.get(`/payment/verify/${reference}`),
     enabled: Boolean(reference?.length),
-    retry: 3,
-    retryDelay: 2000,
+    retry: false, // Don't auto retry so we can show the server error state
   });
-
-  const {
-    isSuccess: orgIsSuccess,
-    isPending: orgIsPending,
-    isIdle: orgIsIdle,
-    isError: orgIsError,
-    error: orgError,
-    data: orgData,
-    mutate: organizationMutate,
-  } = useMutation({
-    mutationKey: ["organization"],
-    mutationFn: async (data: OrganizationData) => {
-      const orgId = typeof user?.organization === "object" ? user?.organization?._id : user?.organization;
-      if (orgId) {
-        return await api.put(`/organizations/${orgId}`, data);
-      }
-      return await api.post("/organizations", data);
-    },
-  });
-
-
 
   const isStudent = user?.role === "student";
 
   useEffect(() => {
-    // Guards to ensure all data is ready
-    if (isLoading || !selectedPaymentPlan || !user) return;
-
-    if (((isSuccess && data) || isFreePlan)) {
-      if (reference) {
-        toast.success("Payment verified successfully!", {
-          id: "payment-verification",
-        });
-      } else {
-        toast.success("Free plan activated!", {
-          id: "payment-verification",
-        });
-      }
-
-      if (orgIsIdle) {
-        // All users: create/update organization
-        console.log("Starting organization setup...");
-        toast.loading("Setting up your organization...", { id: "org-creation" });
-
-        const finalOrgData = {
-          organizationType: (user?.role === "lecturer" || user?.role === "student") ? "individual" : "institution",
-          ...organizationData,
-          paymentPlan: String(selectedPaymentPlan?._id),
-        };
-
-        // Ensure we have at least the basic required fields if organizationData is sparse
-        if (!finalOrgData.name) finalOrgData.name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username;
-        if (!finalOrgData.email) finalOrgData.email = user.email;
-        if (!finalOrgData.phoneNumber) finalOrgData.phoneNumber = "N/A";
-        if (!finalOrgData.physicalAddress) finalOrgData.physicalAddress = "N/A";
-        
-        organizationMutate(finalOrgData as OrganizationData);
-      }
+    // For free plans, we can just redirect them since they don't go through Paystack
+    if (isFreePlan) {
+      toast.success("Free plan activated!", { id: "payment-verification" });
+      posthog.capture("free_plan_activated", { 
+        plan_name: selectedPaymentPlan?.name, 
+        plan_type: selectedPaymentPlan?.planType 
+      });
+      if (isStudent) nav("/student/dashboard");
+      else nav("/app/assessments");
+      return;
     }
 
-    if (isError) {
-      toast.error("Payment verification failed", {
+    if (isSuccess && data?.data?.success) {
+      toast.success("Payment verified successfully!", {
         id: "payment-verification",
       });
-    }
-  }, [
-    data,
-    isSuccess,
-    isLoading,
-    isError,
-    error,
-    organizationData,
-    selectedPaymentPlan,
-    organizationMutate,
-    isFreePlan,
-    reference,
-    orgIsIdle,
-    user
-  ]);
-
-
-
-  // Handle org creation result (for all users)
-  useEffect(() => {
-
-    if (orgIsError) {
-      posthog.capture("org_creation_failed", { error: orgError?.message });
-      toast.error("Failed to create organization", { id: "org-creation" });
-    }
-
-    if (orgIsPending) {
-      toast.loading("Creating your organization...", { id: "org-creation" });
-    }
-
-    if (orgIsSuccess && orgData) {
-      toast.success("Organization created successfully!", {
-        id: "org-creation",
+      
+      posthog.capture("payment_completed", { 
+        payment_reference: reference 
       });
 
-      if (user) {
-        if (isFreePlan) {
-          posthog.capture("free_plan_activated", { 
-            plan_name: selectedPaymentPlan?.name, 
-            plan_type: selectedPaymentPlan?.planType 
-          });
-        } else {
-          posthog.capture("payment_completed", { 
-            plan_name: selectedPaymentPlan?.name, 
-            plan_type: selectedPaymentPlan?.planType, 
-            plan_amount: selectedPaymentPlan?.amount, 
-            payment_reference: reference 
-          });
-        }
-
-        saveUser({
-          ...user,
-          organization: orgData.data?.data || user.organization
-        });
-      }
-
-      setTimeout(() => {
-        if (isStudent) nav("/student/dashboard");
-        else nav("/app/assessments");
-      }, 2000);
+      // Redirect immediately. Do not show an intermediate screen.
+      if (isStudent) nav("/student/dashboard");
+      else nav("/app/assessments");
     }
-  }, [orgIsSuccess, orgIsError, orgIsPending, orgData, nav, user, saveUser, isStudent, selectedPaymentPlan, reference, isFreePlan, posthog]);
+  }, [data, isSuccess, isFreePlan, isStudent, nav, posthog, reference, selectedPaymentPlan]);
 
   const handleRetry = () => {
     refetch();
   };
 
-  const handleGoToDashboard = () => {
-    if (isStudent) nav("/student/dashboard");
-    else nav("/app/assessments");
+  const handleGoBack = () => {
+    nav("/auth/pricing");
   };
 
-  const handleGoBack = () => {
-    nav("/sign-up/payment-plan");
+  const handleContactSupport = () => {
+    window.location.href = "mailto:contact@gradrai.com";
   };
+
+  if (isFreePlan) {
+    return null; // Will redirect immediately in useEffect
+  }
 
   // Loading state
   if (isLoading) {
     return (
       <div className="w-full min-h-[600px] flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center">
-              <Loader2 className="w-8 h-8 text-primary animate-spin" />
-            </div>
-            <CardTitle>{isFreePlan ? "Setting Up Your Account" : "Verifying Payment"}</CardTitle>
-            <CardDescription>
-              {isFreePlan 
-                ? "Please wait while we set up your free account..." 
-                : "Please wait while we confirm your payment..."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <div className="space-y-2 text-sm text-gray-600">
-              <p>• Checking payment status</p>
-              <p>• Validating transaction</p>
-              <p>• Preparing your account</p>
-            </div>
+        <Card className="w-full max-w-md border-0 shadow-none bg-transparent">
+          <CardContent className="text-center flex flex-col items-center justify-center space-y-4">
+            <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            <h2 className="text-xl font-semibold text-gray-800">Verifying Payment...</h2>
+            <p className="text-sm text-gray-500">Please wait while we securely confirm your transaction.</p>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  // Error state
-  if (isError) {
+  // Error state (Payment failure or Server error)
+  if (isError || (isSuccess && !data?.data?.success)) {
+    const isServerError = isError && (error as any)?.response?.status === 500;
+    const errorMessage = isError 
+      ? ((error as any)?.response?.data?.error || "We could not confirm your payment. This may be a temporary issue.")
+      : (data?.data?.error || "Your payment was not successful.");
+
     return (
-      <div className="w-full min-h-[600px] flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-brand-danger-100 rounded-full flex items-center justify-center">
-              <XCircle className="w-8 h-8 text-brand-danger-600" />
+      <div className="w-full min-h-[600px] flex items-center justify-center p-4">
+        <Card className="w-full max-w-md border-brand-danger-100 shadow-lg">
+          <CardHeader className="text-center pb-2">
+            <div className="mx-auto mb-4 w-16 h-16 bg-brand-danger-50 rounded-full flex items-center justify-center">
+              <XCircle className="w-8 h-8 text-brand-danger-500" />
             </div>
-            <CardTitle className="text-brand-danger-600">
-              Payment Verification Failed
+            <CardTitle className="text-2xl font-bold text-gray-900">
+              Something went wrong with your payment
             </CardTitle>
-            <CardDescription>
-              We couldn't verify your payment. This might be a temporary issue.
+            <CardDescription className="text-base text-gray-600 mt-2">
+              {errorMessage}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-sm text-gray-600 space-y-1">
-              <p>• Your payment may still be processing</p>
-              <p>• Network issues may have occurred</p>
-              <p>• The transaction may need more time</p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Button onClick={handleRetry} className="w-full">
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Retry Verification
-              </Button>
+          <CardContent className="space-y-6 pt-4">
+            <div className="flex flex-col gap-3">
+              {isServerError ? (
+                <Button id="payment-retry-button" onClick={handleRetry} className="w-full h-12 text-base">
+                  <RefreshCw className="w-5 h-5 mr-2" />
+                  Retry Verification
+                </Button>
+              ) : (
+                <Button id="payment-back-button" onClick={handleGoBack} className="w-full h-12 text-base">
+                  <ArrowLeft className="w-5 h-5 mr-2" />
+                  Return to Payment Page
+                </Button>
+              )}
               <Button
+                id="payment-support-button"
                 variant="outline"
-                onClick={handleGoBack}
-                className="w-full"
+                onClick={handleContactSupport}
+                className="w-full h-12 text-base"
               >
-                Go Back to Payment Plans
+                <Mail className="w-5 h-5 mr-2" />
+                Contact Support
               </Button>
             </div>
           </CardContent>
@@ -247,134 +148,8 @@ const PostPayment = () => {
     );
   }
 
-  // Setup pending
-  if ((isSuccess || isFreePlan) && orgIsPending) {
-    return (
-      <div className="w-full min-h-[600px] flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center">
-              <Loader2 className="w-8 h-8 text-primary animate-spin" />
-            </div>
-            <CardTitle>{isFreePlan ? "Setting Up Your Account" : "Payment Successful!"}</CardTitle>
-            <CardDescription>
-              {isStudent
-                ? (isFreePlan ? "Setting up your account..." : "Activating your plan...")
-                : (isFreePlan ? "Creating your account..." : "Setting up your organization...")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <div className="space-y-4">
-              <div className="flex items-center justify-center">
-                <Loader2 className="w-6 h-6 text-primary animate-spin mr-2" />
-                <span className="text-sm text-gray-600">
-                  Creating your workspace
-                </span>
-              </div>
-              <div className="text-xs text-gray-500">
-                <p>
-                  Plan: <strong>{selectedPaymentPlan?.name}</strong>
-                </p>
-                <p>This will take just a moment...</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Setup error
-  if ((isSuccess || isFreePlan) && orgIsError) {
-    return (
-      <div className="w-full min-h-[600px] flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
-              <XCircle className="w-8 h-8 text-yellow-600" />
-            </div>
-            <CardTitle className="text-yellow-600">Setup Issue</CardTitle>
-            <CardDescription>
-              {isFreePlan 
-                ? "We encountered an issue setting up your account." 
-                : "Payment was successful, but we encountered an issue setting up your organization."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-sm text-gray-600 text-center">
-              <p>
-                Don't worry - our team will resolve this shortly.
-              </p>
-            </div>
-            <Button
-              onClick={() =>
-                (window.location.href = "mailto:support@gradrai.com")
-              }
-              className="w-full"
-            >
-              Contact Support
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Success state
-  if ((isSuccess || isFreePlan) && orgIsSuccess) {
-    return (
-      <div className="w-full min-h-[600px] flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-green-600" />
-            </div>
-            <CardTitle className="text-green-600">
-              Welcome to GradrAI!
-            </CardTitle>
-            <CardDescription>
-              Your account has been successfully set up
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="text-sm space-y-1">
-                <p className="font-medium text-green-800">Account Details:</p>
-                <p className="text-green-700">
-                  Plan: <strong>{selectedPaymentPlan?.name}</strong>
-                </p>
-                <p className="text-green-700">
-                  Status: <strong>Active</strong>
-                </p>
-              </div>
-            </div>
-            <div className="text-sm text-gray-600">
-              <p>
-                You'll be redirected to your dashboard in a moment, or click
-                below to continue.
-              </p>
-            </div>
-            <Button onClick={handleGoToDashboard} className="w-full">
-              Go to Dashboard
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Fallback - should not reach here
-  return (
-    <div className="w-full min-h-[600px] flex items-center justify-center">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle>Processing...</CardTitle>
-          <CardDescription>Please wait</CardDescription>
-        </CardHeader>
-      </Card>
-    </div>
-  );
+  // Fallback while waiting for useEffect redirect
+  return null;
 };
 
 export default PostPayment;
