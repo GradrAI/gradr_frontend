@@ -9,9 +9,33 @@ const Changelog = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = 'Changelog | GradrAI';
+    updateMetaTags();
     fetchChangelog();
   }, []);
+
+  const updateMetaTags = () => {
+    const title = 'Changelog | GradrAI';
+    const description = 'All the latest updates, fixes, and improvements to the GradrAI platform.';
+    
+    document.title = title;
+
+    const setMetaTag = (attrName: string, attrValue: string, content: string) => {
+      let element = document.querySelector(`meta[${attrName}="${attrValue}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(attrName, attrValue);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    };
+
+    setMetaTag('name', 'description', description);
+    setMetaTag('property', 'og:title', title);
+    setMetaTag('property', 'og:description', description);
+    setMetaTag('property', 'og:url', window.location.href);
+    setMetaTag('name', 'twitter:title', title);
+    setMetaTag('name', 'twitter:description', description);
+  };
 
   const fetchChangelog = async () => {
     try {

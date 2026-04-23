@@ -12,9 +12,33 @@ const BlogIndex = () => {
   const [activeType, setActiveType] = useState('');
 
   useEffect(() => {
-    document.title = 'Blog | GradrAI';
+    updateMetaTags();
     fetchPosts();
   }, [activeType]);
+
+  const updateMetaTags = () => {
+    const title = 'Blog | GradrAI';
+    const description = 'Stay informed with the latest from GradrAI—your partner in modernizing assessment grading across Africa.';
+    
+    document.title = title;
+
+    const setMetaTag = (attrName: string, attrValue: string, content: string) => {
+      let element = document.querySelector(`meta[${attrName}="${attrValue}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(attrName, attrValue);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    };
+
+    setMetaTag('name', 'description', description);
+    setMetaTag('property', 'og:title', title);
+    setMetaTag('property', 'og:description', description);
+    setMetaTag('property', 'og:url', window.location.href);
+    setMetaTag('name', 'twitter:title', title);
+    setMetaTag('name', 'twitter:description', description);
+  };
 
   const fetchPosts = async () => {
     setLoading(true);

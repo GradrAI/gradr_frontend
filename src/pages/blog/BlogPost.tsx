@@ -33,7 +33,7 @@ const BlogPost = () => {
         return;
       }
       setPost(data);
-      document.title = `${data.seo?.metaTitle || data.title} | GradrAI Blog`;
+      updateMetaTags(data);
 
       // Fetch related posts
       const related = await client.fetch(RELATED_POSTS_QUERY, {
@@ -46,6 +46,49 @@ const BlogPost = () => {
       setError('An error occurred while loading the post.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateMetaTags = (data: Post) => {
+    const title = data.seo?.metaTitle || data.title;
+    const description = data.seo?.metaDescription || data.summary;
+    const siteTitle = 'GradrAI Blog';
+    const fullTitle = `${title} | ${siteTitle}`;
+
+    // Update document title
+    document.title = fullTitle;
+
+    // Helper to update or create meta tags
+    const setMetaTag = (attrName: string, attrValue: string, content: string) => {
+      let element = document.querySelector(`meta[${attrName}="${attrValue}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(attrName, attrValue);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    };
+
+    // SEO Meta Tags
+    setMetaTag('name', 'description', description);
+
+    // Open Graph
+    setMetaTag('property', 'og:title', title);
+    setMetaTag('property', 'og:description', description);
+    setMetaTag('property', 'og:type', 'article');
+    setMetaTag('property', 'og:url', window.location.href);
+
+    // Twitter
+    setMetaTag('name', 'twitter:title', title);
+    setMetaTag('name', 'twitter:description', description);
+    setMetaTag('name', 'twitter:card', 'summary_large_image');
+
+    // Image logic
+    const ogImage = data.seo?.ogImage || data.coverImage;
+    if (ogImage) {
+      const imageUrl = urlFor(ogImage).width(1200).height(630).auto('format').url();
+      setMetaTag('property', 'og:image', imageUrl);
+      setMetaTag('name', 'twitter:image', imageUrl);
     }
   };
 
