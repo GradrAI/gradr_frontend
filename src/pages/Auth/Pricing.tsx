@@ -42,7 +42,7 @@ const Pricing = () => {
 
   const { mutate: paymentMutate, isPending: paymentPending } = useMutation({
     mutationKey: ["payment"],
-    mutationFn: async (data: { email: string; amount: number }) =>
+    mutationFn: async (data: { email: string; amount: number; planId: string }) =>
       await api.post("/payment", data),
   });
 
@@ -90,6 +90,7 @@ const Pricing = () => {
       {
         email: user.email,
         amount: selectedPaymentPlan.amount,
+        planId: selectedPaymentPlan._id,
       },
       {
         onSuccess: (data: any) => {
