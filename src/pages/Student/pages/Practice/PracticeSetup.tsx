@@ -59,7 +59,7 @@ export default function PracticeSetup() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto h-[calc(100vh-80px)] overflow-y-auto">
+    <div className="p-4 sm:p-8 max-w-4xl mx-auto h-[calc(100vh-80px)] overflow-y-auto">
       <div className="mb-4">
         <Button 
           variant="ghost" 
@@ -71,25 +71,25 @@ export default function PracticeSetup() {
         </Button>
       </div>
 
-      <div className="mb-8 p-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl shadow-lg relative overflow-hidden">
+      <div className="mb-8 p-6 sm:p-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl shadow-lg relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
         <div className="relative z-10 flex items-center gap-4">
           <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
             <BrainCircuit className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Configure SmartPrep</h1>
-            <p className="text-indigo-100 font-medium">Create a personalized AI mock test.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Configure SmartPrep</h1>
+            <p className="text-indigo-100 font-medium text-sm sm:text-base">Create a personalized AI mock test.</p>
           </div>
         </div>
       </div>
 
       <Card className="border-none shadow-xl bg-white/80 backdrop-blur-md rounded-3xl overflow-hidden">
-        <CardHeader className="bg-slate-50 border-b border-slate-100 pb-6 pt-8 px-8">
+        <CardHeader className="bg-slate-50 border-b border-slate-100 pb-6 pt-8 px-6 sm:px-8">
           <CardTitle className="text-xl text-slate-800">Session Settings</CardTitle>
           <CardDescription>Tailor your practice session to your needs.</CardDescription>
         </CardHeader>
-        <CardContent className="p-8 space-y-10">
+        <CardContent className="p-6 sm:p-8 space-y-10">
           
           {/* Exam Type Selection */}
           <div className="space-y-4">
@@ -149,7 +149,7 @@ export default function PracticeSetup() {
           {/* Question Count Selection */}
           <div className="space-y-4">
             <label className="text-sm font-bold text-slate-700 uppercase tracking-widest">3. Number of Questions</label>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[10, 20, 30, 40].map((num) => (
                 <div 
                   key={num}
@@ -161,7 +161,7 @@ export default function PracticeSetup() {
                   }`}
                 >
                   <span className={`text-lg font-bold ${questionCount === num ? "text-purple-700" : "text-slate-600"}`}>
-                    {num} <span className="text-sm font-medium">Q</span>
+                    {num}
                   </span>
                 </div>
               ))}
@@ -171,7 +171,7 @@ export default function PracticeSetup() {
           {/* Mode Selection */}
           <div className="space-y-4">
             <label className="text-sm font-bold text-slate-700 uppercase tracking-widest">4. Exam Mode</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div 
                 onClick={() => setMode("quick")}
                 className={`p-5 rounded-2xl cursor-pointer border-2 transition-all ${
@@ -202,7 +202,7 @@ export default function PracticeSetup() {
               size="lg"
               onClick={handleStart}
               disabled={loading || selectedSubjects.length === 0}
-              className="bg-slate-900 text-white hover:bg-slate-800 rounded-xl px-10 h-14 text-lg font-semibold shadow-xl"
+              className="w-full sm:w-auto bg-slate-900 text-white hover:bg-slate-800 rounded-xl px-10 h-14 text-lg font-semibold shadow-xl"
             >
               {loading ? (
                 <>

@@ -1,7 +1,7 @@
 import api from "@/lib/axios";
 import useStore from "@/state";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -45,6 +45,32 @@ const PostPayment = () => {
   } = useMutation({
     mutationKey: ["createOrganization"],
     mutationFn: async (data: OrganizationData) => await api.post("/organizations", data),
+    onSuccess: (response) => {
+      if (processedRef.current) return;
+      processedRef.current = true;
+
+      toast.success("Account set up successfully!", { id: "org-creation" });
+      
+      posthog.capture("free_plan_activated", { 
+        plan_name: selectedPaymentPlan?.name 
+      });
+
+      const newOrg = response.data?.data;
+      if (newOrg) {
+        saveUser({
+          ...user,
+          organization: newOrg
+        } as any);
+      }
+
+      setTimeout(() => {
+        if (isStudent) nav("/student/dashboard");
+        else nav("/app/assessments");
+      }, 2000);
+    },
+    onError: () => {
+      toast.error("Failed to set up account", { id: "org-creation" });
+    }
   });
 
   // Query for verifying payment (used for paid plans)
@@ -55,9 +81,11 @@ const PostPayment = () => {
     retry: 1,
   });
 
+  const processedRef = useRef(false);
+
   useEffect(() => {
     // Guards to ensure all data is ready
-    if (isLoading || !selectedPaymentPlan || !user) return;
+    if (isLoading || !selectedPaymentPlan || !user || processedRef.current) return;
 
     if (isFreePlan && orgIsIdle) {
       // Free plans: Create organization manually
@@ -78,6 +106,7 @@ const PostPayment = () => {
     } 
     
     if (reference && isSuccess && data?.data) {
+      processedRef.current = true;
       // Paid plans: The backend verifyTransaction already created the organization
       toast.success("Payment verified successfully!", { id: "payment-verification" });
       
@@ -100,31 +129,6 @@ const PostPayment = () => {
       }, 2000);
     }
   }, [data, isSuccess, isLoading, isFreePlan, isStudent, nav, posthog, reference, selectedPaymentPlan, user, organizationData, organizationMutate, orgIsIdle, saveUser]);
-
-  // Handle org creation success (for free plans)
-  useEffect(() => {
-    if (orgIsSuccess && orgData) {
-      toast.success("Account set up successfully!", { id: "org-creation" });
-      
-      posthog.capture("free_plan_activated", { 
-        plan_name: selectedPaymentPlan?.name 
-      });
-
-      saveUser({
-        ...user,
-        organization: orgData.data?.data || user?.organization
-      } as any);
-
-      setTimeout(() => {
-        if (isStudent) nav("/student/dashboard");
-        else nav("/app/assessments");
-      }, 2000);
-    }
-
-    if (orgIsError) {
-      toast.error("Failed to set up account", { id: "org-creation" });
-    }
-  }, [orgIsSuccess, orgIsError, orgData, nav, user, isStudent, saveUser, selectedPaymentPlan, posthog]);
 
   const handleRetry = () => {
     refetch();

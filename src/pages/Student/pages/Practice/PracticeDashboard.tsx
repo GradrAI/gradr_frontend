@@ -23,18 +23,18 @@ export default function PracticeDashboard() {
   const sessions = response?.data?.data?.sessions || [];
 
   return (
-    <div className="p-8 max-w-6xl mx-auto h-[calc(100vh-80px)] overflow-y-auto">
-      <header className="mb-10 flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div className="p-4 sm:p-8 max-w-6xl mx-auto h-[calc(100vh-80px)] overflow-y-auto">
+      <header className="mb-8 sm:mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 gap-6">
         <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 mb-2 flex items-center gap-3">
-            <BrainCircuit className="w-8 h-8 text-indigo-500" />
+          <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 mb-2 flex items-center gap-3">
+            <BrainCircuit className="w-6 h-6 sm:w-8 sm:h-8 text-indigo-500" />
             SmartPrep Practice
           </h1>
-          <p className="text-slate-500 font-medium">Master your exams with AI-guided mock tests.</p>
+          <p className="text-slate-500 font-medium text-sm sm:text-base">Master your exams with AI-guided mock tests.</p>
         </div>
         <Button 
           onClick={() => navigate("/student/practice/new")}
-          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5"
+          className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5 py-6 sm:py-2"
           size="lg"
         >
           <PlusCircle className="mr-2 h-5 w-5" />
@@ -60,16 +60,16 @@ export default function PracticeDashboard() {
       )}
 
       {!isLoading && !isError && sessions.length === 0 && (
-        <div className="bg-slate-50/50 backdrop-blur-sm border border-dashed border-slate-300 p-16 rounded-3xl text-center">
-          <div className="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-            <BrainCircuit className="w-12 h-12 text-indigo-400" />
+        <div className="bg-slate-50/50 backdrop-blur-sm border border-dashed border-slate-300 p-8 sm:p-16 rounded-3xl text-center">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <BrainCircuit className="w-10 h-10 sm:w-12 sm:h-12 text-indigo-400" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-3">No practice sessions yet</h2>
-          <p className="text-slate-500 max-w-md mx-auto mb-8">Start your first SmartPrep session to get AI-powered explanations for JAMB & WASSCE past questions.</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-3">No practice sessions yet</h2>
+          <p className="text-slate-500 max-w-md mx-auto mb-8 text-sm sm:text-base">Start your first SmartPrep session to get AI-powered explanations for JAMB & WASSCE past questions.</p>
           <Button 
             onClick={() => navigate("/student/practice/new")}
             variant="outline"
-            className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 rounded-xl"
+            className="w-full sm:w-auto border-indigo-200 text-indigo-700 hover:bg-indigo-50 rounded-xl py-6 sm:py-2"
             size="lg"
           >
             Start your first session

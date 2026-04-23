@@ -23,7 +23,7 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && error.response.data.message === "Unauthorized") {
+    if (error.response && error.response.status === 401) {
       queryClient.clear();
       useStore.getState().reset();
       window.location.href = "/auth/sign-in?expired=true";

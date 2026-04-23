@@ -120,12 +120,12 @@ function App() {
               <Route index element={<Content />} />
             </Route>
 
-            <Route path="assessments">
-              <Route index element={<Assessments />} />
-              <Route path=":courseId" element={<AssessmentDetails />} />
-            </Route>
-
             <Route element={<ProtectedRoutes />}>
+              <Route path="assessments">
+                <Route index element={<Assessments />} />
+                <Route path=":courseId" element={<AssessmentDetails />} />
+              </Route>
+
               <Route path="grader">
                 <Route index element={<Grader />} />
                 <Route path="details" element={<Details />} />
