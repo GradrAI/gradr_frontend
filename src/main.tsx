@@ -14,6 +14,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "./components/ThemeProvider";
 // import { Toaster } from "@/components/ui/toaster";
 import { PostHogProvider } from '@posthog/react'
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 const options = {
   api_host: import.meta.env.VITE_POSTHOG_HOST,
@@ -34,6 +35,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
               <App />
             </PostHogProvider>
             <Analytics />
+            <SpeedInsights />
             {/* <Toaster /> */}
           </ThemeProvider>
         </ErrorBoundary>
