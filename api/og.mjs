@@ -1,10 +1,29 @@
-// Vercel Serverless Function for OG meta tag injection
+// Vercel Serverless Function for OG meta tag injection.
 // Social media crawlers don't execute JS, so this function
 // fetches post data from Sanity and returns HTML with correct meta tags.
+// Using .mjs extension to force ESM since package.json has "type": "module".
+
+import https from 'https';
 
 const SANITY_PROJECT_ID = process.env.VITE_SANITY_PROJECT_ID || '8bjalpha';
 const SANITY_DATASET = process.env.VITE_SANITY_DATASET || 'production';
 const SITE_URL = 'https://gradrai.com';
+
+function fetchJson(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(data));
+        } catch (e) {
+          reject(new Error('Failed to parse Sanity response'));
+        }
+      });
+    }).on('error', reject);
+  });
+}
 
 function buildImageUrl(imageRef) {
   if (!imageRef || !imageRef.asset || !imageRef.asset._ref) return null;
@@ -30,7 +49,7 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   const { slug } = req.query;
 
   if (!slug) {
@@ -40,7 +59,6 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Fetch post data directly from Sanity's HTTP API (no SDK needed)
     const query = encodeURIComponent(
       `*[_type == "post" && slug.current == "${slug}"][0]{
         title,
@@ -53,8 +71,7 @@ module.exports = async function handler(req, res) {
     );
 
     const sanityUrl = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${SANITY_DATASET}?query=${query}`;
-    const response = await fetch(sanityUrl);
-    const data = await response.json();
+    const data = await fetchJson(sanityUrl);
     const post = data.result;
 
     if (!post) {
@@ -71,9 +88,6 @@ module.exports = async function handler(req, res) {
     const publishedAt = post.publishedAt || '';
     const authorName = post.authorName || 'GradrAI';
 
-    // Return a minimal HTML page with proper OG tags.
-    // Crawlers will parse the meta tags; they don't follow JS redirects.
-    // Real users won't hit this route (the Vercel route only sends bots here).
     const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -116,7 +130,6 @@ module.exports = async function handler(req, res) {
     res.status(200).send(html);
   } catch (error) {
     console.error('OG handler error:', error);
-    // On error, return a basic page with default OG tags
     const fallbackHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -124,7 +137,7 @@ module.exports = async function handler(req, res) {
   <title>GradrAI Blog</title>
   <meta property="og:title" content="GradrAI Blog" />
   <meta property="og:image" content="${SITE_URL}/og-image.png" />
-  <meta property="og:url" content="${SITE_URL}/blog/${slug}" />
+  <meta property="og:url" content="${SITE_URL}/blog/${slug || ''}" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="${SITE_URL}/og-image.png" />
 </head>
@@ -133,4 +146,4 @@ module.exports = async function handler(req, res) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.status(200).send(fallbackHtml);
   }
-};
+}
