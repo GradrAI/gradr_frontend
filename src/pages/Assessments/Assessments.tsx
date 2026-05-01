@@ -16,7 +16,7 @@ const Assessments = () => {
   const code = searchParams.get("code");
 
   // Handles token exchange, saving user, navigation
-  useGoogleAuth(code);
+  const googleAuthMutation = useGoogleAuth(code);
 
   const {
     data: courseData,
@@ -27,7 +27,17 @@ const Assessments = () => {
   } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => await api.get(`/courses/users`),
+    enabled: !code,
   });
+
+  if (code || googleAuthMutation.isPending) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <p className="text-gray-500 animate-pulse">Authenticating securely...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-100 p-4 flex flex-col justify-between gap-2">
