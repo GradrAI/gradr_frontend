@@ -2,7 +2,7 @@ import { createContext, useState } from "react";
 import Header from "./components/Header";
 import { Outlet } from "react-router-dom";
 import useStore from "./state";
-import { Folder, Scan, Settings, Upload, Blocks } from "lucide-react";
+import { Folder, Scan, Settings, Upload, Blocks, PieChart } from "lucide-react";
 
 export const ModalContext = createContext<any>(null);
 
@@ -34,6 +34,11 @@ export default function Layout() {
       title: "Exams",
       url: "/app/exams",
       icon: Blocks,
+    },
+    {
+      title: "Reports",
+      url: "/app/reports",
+      icon: PieChart,
     },
     {
       title: "Settings",

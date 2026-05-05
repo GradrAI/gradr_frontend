@@ -16,10 +16,22 @@ const Uploads = () => {
   const nav = useNavigate();
   const { user } = useStore();
 
+  // Fetch active period first
+  const { data: activePeriod, isLoading: isPeriodLoading } = useQuery({
+    queryKey: ["activePeriod"],
+    queryFn: async () => {
+      const res = await api.get("/periods/active");
+      return res.data.data;
+    },
+  });
+
   const { data, isLoading, isSuccess, isError, error } = useQuery({
-    queryKey: ["courses"],
-    queryFn: async () => await api.get(`/courses/users?userId=${user?._id}`),
-    enabled: Boolean(user?._id?.length),
+    queryKey: ["courses", activePeriod?._id],
+    queryFn: async () => {
+      const res = await api.get(`/courses/users?periodId=${activePeriod._id}`);
+      return res.data.data;
+    },
+    enabled: Boolean(user?._id?.length) && !!activePeriod?._id,
     refetchOnWindowFocus: false,
   });
 
@@ -37,7 +49,7 @@ const Uploads = () => {
       <Button className="w-[150px] self-end" onClick={handleClick}>
         Upload new file(s)
       </Button>
-      {isLoading && (
+      {(isLoading || isPeriodLoading) && (
         <div className="w-full flex flex-col items-center justify-between gap-2">
           <div className="w-full flex items-center justify-between gap-6">
             <Skeleton className="w-[200px] h-[30px] rounded-lg" />
@@ -57,10 +69,10 @@ const Uploads = () => {
         </p>
       )}
 
-      {isSuccess && data?.data?.length && (
+      {isSuccess && data?.length && (
         <DataTable<Partial<Course>, unknown>
           columns={columns}
-          data={data.data}
+          data={data}
           getSubRows={(row: Partial<Course>) => row.categories ?? []}
         />
       )}

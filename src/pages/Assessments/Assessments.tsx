@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/axios";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, PenLine } from "lucide-react";
+import { GraduationCap, PenLine, AlertCircle } from "lucide-react";
 
 const Assessments = () => {
   const [searchParams] = useSearchParams();
@@ -18,6 +18,21 @@ const Assessments = () => {
   // Handles token exchange, saving user, navigation
   const googleAuthMutation = useGoogleAuth(code);
 
+  // 1. Fetch the active period for this organization
+  const {
+    data: activePeriod,
+    isLoading: isPeriodLoading,
+    isError: isPeriodError,
+  } = useQuery({
+    queryKey: ["activePeriod"],
+    queryFn: async () => {
+      const res = await api.get("/periods/active");
+      return res.data.data;
+    },
+    enabled: !code,
+  });
+
+  // 2. Fetch courses scoped to the active period
   const {
     data: courseData,
     isLoading: courseIsLoading,
@@ -25,9 +40,12 @@ const Assessments = () => {
     isError: courseIsError,
     error: courseError,
   } = useQuery({
-    queryKey: ["courses"],
-    queryFn: async () => await api.get(`/courses/users`),
-    enabled: !code,
+    queryKey: ["courses", activePeriod?._id],
+    queryFn: async () => {
+      const res = await api.get(`/courses/users?periodId=${activePeriod._id}`);
+      return res.data.data;
+    },
+    enabled: !code && !!activePeriod?._id,
   });
 
   if (code || googleAuthMutation.isPending) {
@@ -39,9 +57,34 @@ const Assessments = () => {
     );
   }
 
+  // No active period configured
+  if (isPeriodError) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center py-20 px-4 animate-fade-in mt-10">
+        <div className="w-24 h-24 bg-gradient-to-tr from-amber-100 to-orange-100 text-amber-600 rounded-full flex items-center justify-center mb-6 shadow-sm border border-amber-50">
+          <AlertCircle size={48} strokeWidth={1.5} />
+        </div>
+        <h2 className="text-3xl font-bold text-slate-800 mb-3">
+          No Active Period
+        </h2>
+        <p className="text-lg text-slate-500 max-w-lg mb-8 leading-relaxed">
+          You need to create and activate a period (e.g. "First Term") before you can manage assessments. Head to Settings to set up your academic cycle.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-100 p-4 flex flex-col justify-between gap-2">
-      {courseIsLoading && (
+      {/* Period indicator */}
+      {activePeriod && (
+        <div className="mb-2 flex items-center gap-2">
+          <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Active Period:</span>
+          <span className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">{activePeriod.name}</span>
+        </div>
+      )}
+
+      {(courseIsLoading || isPeriodLoading) && (
         <div className="flex flex-col space-y-3">
           <div className="flex flex-wrap gap-4 justify-between items-center">
             <Skeleton className="w-[200px] h-[50px] rounded-md" />
@@ -86,8 +129,8 @@ const Assessments = () => {
         </div>
       )}
 
-      {courseIsSuccess && Boolean(courseData?.data?.length) && (
-        <DataTable columns={columns} data={courseData.data} />
+      {courseIsSuccess && Boolean(courseData?.length) && (
+        <DataTable columns={columns} data={courseData} />
       )}
     </div>
   );

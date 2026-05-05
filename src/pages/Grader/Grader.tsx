@@ -6,7 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
@@ -29,7 +29,7 @@ const postResults = async (data: any) =>
 
 const Grader = () => {
   const nav = useNavigate();
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
   const { user, saveUser } = useStore();
 
   const [selectedSubRows, setSelectedSubRows] = useState<any[]>([]);
@@ -40,6 +40,15 @@ const Grader = () => {
   const [exportButtonText, setExportButtonText] = useState(
     "Export to Google Sheets"
   );
+  // Fetch active period
+  const { data: activePeriodData } = useQuery({
+    queryKey: ["activePeriod"],
+    queryFn: async () => {
+      const res = await api.get("/periods/active");
+      return res.data.data;
+    },
+  });
+
   const {
     data: courseData,
     isLoading: courseIsLoading,
@@ -47,9 +56,12 @@ const Grader = () => {
     isError: courseIsError,
     error: courseError,
   } = useQuery({
-    queryKey: ["courses"],
-    queryFn: async () => await api.get(`/courses/users?userId=${user?._id}`),
-    enabled: Boolean(user?._id?.length),
+    queryKey: ["courses", activePeriodData?._id],
+    queryFn: async () => {
+      const res = await api.get(`/courses/users?periodId=${activePeriodData._id}`);
+      return res.data.data;
+    },
+    enabled: Boolean(user?._id?.length) && !!activePeriodData?._id,
   });
 
   const { data, isLoading, isSuccess, isError, refetch } = useQuery({
@@ -107,10 +119,7 @@ const Grader = () => {
     });
   };
 
-  useEffect(() => {
-    console.log("selectedCourse changed: ", selectedCourse);
-    refetch();
-  }, [selectedCourse]);
+  // Removed manual refetch to prevent bypassing 'enabled' check
 
   useEffect(() => {
     if (!selectedRows?.length) return;
@@ -203,7 +212,7 @@ const Grader = () => {
           Unable to fetch courses for user
         </p>
       )}
-      {Boolean(courseData?.data?.length) && (
+      {Boolean(courseData?.length) && (
         <>
           <div className="w-full flex flex-wrap items-center justify-between gap-4">
             <Select onValueChange={handleSelect}>
@@ -211,7 +220,7 @@ const Grader = () => {
                 <SelectValue placeholder="Select course" />
               </SelectTrigger>
               <SelectContent>
-                {courseData?.data?.map(({ name, _id }: Course) => (
+                {courseData?.map(({ name, _id }: Course) => (
                   <div key={_id}>
                     <SelectItem value={_id}>{name}</SelectItem>
                   </div>

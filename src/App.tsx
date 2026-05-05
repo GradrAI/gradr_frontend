@@ -34,6 +34,7 @@ const StudentLayout = lazy(() => import("./pages/Student/components/StudentLayou
 const StudentRouter = lazy(() => import("./pages/Student/pages/StudentRouter"));
 const ExamCreate = lazy(() => import("./pages/Exams/pages/ExamCreate"));
 const Exams = lazy(() => import("./pages/Exams/pages/Exams"));
+const Reports = lazy(() => import("./pages/Reports/Reports"));
 
 // Blog pages
 const BlogIndex = lazy(() => import("./pages/blog/BlogIndex"));
@@ -143,6 +144,8 @@ function App() {
                 <Route index element={<Exams />} />
                 <Route path="create" element={<ExamCreate />} />
               </Route>
+
+              <Route path="reports" element={<Reports />} />
             </Route>
           </Route>
         </Route>

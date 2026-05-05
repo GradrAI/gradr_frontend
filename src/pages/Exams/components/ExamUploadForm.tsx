@@ -225,18 +225,30 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
     mutationFn: async (data: any) => await api.post("/exam", data),
   });
 
+  // Fetch active period
+  const { data: activePeriodData } = useQuery({
+    queryKey: ["activePeriod"],
+    queryFn: async () => {
+      const res = await api.get("/periods/active");
+      return res.data.data;
+    },
+  });
+
   const {
     data: coursesData,
-  } = useQuery<AxiosResponse<CourseData[]>>({
-    queryKey: ["courses", user?._id],
-    queryFn: async () => await api.get(`/courses/users?userId=${user?._id}`),
-    enabled: Boolean(user?._id?.length),
+  } = useQuery({
+    queryKey: ["courses", user?._id, activePeriodData?._id],
+    queryFn: async () => {
+      const res = await api.get(`/courses/users?periodId=${activePeriodData._id}`);
+      return res.data.data;
+    },
+    enabled: Boolean(user?._id?.length) && !!activePeriodData?._id,
     refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
-    if (coursesData?.data) {
-      setCourses(coursesData.data);
+    if (coursesData) {
+      setCourses(coursesData);
     }
   }, [coursesData]);
 

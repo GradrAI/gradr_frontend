@@ -91,10 +91,19 @@ const NewUpload = () => {
     //! TO-DO: reset file input to empty state when fileType changes
   }, [uploadData.fileType]);
 
+  // Fetch active period first
+  const { data: activePeriodData } = useQuery({
+    queryKey: ["activePeriod"],
+    queryFn: async () => {
+      const res = await api.get("/periods/active");
+      return res.data.data;
+    },
+  });
+
   const { data, isLoading, isSuccess, isError } = useQuery({
-    queryKey: ["courses", user?._id],
-    queryFn: async () => await api.get(`/courses/users?userId=${user?._id}`),
-    enabled: Boolean(user?._id?.length),
+    queryKey: ["courses", user?._id, activePeriodData?._id],
+    queryFn: async () => await api.get(`/courses/users?periodId=${activePeriodData._id}`),
+    enabled: Boolean(user?._id?.length) && !!activePeriodData?._id,
   });
 
   const { isPending, mutate } = useMutation({
@@ -116,6 +125,7 @@ const NewUpload = () => {
       {
         lecturerId: user?._id,
         name: uploadData.name,
+        periodId: activePeriodData?._id,
       },
       {
         onSuccess: (

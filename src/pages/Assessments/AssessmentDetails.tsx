@@ -50,6 +50,7 @@ const AssessmentDetails = () => {
         `/courses/${decodeURI(courseId ?? "")}/students-by-category`
       ),
     select: (res) => res.data.data,
+    enabled: !!courseId,
   });
 
   useEffect(() => {

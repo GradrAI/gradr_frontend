@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { ExamData } from "../components/ExamForm";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CheckCircle, Paperclip } from "lucide-react";
+import { CheckCircle, Copy, Paperclip } from "lucide-react";
 import toast from "react-hot-toast";
 import { Exam, Option, Question } from "@/types/Exam";
 import { Badge } from "@/components/ui/badge";
@@ -106,6 +106,17 @@ const Exams = () => {
                     <span className="font-semibold">{exam.difficulty}</span> •
                     Questions:{" "}
                     <span className="font-semibold">{exam.totalQuestions}</span>
+                    <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-500 bg-slate-50 w-fit px-2 py-0.5 rounded border border-slate-200">
+                      <span className="font-mono uppercase">ID: {exam._id}</span>
+                      <Copy 
+                        className="h-3 w-3 cursor-pointer hover:text-indigo-600 transition-colors" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(exam._id);
+                          toast.success("Cloud ID Copied");
+                        }}
+                      />
+                    </div>
                   </div>
 
                   {exam?.uniqueExamLink && (
@@ -214,13 +225,33 @@ const Exams = () => {
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle>{activeExam?.topic}</DialogTitle>
-            <DialogDescription>
-              Difficulty:{" "}
-              <span className="font-semibold">{activeExam?.difficulty}</span> •
-              Questions:{" "}
-              <span className="font-semibold">
-                {activeExam?.totalQuestions}
-              </span>
+            <DialogDescription asChild>
+              <div className="space-y-1">
+                <p>
+                  Difficulty:{" "}
+                  <span className="font-semibold">{activeExam?.difficulty}</span> •
+                  Questions:{" "}
+                  <span className="font-semibold">
+                    {activeExam?.totalQuestions}
+                  </span>
+                </p>
+                <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                  <span className="font-mono bg-slate-100 px-2 py-0.5 rounded">Cloud ID: {activeExam?._id}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6"
+                    onClick={() => {
+                      if (activeExam?._id) {
+                        navigator.clipboard.writeText(activeExam._id);
+                        toast.success("ID Copied");
+                      }
+                    }}
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
             </DialogDescription>
           </DialogHeader>
 

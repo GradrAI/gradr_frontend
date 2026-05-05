@@ -53,10 +53,19 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
     },
   });
 
+  // Fetch active period
+  const { data: activePeriodData } = useQuery({
+    queryKey: ["activePeriod"],
+    queryFn: async () => {
+      const res = await api.get("/periods/active");
+      return res.data.data;
+    },
+  });
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["courses"],
-    queryFn: async () => await api.get(`/courses/users?userId=${user?._id}`),
-    enabled: Boolean(user?._id?.length),
+    queryKey: ["courses", activePeriodData?._id],
+    queryFn: async () => await api.get(`/courses/users?periodId=${activePeriodData._id}`),
+    enabled: Boolean(user?._id?.length) && !!activePeriodData?._id,
   });
 
   const { isPending, mutate } = useMutation({

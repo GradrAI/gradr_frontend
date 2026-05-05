@@ -102,6 +102,22 @@ const Sidebar = () => {
               Settings
             </NavLink>
           </div>
+          <div className="flex justify-start gap-4 items-center py-4">
+            <img
+              src={report}
+              alt="icon"
+              className={`cursor-pointer w-6 h-6 ${currPath === "reports" ? "filter brightness-0 invert-0 sepia-[1] hue-rotate-180 saturate-[2]" : ""}`}
+              onClick={() => nav("/app/reports")}
+            />
+            <NavLink
+              className={({ isActive }) =>
+                `cursor-pointer  ${isActive ? "" : "text-white"}`
+              }
+              to="/app/reports"
+            >
+              Reports
+            </NavLink>
+          </div>
         </div>
       </div>
 
