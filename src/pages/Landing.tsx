@@ -43,6 +43,8 @@ import "./customMask.css";
 import useStore from "@/state";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
+import BackedBy from "@/components/landing/BackedBy";
+
 const Landing = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -460,6 +462,8 @@ const Landing = () => {
           </div>
         </div>
       </section>
+
+      <BackedBy />
 
       {/* Problem Section */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/10">
