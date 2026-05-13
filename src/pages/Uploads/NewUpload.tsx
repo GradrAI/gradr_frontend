@@ -102,7 +102,10 @@ const NewUpload = () => {
 
   const { data, isLoading, isSuccess, isError } = useQuery({
     queryKey: ["courses", user?._id, activePeriodData?._id],
-    queryFn: async () => await api.get(`/courses/users?periodId=${activePeriodData._id}`),
+    queryFn: async () => {
+      const res = await api.get(`/courses/users?periodId=${activePeriodData._id}`);
+      return res.data.data;
+    },
     enabled: Boolean(user?._id?.length) && !!activePeriodData?._id,
   });
 
@@ -112,7 +115,7 @@ const NewUpload = () => {
   });
 
   useEffect(() => {
-    if (isSuccess && data) setCourses(data.data);
+    if (isSuccess && data) setCourses(data);
     if (!data) console.log("No exam record for current user");
   }, [data]);
 
@@ -129,17 +132,17 @@ const NewUpload = () => {
       },
       {
         onSuccess: (
-          data: AxiosResponse<CourseData>,
+          data: AxiosResponse<{ success: boolean; data: CourseData }>,
           variables: any,
           context: any
         ) => {
           if (data?.status === 201) {
-            posthog.capture("course_created", { course_name: data.data.name });
+            posthog.capture("course_created", { course_name: data.data.data.name });
             toast.success("Added course successfully");
             queryClient.invalidateQueries({ queryKey: ["courses"] });
-            setCourses((prev) => [...prev, data.data]);
+            setCourses((prev) => [...prev, data.data.data]);
             setAddNew(false);
-            handleSelectCourse(data.data.name);
+            handleSelectCourse(data.data.data.name);
           }
         },
         onError: (error: any, variables: any, context: any) => {
