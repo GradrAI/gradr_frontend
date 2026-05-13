@@ -13,4 +13,5 @@ export type User = {
   refresh_token: string;
   __v: number | null;
   role?: 'student' | 'lecturer' | 'admin';
+  membershipStatus?: 'none' | 'pending' | 'approved' | 'denied';
 };

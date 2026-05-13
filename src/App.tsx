@@ -35,6 +35,7 @@ const StudentRouter = lazy(() => import("./pages/Student/pages/StudentRouter"));
 const ExamCreate = lazy(() => import("./pages/Exams/pages/ExamCreate"));
 const Exams = lazy(() => import("./pages/Exams/pages/Exams"));
 const Reports = lazy(() => import("./pages/Reports/Reports"));
+const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard"));
 
 // Blog pages
 const BlogIndex = lazy(() => import("./pages/blog/BlogIndex"));
@@ -146,6 +147,7 @@ function App() {
               </Route>
 
               <Route path="reports" element={<Reports />} />
+              <Route path="admin" element={<AdminDashboard />} />
             </Route>
           </Route>
         </Route>

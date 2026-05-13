@@ -1,13 +1,47 @@
-import React from 'react';
-import { PortableTextComponents } from '@portabletext/react';
-import { urlFor } from '../../lib/sanity/image';
+import React from "react";
+import { PortableText, PortableTextComponents } from "@portabletext/react";
+import { urlFor } from "../../lib/sanity/image";
 
 const slugify = (text: string) => {
   return text
     .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};
+
+const renderPortableTextValue = (value: any) => {
+  if (!value) return null;
+  if (Array.isArray(value)) {
+    return (
+      <PortableText
+        value={value}
+        components={components as PortableTextComponents}
+      />
+    );
+  }
+  if (value._type === "block" || Array.isArray(value.children)) {
+    return (
+      <PortableText
+        value={[value]}
+        components={components as PortableTextComponents}
+      />
+    );
+  }
+  if (typeof value === "string" || typeof value === "number") {
+    return String(value);
+  }
+  return String(value?.text ?? "");
+};
+
+const renderTableCell = (cell: any) => {
+  if (cell == null) return null;
+  if (typeof cell === "string" || typeof cell === "number") return cell;
+  if (Array.isArray(cell)) return renderPortableTextValue(cell);
+  if (cell._type === "block" || Array.isArray(cell.children))
+    return renderPortableTextValue(cell);
+  if (cell.content) return renderPortableTextValue(cell.content);
+  return String(cell?.text ?? "");
 };
 
 const components: PortableTextComponents = {
@@ -17,7 +51,7 @@ const components: PortableTextComponents = {
         <figure className="my-8 overflow-hidden rounded-xl border border-slate-200">
           <img
             src={urlFor(value).width(1200).url()}
-            alt={value.alt || ''}
+            alt={value.alt || ""}
             className="w-full h-auto object-cover"
           />
           {value.caption && (
@@ -46,12 +80,66 @@ const components: PortableTextComponents = {
         </div>
       );
     },
+    table: ({ value }: any) => {
+      const rows = Array.isArray(value?.rows) ? value.rows : [];
+      const hasHeader = Boolean(value?.hasHeader);
+      const headerRow = hasHeader ? rows[0] : null;
+      const bodyRows = hasHeader ? rows.slice(1) : rows;
+
+      const hasColumnHeaders =
+        Array.isArray(value?.columns) && value.columns.length > 0;
+
+      return (
+        <div className="my-10 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+          <table className="min-w-full border-collapse text-left">
+            {headerRow || hasColumnHeaders ? (
+              <thead className="bg-slate-50">
+                <tr>
+                  {(headerRow?.cells || value?.columns || []).map(
+                    (cell: any, idx: number) => (
+                      <th
+                        key={idx}
+                        className="border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700"
+                      >
+                        {headerRow?.cells
+                          ? renderTableCell(cell)
+                          : renderTableCell(cell?.title ?? cell)}
+                      </th>
+                    ),
+                  )}
+                </tr>
+              </thead>
+            ) : null}
+            <tbody>
+              {bodyRows.map((row: any, rowIndex: number) => (
+                <tr
+                  key={row._key || rowIndex}
+                  className={rowIndex % 2 === 0 ? "bg-white" : "bg-slate-50"}
+                >
+                  {(row?.cells || []).map((cell: any, cellIndex: number) => (
+                    <td
+                      key={cell._key || cellIndex}
+                      className="border-b border-slate-200 px-4 py-3 align-top text-sm text-slate-700"
+                    >
+                      {renderTableCell(cell)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    },
   },
   block: {
     h2: ({ children }: any) => {
       const id = slugify(String(children));
       return (
-        <h2 id={id} className="text-3xl font-bold text-slate-900 mt-12 mb-6 font-fraunces scroll-mt-24">
+        <h2
+          id={id}
+          className="text-3xl font-bold text-slate-900 mt-12 mb-6 font-fraunces scroll-mt-24"
+        >
           {children}
         </h2>
       );
@@ -59,7 +147,10 @@ const components: PortableTextComponents = {
     h3: ({ children }: any) => {
       const id = slugify(String(children));
       return (
-        <h3 id={id} className="text-2xl font-bold text-slate-900 mt-8 mb-4 font-fraunces scroll-mt-24">
+        <h3
+          id={id}
+          className="text-2xl font-bold text-slate-900 mt-8 mb-4 font-fraunces scroll-mt-24"
+        >
           {children}
         </h3>
       );
@@ -79,8 +170,10 @@ const components: PortableTextComponents = {
   },
   marks: {
     link: ({ children, value }: any) => {
-      const rel = !value.href.startsWith('/') ? 'noopener noreferrer' : undefined;
-      const target = !value.href.startsWith('/') ? '_blank' : undefined;
+      const rel = !value.href.startsWith("/")
+        ? "noopener noreferrer"
+        : undefined;
+      const target = !value.href.startsWith("/") ? "_blank" : undefined;
       return (
         <a
           href={value.href}
@@ -97,7 +190,9 @@ const components: PortableTextComponents = {
         {children}
       </code>
     ),
-    strong: ({ children }: any) => <strong className="font-bold text-slate-900">{children}</strong>,
+    strong: ({ children }: any) => (
+      <strong className="font-bold text-slate-900">{children}</strong>
+    ),
   },
 };
 

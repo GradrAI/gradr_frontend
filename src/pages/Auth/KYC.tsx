@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -38,6 +39,14 @@ const KYC = () => {
   
   const isLecturer = user?.role === "lecturer";
   const isIndividual = user?.role === "lecturer" || user?.role === "student";
+
+  // If user already has an organization (joining flow), skip KYC entirely
+  useEffect(() => {
+    if (user?.organization && user?.membershipStatus === "pending") {
+      // User is joining an org, they don't need to set up their own
+      nav("/app/assessments");
+    }
+  }, [user, nav]);
 
   const form = useForm<OrganizationData>({
     resolver: zodResolver(formSchema),

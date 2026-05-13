@@ -15,7 +15,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import useStore from "@/state";
 import { usePostHog } from '@posthog/react'
@@ -28,6 +28,7 @@ const formSchema = z
     email: z.string().email("Enter a valid email"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(6, "Please confirm your password"),
+    tenant_code: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -36,16 +37,30 @@ const formSchema = z
 
 const SignUpForm = () => {
   const nav = useNavigate();
+  const [searchParams] = useSearchParams();
   const posthog = usePostHog()
-  const { saveUser, saveUserToken, accountType } = useStore();
+  const { saveUser, saveUserToken, accountType, setAccountType } = useStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  // Read invite params from URL (from admin invite emails)
+  const urlTenantCode = searchParams.get("tenant_code") || "";
+  const urlAccountType = searchParams.get("accountType") || "";
+
   useEffect(() => {
-    if (!accountType) {
+    // If coming from an invite link, set the account type
+    if (urlAccountType === "joining" && !accountType) {
+      setAccountType("joining");
+    }
+  }, [urlAccountType, accountType, setAccountType]);
+
+  const isJoining = accountType === "joining" || urlAccountType === "joining";
+
+  useEffect(() => {
+    if (!accountType && !urlAccountType) {
       nav("../account-type");
     }
-  }, [accountType, nav]);
+  }, [accountType, urlAccountType, nav]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,6 +71,7 @@ const SignUpForm = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      tenant_code: urlTenantCode,
     },
   });
 
@@ -69,7 +85,7 @@ const SignUpForm = () => {
       const validatedData = formSchema.parse(data);
       return axios.post(`/auth/register`, {
         ...validatedData,
-        accountType,
+        accountType: isJoining ? "joining" : accountType,
         confirmPassword: undefined, // exclude confirmPassword before sending
       });
     }
@@ -92,14 +108,21 @@ const SignUpForm = () => {
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // Validate org code is provided for joining flow
+    if (isJoining && !values.tenant_code?.trim()) {
+      toast.error("Organization code is required to join an institution.");
+      return;
+    }
+
     registerMutate(values, {
       onSuccess: (data: any, variables: any, context: any) => {
         if (data.data.success) {
-          const { email } = data.data.data;
+          const { email, membershipStatus } = data.data.data;
 
           posthog.capture("user_signed_up", { 
             method: "email", 
-            account_type: accountType
+            account_type: isJoining ? "joining" : accountType,
+            membership_status: membershipStatus,
           });
 
           toast.success(data.data.message || "Account created! Please verify your email.");
@@ -126,13 +149,41 @@ const SignUpForm = () => {
     <div className="w-full max-w-md bg-white p-4 rounded-3xl shadow-xl space-y-6 animate-fade-in">
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-extrabold text-gray-800">
-          Create your account
+          {isJoining ? "Join your institution" : "Create your account"}
         </h2>
-        <p className="text-gray-500 text-sm">Start grading smarter today.</p>
+        <p className="text-gray-500 text-sm">
+          {isJoining
+            ? "Enter your organization code and personal details."
+            : "Start grading smarter today."}
+        </p>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          {/* Organization Code field for joining flow */}
+          {isJoining && (
+            <FormField
+              control={form.control}
+              name="tenant_code"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Organization Code <span className="text-red-500">*</span></FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter the code from your admin"
+                      {...field}
+                      className="border-amber-300 focus:border-amber-500"
+                    />
+                  </FormControl>
+                  <p className="text-xs text-gray-500">
+                    Ask your institution admin for this code.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
               {
@@ -235,26 +286,30 @@ const SignUpForm = () => {
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 rounded-xl"
           >
             {isPending && <Loader2Icon className="animate-spin mr-2" />}
-            Sign Up
+            {isJoining ? "Join Institution" : "Sign Up"}
           </Button>
         </form>
       </Form>
 
-      <div className="flex items-center justify-center gap-4 my-4">
-        <span className="h-px w-full bg-gray-300" />
-        <span className="text-sm text-gray-500">or</span>
-        <span className="h-px w-full bg-gray-300" />
-      </div>
+      {!isJoining && (
+        <>
+          <div className="flex items-center justify-center gap-4 my-4">
+            <span className="h-px w-full bg-gray-300" />
+            <span className="text-sm text-gray-500">or</span>
+            <span className="h-px w-full bg-gray-300" />
+          </div>
 
-      <Button
-        type="button"
-        onClick={handleGoogleSignUp}
-        disabled={googleIsPending}
-        className="w-full border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 font-medium py-2 rounded-xl"
-      >
-        {googleIsPending && <Loader2Icon className="animate-spin" />}
-        <span className="mr-2">🔗</span> Sign up with Google
-      </Button>
+          <Button
+            type="button"
+            onClick={handleGoogleSignUp}
+            disabled={googleIsPending}
+            className="w-full border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 font-medium py-2 rounded-xl"
+          >
+            {googleIsPending && <Loader2Icon className="animate-spin" />}
+            <span className="mr-2">🔗</span> Sign up with Google
+          </Button>
+        </>
+      )}
 
       <div className="text-center text-sm mt-6 text-gray-600">
         Already have an account?{" "}
@@ -270,3 +325,4 @@ const SignUpForm = () => {
 };
 
 export default SignUpForm;
+

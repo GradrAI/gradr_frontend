@@ -1,6 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
 import useStore from "@/state";
-import { Brain, Users, School, ArrowRight } from "lucide-react";
+import { Brain, Users, School, ArrowRight, UserPlus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { usePostHog } from "@posthog/react";
 
@@ -46,6 +46,16 @@ const AccountType = () => {
       iconColor: "text-primary",
       borderColor: "hover:border-primary",
     },
+    {
+      id: "joining",
+      title: "Join an Institution",
+      description: "Your admin gave you an organization code? Join your institution here",
+      icon: UserPlus,
+      color: "from-amber-500 to-orange-600",
+      bgLight: "bg-amber-50",
+      iconColor: "text-amber-600",
+      borderColor: "hover:border-amber-500",
+    },
   ];
 
   return (
@@ -59,7 +69,7 @@ const AccountType = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
         {accountTypes.map((type) => (
           <Card
             key={type.id}
@@ -106,3 +116,4 @@ const AccountType = () => {
 };
 
 export default AccountType;
+

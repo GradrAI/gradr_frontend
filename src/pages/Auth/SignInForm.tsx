@@ -17,7 +17,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import useStore from "@/state";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, Eye, EyeOff } from "lucide-react";
 import { usePostHog } from '@posthog/react'
 
 const formSchema = z.object({
@@ -27,8 +27,9 @@ const formSchema = z.object({
 
 const SignInForm = () => {
   const nav = useNavigate();
-  const posthog = usePostHog()
-  const { user, accountType, saveUser, saveUserToken } = useStore();
+  const posthog = usePostHog();
+  const { user, accountType, saveUser, saveUserToken, setAccountType } = useStore();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,7 +88,7 @@ const SignInForm = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     loginMutate(values, {
       onSuccess: (response) => {
-        const { user, token, needsKYC, needsPayment } = response.data;
+        const { user, token, needsKYC, needsPayment, membershipStatus } = response.data;
         saveUser(user);
         saveUserToken(token);
 
@@ -101,8 +102,22 @@ const SignInForm = () => {
           method: "email", 
           role: user.role, 
           needs_kyc: needsKYC, 
-          needs_payment: needsPayment 
+          needs_payment: needsPayment,
+          membership_status: membershipStatus,
         });
+
+        // Handle membership states
+        if (membershipStatus === "pending") {
+          toast.success("Your membership request is pending admin approval. You'll be notified once approved.");
+          nav("/app/assessments");
+          return;
+        }
+
+        if (membershipStatus === "denied") {
+          toast.error("Your request to join the institution was denied. You can create your own personal account.");
+          nav("/auth/account-type");
+          return;
+        }
 
         toast.success("Welcome back!");
 
@@ -148,39 +163,74 @@ const SignInForm = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email Address</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="user@org.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex justify-between w-full">
-                  <span>Password</span>
-                  <Link to="/auth/forgot-password" className="text-primary hover:underline text-xs font-normal">
-                    Forgot password?
-                  </Link>
-                </FormLabel>
-                <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <Input placeholder="you@domain.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Password</FormLabel>
+                  <Link
+                    to="/auth/forgot-password"
+                    className="text-xs text-primary hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      {...field}
+                    />
+                    <div
+                      className="absolute right-3 top-2.5 cursor-pointer"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5 text-gray-500" />
+                      ) : (
+                        <Eye className="w-5 h-5 text-gray-500" />
+                      )}
+                    </div>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex items-center justify-center py-2">
+            <p className="text-xs text-gray-500">
+              Joining an institution?{" "}
+              <span
+                onClick={() => {
+                  setAccountType("joining");
+                  nav("/auth/sign-up");
+                }}
+                className="font-medium text-amber-600 hover:text-amber-700 transition-colors cursor-pointer"
+              >
+                Sign up here
+              </span>
+            </p>
+          </div>
+
           <Button
             type="submit"
             disabled={isPending}
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 rounded-xl"
           >
-            {isPending && <Loader2Icon className="animate-spin" />}
+            {isPending && <Loader2Icon className="animate-spin mr-2" />}
             Sign In
           </Button>
         </form>
