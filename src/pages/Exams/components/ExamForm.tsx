@@ -129,6 +129,15 @@ export default function ExamForm() {
   const [localMarks, setLocalMarks] = useState<Record<string, number>>({});
   const [marksDirty, setMarksDirty] = useState(false);
 
+  // Fetch active period for course creation
+  const { data: activePeriodData } = useQuery({
+    queryKey: ["activePeriod"],
+    queryFn: async () => {
+      const res = await api.get("/periods/active");
+      return res.data.data;
+    },
+  });
+
   const mutationKey = ["generateQuiz"];
   const mutations = useMutationState({ filters: { mutationKey } });
   const isGenerating = mutations.some((m) => m.status === "pending");
@@ -232,7 +241,7 @@ export default function ExamForm() {
       return;
     }
     courseMutate(
-      { lecturerId: user?._id, name: courseName },
+      { lecturerId: user?._id, name: courseName, periodId: activePeriodData?._id },
       {
         onSuccess: (data: AxiosResponse<CourseData>) => {
           if (data?.status === 201) {
