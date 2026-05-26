@@ -219,6 +219,14 @@ const Settings = () => {
                         {organizationData.tenant_code}
                       </code>
                     </div>
+                    {organizationData.desktop_api_key && (
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-slate-500">Desktop API Key</p>
+                        <code className="text-lg font-mono bg-slate-100 px-2 py-1 rounded text-primary break-all">
+                          {organizationData.desktop_api_key}
+                        </code>
+                      </div>
+                    )}
                   </div>
                   
                   {organizationData.organizationType === "individual" && (
