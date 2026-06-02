@@ -152,7 +152,7 @@ export function DataTable<TData, TValue>({
           placeholder="Filter..."
           value={globalFilter ?? ""}
           onChange={(event) => table.setGlobalFilter(event.target.value)}
-          className="max-w-sm bg-white"
+          className="max-w-sm bg-background"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -181,7 +181,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border bg-white p-2">
+      <div className="rounded-md border bg-card text-card-foreground p-2">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

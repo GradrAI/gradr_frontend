@@ -82,10 +82,10 @@ const AssessmentDetails = () => {
   }
 
   return (
-    <div className="p-6 md:p-8 space-y-8 bg-slate-50/50">
+    <div className="p-6 md:p-8 space-y-8 bg-transparent">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             {data?.courseName}
           </h1>
           <p className="text-muted-foreground">
@@ -144,7 +144,7 @@ const AssessmentDetails = () => {
                 <ArrowUpRight className="h-4 w-4 text-green-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">{assessmentStat.highestScore}</div>
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">{assessmentStat.highestScore}</div>
                 <p className="text-xs text-muted-foreground mt-1">
                   Top performance
                 </p>
@@ -159,7 +159,7 @@ const AssessmentDetails = () => {
                 <ArrowDownRight className="h-4 w-4 text-red-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-red-600">{assessmentStat.lowestScore}</div>
+                <div className="text-2xl font-bold text-red-600 dark:text-red-400">{assessmentStat.lowestScore}</div>
                 <p className="text-xs text-muted-foreground mt-1">
                   Needs attention
                 </p>
@@ -179,28 +179,28 @@ const AssessmentDetails = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="pl-0">
-                <div className="h-[300px] w-full">
+                <div className="h-[300px] w-full text-foreground">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={assessmentStat.scoreDistribution}
                       margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" strokeOpacity={0.1} />
                       <XAxis 
                         dataKey="grade" 
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#6B7280', fontSize: 12 }}
+                        tick={{ fill: 'currentColor', opacity: 0.6, fontSize: 12 }}
                         dy={10}
                       />
                       <YAxis 
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#6B7280', fontSize: 12 }}
+                        tick={{ fill: 'currentColor', opacity: 0.6, fontSize: 12 }}
                       />
                       <Tooltip 
                         cursor={{ fill: 'rgba(0,0,0,0.05)' }} 
-                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--popover-foreground))', borderRadius: '8px' }}
                       />
                       <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]}>
                         {assessmentStat.scoreDistribution?.map((entry, index) => (
@@ -252,7 +252,7 @@ const AssessmentDetails = () => {
                         ))}
                       </Pie>
                       <Tooltip 
-                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--popover-foreground))', borderRadius: '8px' }}
                       />
                       <Legend verticalAlign="bottom" height={36} iconType="circle" />
                     </PieChart>
@@ -270,32 +270,32 @@ const AssessmentDetails = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="pl-0">
-                <div className="h-[300px] w-full">
+                <div className="h-[300px] w-full text-foreground">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={assessmentStat.categoryPerformance}
                       margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
                       layout="vertical"
                     >
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="currentColor" strokeOpacity={0.1} />
                       <XAxis 
                         type="number" 
                         domain={[0, 100]}
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#6B7280', fontSize: 12 }}
+                        tick={{ fill: 'currentColor', opacity: 0.6, fontSize: 12 }}
                       />
                       <YAxis 
                         dataKey="category" 
                         type="category" 
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#374151', fontSize: 12, fontWeight: 500 }}
+                        tick={{ fill: 'currentColor', opacity: 0.8, fontSize: 12, fontWeight: 500 }}
                         width={150}
                       />
                       <Tooltip 
                         cursor={{ fill: 'rgba(0,0,0,0.05)' }}
-                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--popover-foreground))', borderRadius: '8px' }}
                         formatter={(value: any) => [`${value}%`, 'Average Score']}
                       />
                       <Bar dataKey="averageScore" fill="#8b5cf6" radius={[0, 4, 4, 0]} barSize={32} />

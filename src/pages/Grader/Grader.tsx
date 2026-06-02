@@ -216,7 +216,7 @@ const Grader = () => {
         <>
           <div className="w-full flex flex-wrap items-center justify-between gap-4">
             <Select onValueChange={handleSelect}>
-              <SelectTrigger className="w-[200px] bg-white">
+              <SelectTrigger className="w-[200px] bg-background">
                 <SelectValue placeholder="Select course" />
               </SelectTrigger>
               <SelectContent>
@@ -281,14 +281,14 @@ const Grader = () => {
                 getSubRows={(row: Partial<Category>) => row?.students ?? []}
               />
 
-              <div className="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-4 rounded-lg border">
+              <div className="flex flex-col md:flex-row justify-between items-center bg-muted/50 dark:bg-zinc-900/50 p-4 rounded-lg border border-border">
                 <div className="text-sm">
                   {isEnterprise ? (
-                    <p className="text-gray-700">
+                    <p className="text-muted-foreground">
                       Grading Quota: Unlimited (Enterprise)
                     </p>
                   ) : remainingCredits > 0 ? (
-                    <p className={isOverLimit ? "text-red-500 font-semibold" : "text-gray-700"}>
+                    <p className={isOverLimit ? "text-red-500 font-semibold" : "text-muted-foreground"}>
                       Credit Balance: {remainingCredits} credits available
                     </p>
                   ) : (

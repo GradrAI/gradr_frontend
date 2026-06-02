@@ -57,22 +57,23 @@ const StudentResultDetails = () => {
         <div className="p-8 max-w-4xl mx-auto">
             <Button 
                 variant="ghost" 
-                className="mb-8 flex items-center text-slate-500 hover:text-slate-800 transition-colors"
+                className="mb-8 flex items-center text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => navigate("/student/dashboard")}
             >
+                <ChevronLeft className="w-4 h-4 mr-1.5" />
                 Back to Dashboard
             </Button>
 
             <header className="mb-10">
                 <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-3xl font-extrabold text-slate-900">
+                    <h1 className="text-3xl font-extrabold text-foreground">
                         {result.courseId?.name || "Assessment Result"}
                     </h1>
-                    <div className="bg-indigo-600 text-white px-6 py-2 rounded-full text-xl font-black shadow-lg shadow-indigo-200">
+                    <div className="bg-indigo-600 text-white px-6 py-2 rounded-full text-xl font-black shadow-lg shadow-indigo-200 dark:shadow-none">
                         {result.score}
                     </div>
                 </div>
-                <div className="flex items-center text-slate-500 space-x-4">
+                <div className="flex items-center text-muted-foreground space-x-4">
                     <div className="flex items-center">
                         <FileText className="w-4 h-4 mr-1.5" />
                         <span className="text-sm">{result.categoryId?.name || "Quiz"}</span>
@@ -87,18 +88,18 @@ const StudentResultDetails = () => {
 
             <div className="grid gap-8">
                 {/* Overall Feedback Section */}
-                <Card className="border-none shadow-xl bg-gradient-to-br from-white to-slate-50 overflow-hidden relative">
+                <Card className="border border-border shadow-xl bg-gradient-to-br from-card to-muted/20 overflow-hidden relative">
                     <div className="absolute top-0 right-0 p-4 opacity-5">
                         <GraduationCap className="w-24 h-24" />
                     </div>
                     <CardHeader>
-                        <CardTitle className="flex items-center text-indigo-900">
+                        <CardTitle className="flex items-center text-indigo-900 dark:text-indigo-300">
                             <Info className="w-5 h-5 mr-2" />
                             Overall Feedback
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="text-slate-700 leading-relaxed text-lg italic bg-white/50 p-4 rounded-xl border border-slate-100">
+                        <div className="text-foreground/90 leading-relaxed text-lg italic bg-background/50 p-4 rounded-xl border border-border">
                             {result.feedback || "Great job completing the assessment."}
                         </div>
                         {result?.explanation && (
@@ -114,29 +115,29 @@ const StudentResultDetails = () => {
 
                 {/* Per-Question Breakdown */}
                 <div className="space-y-6">
-                    <h2 className="text-2xl font-bold text-slate-900 flex items-center">
+                    <h2 className="text-2xl font-bold text-foreground flex items-center">
                         Question Breakdown
                     </h2>
                     {result.results?.length > 0 ? (
                         result.results.map((item: any, index: number) => (
-                            <Card key={index} className="border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                            <Card key={index} className="border-border dark:border-zinc-800 shadow-sm hover:shadow-md transition-shadow bg-card">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-lg font-bold text-slate-800">
+                                    <CardTitle className="text-lg font-bold text-foreground">
                                         Question {index + 1}
                                     </CardTitle>
-                                    <div className="bg-slate-100 text-slate-700 font-bold px-3 py-1 rounded-lg text-sm">
+                                    <div className="bg-muted text-muted-foreground font-bold px-3 py-1 rounded-lg text-sm">
                                         Score: {item.score} / {item.maxScore}
                                     </div>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
-                                        <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Feedback</p>
-                                        <p className="text-slate-700">{item.feedback}</p>
+                                        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Feedback</p>
+                                        <p className="text-foreground/95">{item.feedback}</p>
                                     </div>
                                     {item.explanation && (
-                                        <div className="mt-4 pt-4 border-t border-slate-50">
-                                            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Explanation</p>
-                                            <p className="text-slate-600 text-sm leading-relaxed bg-slate-50 p-4 rounded-xl">
+                                        <div className="mt-4 pt-4 border-t border-border">
+                                            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">Explanation</p>
+                                            <p className="text-muted-foreground text-sm leading-relaxed bg-muted/40 p-4 rounded-xl">
                                                 {item.explanation}
                                             </p>
                                         </div>
@@ -145,13 +146,13 @@ const StudentResultDetails = () => {
                             </Card>
                         ))
                     ) : (
-                        <p className="text-slate-500 italic text-center py-10">No individual question data available.</p>
+                        <p className="text-muted-foreground italic text-center py-10">No individual question data available.</p>
                     )}
                 </div>
             </div>
             
-            <CardFooter className="mt-12 pt-8 border-t flex flex-col items-center">
-                <p className="text-slate-400 text-xs mb-4 uppercase tracking-widest">Powered by GradrAI</p>
+            <CardFooter className="mt-12 pt-8 border-t border-border flex flex-col items-center">
+                <p className="text-muted-foreground/60 text-xs mb-4 uppercase tracking-widest">Powered by GradrAI</p>
                 <Button variant="outline" onClick={()=>printResult()}>Print Result</Button>
             </CardFooter>
         </div>

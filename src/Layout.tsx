@@ -62,7 +62,7 @@ export default function Layout() {
       <SidebarProvider>
         {user && Object.keys(user)?.length && <AppSidebar items={items} />}
         <main className="w-screen h-screen">
-          <div className="w-full h-full flex flex-col bg-gray-200 overflow-y-auto">
+          <div className="w-full h-full flex flex-col bg-slate-50 dark:bg-zinc-950 text-foreground transition-colors duration-200 overflow-y-auto">
             <Header />
             <Outlet />
           </div>

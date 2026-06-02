@@ -79,7 +79,7 @@ const AcademicSetup = () => {
         {/* Cycles Column */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-slate-800">Academic Sessions</h3>
+            <h3 className="text-xl font-bold text-foreground">Academic Sessions</h3>
             <Button 
               size="sm" 
               variant="outline" 
@@ -98,7 +98,7 @@ const AcademicSetup = () => {
                   placeholder="e.g. 2025/2026 Academic Session" 
                   value={newCycleName}
                   onChange={(e) => setNewCycleName(e.target.value)}
-                  className="bg-white"
+                  className="bg-background border-input"
                 />
                 <div className="flex gap-2">
                   <Button 
@@ -125,18 +125,18 @@ const AcademicSetup = () => {
                   className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between ${
                     selectedCycleId === cycle._id 
                       ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary" 
-                      : "border-slate-200 hover:border-slate-300 bg-white"
+                      : "border-border hover:border-slate-300 dark:hover:border-zinc-700 bg-card text-foreground"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Calendar className={`h-5 w-5 ${selectedCycleId === cycle._id ? "text-primary" : "text-slate-400"}`} />
-                    <span className="font-medium text-slate-700">{cycle.label}</span>
+                    <Calendar className={`h-5 w-5 ${selectedCycleId === cycle._id ? "text-primary" : "text-muted-foreground"}`} />
+                    <span className="font-medium text-foreground/90">{cycle.label}</span>
                   </div>
-                  <ChevronRight className={`h-4 w-4 ${selectedCycleId === cycle._id ? "text-primary" : "text-slate-300"}`} />
+                  <ChevronRight className={`h-4 w-4 ${selectedCycleId === cycle._id ? "text-primary" : "text-muted-foreground/60"}`} />
                 </button>
               ))}
               {cycles?.length === 0 && !isAddingCycle && (
-                <p className="text-center text-slate-500 py-8 italic">No sessions created yet.</p>
+                <p className="text-center text-muted-foreground py-8 italic">No sessions created yet.</p>
               )}
             </div>
           )}
@@ -145,7 +145,7 @@ const AcademicSetup = () => {
         {/* Periods Column */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-slate-800">Terms / Semesters</h3>
+            <h3 className="text-xl font-bold text-foreground">Terms / Semesters</h3>
             {selectedCycleId && (
               <Button 
                 size="sm" 
@@ -160,9 +160,9 @@ const AcademicSetup = () => {
           </div>
 
           {!selectedCycleId ? (
-            <div className="bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-12 text-center">
-              <Calendar className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500">Select a session on the left to manage terms.</p>
+            <div className="bg-muted/30 border border-dashed border-border rounded-2xl p-12 text-center">
+              <Calendar className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+              <p className="text-muted-foreground">Select a session on the left to manage terms.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -173,7 +173,7 @@ const AcademicSetup = () => {
                       placeholder="e.g. First Term" 
                       value={newPeriodName}
                       onChange={(e) => setNewPeriodName(e.target.value)}
-                      className="bg-white"
+                      className="bg-background border-input"
                     />
                     <div className="flex gap-2">
                       <Button 
@@ -194,12 +194,12 @@ const AcademicSetup = () => {
               ) : (
                 <div className="space-y-3">
                   {periods?.map((period: any) => (
-                    <Card key={period._id} className={period.status === "active" ? "border-primary ring-1 ring-primary/20" : ""}>
+                    <Card key={period._id} className={period.status === "active" ? "border-primary ring-1 ring-primary/20" : "border-border bg-card"}>
                       <CardHeader className="p-4 pb-0 flex flex-row items-center justify-between space-y-0">
                         <div className="flex items-center gap-2">
                           <CardTitle className="text-base font-semibold">{period.name}</CardTitle>
                           {period.status === "active" && (
-                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200">
+                            <Badge className="bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-950/40 border border-green-200 dark:border-green-800">
                               Active
                             </Badge>
                           )}
@@ -216,10 +216,10 @@ const AcademicSetup = () => {
                         )}
                       </CardHeader>
                       <CardContent className="p-4 pt-2">
-                        <div className="flex items-center gap-4 text-xs text-slate-500">
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <span className="font-medium">Billing:</span>
-                            <span className={period.billingStatus === "trial" ? "text-amber-600 font-bold uppercase" : "uppercase"}>
+                            <span className={period.billingStatus === "trial" ? "text-amber-600 dark:text-amber-400 font-bold uppercase" : "uppercase"}>
                               {period.billingStatus}
                             </span>
                           </div>
@@ -232,7 +232,7 @@ const AcademicSetup = () => {
                     </Card>
                   ))}
                   {periods?.length === 0 && !isAddingPeriod && (
-                    <p className="text-center text-slate-500 py-8 italic">No terms created for this session.</p>
+                    <p className="text-center text-muted-foreground py-8 italic">No terms created for this session.</p>
                   )}
                 </div>
               )}
@@ -241,9 +241,9 @@ const AcademicSetup = () => {
         </div>
       </div>
       
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
+      <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-xl p-4 flex gap-3">
         <AlertCircle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
-        <p className="text-sm text-amber-800">
+        <p className="text-sm text-amber-800 dark:text-amber-300">
           <strong>Pro Tip:</strong> Only one period can be active at a time institution-wide. 
           Activating a new period will automatically scope all new assessments and reports to that term.
         </p>

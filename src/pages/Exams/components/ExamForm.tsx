@@ -59,16 +59,16 @@ function ScoreBudgetBar({
   const isExact = Math.abs(allocated - max) < 0.01;
 
   return (
-    <div className="p-4 rounded-xl border bg-slate-50 space-y-2">
+    <div className="p-4 rounded-xl border border-border bg-muted/30 space-y-2">
       <div className="flex items-center justify-between text-sm font-medium">
-        <span className="text-slate-700">Score Budget</span>
+        <span className="text-foreground/90">Score Budget</span>
         <span
           className={
             isOver
               ? "text-red-600 font-bold"
               : isExact
               ? "text-emerald-600 font-bold"
-              : "text-slate-600"
+              : "text-muted-foreground"
           }
         >
           {allocated} / {max} marks
@@ -76,7 +76,7 @@ function ScoreBudgetBar({
       </div>
 
       {/* Progress bar */}
-      <div className="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
+      <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-300 ${
             isOver
@@ -104,7 +104,7 @@ function ScoreBudgetBar({
         </p>
       )}
       {!isOver && !isExact && allocated > 0 && (
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted-foreground">
           {Math.round((max - allocated) * 100) / 100} marks remaining unallocated.
         </p>
       )}
@@ -268,12 +268,12 @@ export default function ExamForm() {
     <>
       {isGenerating ? (
         /* ── Loading state ── */
-        <div className="flex flex-col items-center justify-center py-20 w-full bg-white rounded-xl shadow-sm border border-slate-100">
+        <div className="flex flex-col items-center justify-center py-20 w-full bg-card rounded-xl shadow-sm border border-border">
           <Loader2Icon className="w-12 h-12 animate-spin text-primary mb-6" />
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
             Generating your quiz...
           </h2>
-          <p className="text-slate-500 text-center max-w-md px-6">
+          <p className="text-muted-foreground text-center max-w-md px-6">
             Analyzing your resources to craft high-quality questions.
             This usually takes 30-60 seconds.
           </p>
@@ -284,10 +284,10 @@ export default function ExamForm() {
           {/* Header */}
           <div className="flex flex-col flex-wrap md:flex-row w-full gap-4 justify-between items-start md:items-center mb-6">
             <div>
-              <h2 className="text-2xl font-bold m-0 text-slate-900">
+              <h2 className="text-2xl font-bold m-0 text-foreground">
                 Review Generated Quiz
               </h2>
-              <p className="text-sm text-slate-500 mt-0.5">
+              <p className="text-sm text-muted-foreground mt-0.5">
                 Set marks for each question. Total must not exceed{" "}
                 <strong>{maxScoreAttainable}</strong> marks.
               </p>
@@ -299,7 +299,7 @@ export default function ExamForm() {
 
           {/* Score budget bar */}
           {examLoading ? (
-            <div className="h-16 rounded-xl bg-slate-100 animate-pulse mb-6" />
+            <div className="h-16 rounded-xl bg-muted animate-pulse mb-6" />
           ) : (
             <div className="mb-6">
               <ScoreBudgetBar allocated={totalAllocated} max={maxScoreAttainable} />
@@ -312,17 +312,17 @@ export default function ExamForm() {
               ? Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="h-32 rounded-xl bg-slate-100 animate-pulse"
+                    className="h-32 rounded-xl bg-muted animate-pulse"
                   />
                 ))
               : fetchedQuestions.map((q, index) => (
                   <div
                     key={q.id}
-                    className="p-5 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-primary/20 transition-colors"
+                    className="p-5 bg-card rounded-xl border border-border shadow-sm hover:border-primary/20 transition-colors"
                   >
                     <div className="flex justify-start items-start gap-3">
                       {/* Question number badge */}
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold text-sm shrink-0 mt-0.5">
+                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-muted-foreground font-bold text-sm shrink-0 mt-0.5">
                         {index + 1}
                       </span>
 
@@ -331,18 +331,18 @@ export default function ExamForm() {
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide mb-2 ${
                             q.type === "essay"
-                              ? "bg-violet-100 text-violet-700"
-                              : "bg-sky-100 text-sky-700"
+                              ? "bg-violet-100 dark:bg-violet-950/40 text-violet-700 dark:text-violet-400 border border-violet-200 dark:border-violet-800"
+                              : "bg-sky-100 dark:bg-sky-950/40 text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-800"
                           }`}
                         >
                           {q.type === "essay" ? "Essay" : "MCQ"}
                         </span>
 
-                        <h3 className="text-base font-semibold text-slate-900 mb-1">
+                        <h3 className="text-base font-semibold text-foreground mb-1">
                           {q.question}
                         </h3>
                         {q.description && (
-                          <p className="text-slate-500 text-sm mb-3">
+                          <p className="text-muted-foreground text-sm mb-3">
                             {q.description}
                           </p>
                         )}
@@ -353,9 +353,9 @@ export default function ExamForm() {
                             {q.options.map(({ id: optionId, text }) => (
                               <li
                                 key={optionId}
-                                className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 border border-slate-100 text-slate-700 text-sm"
+                                className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/40 border border-border text-muted-foreground text-sm"
                               >
-                                <div className="w-2 h-2 rounded-full bg-slate-300 shrink-0" />
+                                <div className="w-2 h-2 rounded-full bg-muted-foreground/30 shrink-0" />
                                 {text}
                               </li>
                             ))}
@@ -366,7 +366,7 @@ export default function ExamForm() {
                         <div className="flex items-center gap-2 mt-2">
                           <label
                             htmlFor={`marks-${q.id}`}
-                            className="text-xs font-medium text-slate-600 shrink-0"
+                            className="text-xs font-medium text-muted-foreground shrink-0"
                           >
                             Marks for this question:
                           </label>
@@ -382,9 +382,9 @@ export default function ExamForm() {
                                 Math.max(0, Number(e.target.value))
                               )
                             }
-                            className="h-8 w-24 text-sm bg-white"
+                            className="h-8 w-24 text-sm bg-background border-input"
                           />
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-muted-foreground">
                             / {maxScoreAttainable} total
                           </span>
                         </div>
@@ -449,7 +449,7 @@ export default function ExamForm() {
             )}
 
             {!isOverBudget && !isGenerating && !examLoading && (
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-muted-foreground">
                 Only published quizzes can be shared with students.
               </p>
             )}

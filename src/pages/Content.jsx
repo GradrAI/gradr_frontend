@@ -52,12 +52,12 @@ const Content = () => {
                 Welcome to Gradr for Organizations!
               </h1>
             </div>
-            <p className="text-gray-600 text-lg leading-relaxed">
+            <p className="text-muted-foreground text-lg leading-relaxed">
               Unlock powerful tools designed for educational institutions:
             </p>
           </div>
         )}
-
+ 
         {isIndividual && (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
@@ -66,22 +66,22 @@ const Content = () => {
                 Gradr for Individuals!
               </h1>
             </div>
-            <p className="text-gray-600 text-lg leading-relaxed">
+            <p className="text-muted-foreground text-lg leading-relaxed">
               Experience streamlined grading with powerful individual features:
             </p>
           </div>
         )}
-
+ 
         <div className="space-y-4">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+              className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-zinc-900 dark:to-zinc-800/80 border border-gray-200 dark:border-zinc-800 hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
             >
-              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center shadow-sm">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 flex items-center justify-center shadow-sm">
                 {feature.icon}
               </div>
-              <p className="text-gray-700 font-medium">{feature.text}</p>
+              <p className="text-foreground/90 font-medium">{feature.text}</p>
             </div>
           ))}
         </div>

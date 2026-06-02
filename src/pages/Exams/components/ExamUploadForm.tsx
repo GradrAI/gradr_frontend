@@ -383,7 +383,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 value={field.value}
               >
                 <FormControl>
-                  <SelectTrigger className="bg-white">
+                  <SelectTrigger className="bg-background">
                     <SelectValue placeholder="Select course" />
                   </SelectTrigger>
                 </FormControl>
@@ -415,7 +415,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 value={field.value}
               >
                 <FormControl>
-                  <SelectTrigger className="bg-white">
+                  <SelectTrigger className="bg-background">
                     <SelectValue placeholder="Select Standard" />
                   </SelectTrigger>
                 </FormControl>
@@ -443,7 +443,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
               <FormItem className="flex-1 min-w-[200px]">
                 <FormLabel>Category Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Assignment II" className="bg-white" {...field} />
+                  <Input placeholder="e.g. Assignment II" className="bg-background" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -458,7 +458,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 <FormLabel>Category Type</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="bg-white">
+                    <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
@@ -488,7 +488,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 <Input
                   type="number"
                   placeholder="100"
-                  className="bg-white"
+                  className="bg-background"
                   {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
@@ -498,7 +498,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
           )}
         />
 
-        <div className="space-y-4 p-4 border rounded-lg bg-slate-50">
+        <div className="space-y-4 p-4 border rounded-lg bg-slate-50 dark:bg-zinc-900/40">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-medium">Resources & Uploads</h3>
             <Button
@@ -506,7 +506,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
               variant="outline"
               size="sm"
               onClick={handleOpenPicker}
-              className="bg-white border-primary text-primary hover:bg-primary/5"
+              className="bg-background border-primary text-primary hover:bg-primary/5"
             >
               Google Drive
             </Button>
@@ -518,7 +518,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
               <Input
                 type="file"
                 multiple
-                className="bg-white"
+                className="bg-background"
                 onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
                 disabled={isUploading}
               />
@@ -553,7 +553,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                   <FormControl>
                     <ComboboxInput
                       placeholder="Search and toggle resources..."
-                      className="bg-white"
+                      className="bg-background"
                     />
                   </FormControl>
                   <ComboboxContent>
@@ -578,7 +578,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                     const res = resourceData?.data?.data?.find((r: Resource) => r._id === id);
                     if (!res) return null;
                     return (
-                      <div key={id} className="flex items-center gap-1 bg-white border px-2 py-1 rounded-md text-xs">
+                      <div key={id} className="flex items-center gap-1 bg-background dark:bg-zinc-900 border px-2 py-1 rounded-md text-xs">
                         <span>{res.name}</span>
                         <button 
                           type="button" 
@@ -607,7 +607,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
             <FormItem>
               <FormLabel>Main Topic / Subject</FormLabel>
               <FormControl>
-                <Input placeholder="Introduction to Mathematics" {...field} className="bg-white" />
+                <Input placeholder="Introduction to Mathematics" {...field} className="bg-background" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -615,10 +615,10 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
         />
 
 
-          <div className="space-y-4 p-4 border rounded-lg bg-blue-50/30">
+          <div className="space-y-4 p-4 border rounded-lg bg-blue-50/30 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900/50">
             <h3 className="text-sm font-medium flex items-center gap-2 w-full">
               Topic Prioritization
-              <span className="text-[10px] font-normal text-muted-foreground bg-white px-2 py-0.5 rounded-full border">
+              <span className="text-[10px] font-normal text-muted-foreground bg-background px-2 py-0.5 rounded-full border">
                 AI Extracted
               </span>
               {selectedResourceIds.length > 0 && (
@@ -646,12 +646,12 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                   <Skeleton className="w-full h-12" />
                 </div>
               : selectedResourceIds.length === 0 ? (
-                <div className="text-center py-6 border-2 border-dashed rounded-md bg-white/50">
+                <div className="text-center py-6 border-2 border-dashed rounded-md bg-background/50 dark:bg-zinc-900/50">
                     <p className="text-xs text-muted-foreground italic">No resources selected. Select or upload resources to extract topics.</p>
                 </div>
               ) :
               topicPriorities.map((tp, index) => (
-                <div key={tp.topic} className="flex items-center gap-4 bg-white p-2 rounded-md border shadow-sm">
+                <div key={tp.topic} className="flex items-center gap-4 bg-background dark:bg-zinc-900 p-2 rounded-md border shadow-sm">
                   <Checkbox 
                     checked={tp.selected} 
                     onCheckedChange={(checked) => {
@@ -696,10 +696,10 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 <FormLabel>Difficulty</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="bg-white">
+                    <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white">
+                    <SelectContent className="bg-background">
                       <SelectGroup>
                         <SelectItem value="easy">Easy</SelectItem>
                         <SelectItem value="moderate">Moderate</SelectItem>
@@ -725,10 +725,10 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                     value={field.value}
                     disabled={standard === "JAMB"}
                   >
-                    <SelectTrigger className="bg-white">
+                    <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white">
+                    <SelectContent className="bg-background">
                       <SelectGroup>
                         <SelectItem value="multiple-choice">Multiple Choice</SelectItem>
                         <SelectItem value="essay">Essay</SelectItem>
@@ -753,7 +753,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 <Input
                   type="number"
                   {...field}
-                  className="bg-white"
+                  className="bg-background"
                   onChange={(e) => {
                     const val = Number(e.target.value);
                     field.onChange(val);
@@ -773,10 +773,10 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
             control={form.control}
             name="hybridCount"
             render={({ field }) => (
-              <FormItem className="space-y-4 p-4 border rounded-lg bg-orange-50/30">
+              <FormItem className="space-y-4 p-4 border rounded-lg bg-orange-50/30 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/30">
                 <div className="flex justify-between items-center">
                   <FormLabel>Theory/Essay Ratio</FormLabel>
-                  <span className="text-xs font-semibold text-primary bg-white px-2 py-1 rounded-md border">
+                  <span className="text-xs font-semibold text-primary bg-background px-2 py-1 rounded-md border">
                     {totalQuestions - (field.value || 0)} MCQ / {field.value || 0} Essay
                   </span>
                 </div>
@@ -804,7 +804,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
             <div className="flex gap-2">
               <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start font-normal bg-white">
+                  <Button variant="outline" className="w-full justify-start font-normal bg-background">
                     {form.watch("startDate") ? form.watch("startDate")?.toLocaleDateString() : "Date"}
                     <ChevronDownIcon className="ml-auto" />
                   </Button>
@@ -824,7 +824,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 control={form.control}
                 name="startTime"
                 render={({ field }) => (
-                  <Input type="time" {...field} className="bg-white w-32" />
+                  <Input type="time" {...field} className="bg-background w-32" />
                 ) }
               />
             </div>
@@ -835,7 +835,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
             <div className="flex gap-2">
               <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start font-normal bg-white">
+                  <Button variant="outline" className="w-full justify-start font-normal bg-background">
                     {form.watch("endDate") ? form.watch("endDate")?.toLocaleDateString() : "Date"}
                     <ChevronDownIcon className="ml-auto" />
                   </Button>
@@ -855,7 +855,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 control={form.control}
                 name="endTime"
                 render={({ field }) => (
-                  <Input type="time" {...field} className="bg-white w-32" />
+                  <Input type="time" {...field} className="bg-background w-32" />
                 ) }
               />
             </div>
@@ -872,7 +872,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 <Input
                   type="number"
                   {...field}
-                  className="bg-white"
+                  className="bg-background"
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
               </FormControl>
@@ -892,7 +892,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                   <Input
                     type="number"
                     {...field}
-                    className="bg-white"
+                    className="bg-background"
                     onChange={(e) => field.onChange(Number(e.target.value))}
                     disabled={standard === "JAMB" || standard === "WASSCE"}
                   />
@@ -903,14 +903,14 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
           />
         )}
 
-        <div className="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-4 rounded-lg border mt-8">
+        <div className="flex flex-col md:flex-row justify-between items-center bg-slate-50 dark:bg-zinc-900/40 p-4 rounded-lg border mt-8">
            <div className="text-sm">
              {isEnterprise ? (
-               <p className="text-gray-700">
+               <p className="text-foreground/90 dark:text-zinc-300">
                  Generation Quota: Unlimited (Enterprise)
                </p>
              ) : remainingCredits >= requiredCredits ? (
-               <p className="text-gray-700">
+               <p className="text-foreground/90 dark:text-zinc-300">
                  Credit Balance: {remainingCredits} credits available (Cost: {requiredCredits} credits)
                </p>
              ) : (

@@ -92,16 +92,16 @@ const Settings = () => {
   return (
     <div className="p-4 md:p-8 max-w-6xl w-full mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
-        <p className="text-slate-500">Manage your profile, preferences, and institutional setup.</p>
+        <h1 className="text-3xl font-bold text-foreground">Settings</h1>
+        <p className="text-muted-foreground">Manage your profile, preferences, and institutional setup.</p>
       </div>
 
       <Tabs defaultValue="profile" className="w-full space-y-6">
-        <TabsList className="bg-slate-100 p-1 gap-2 h-12 inline-flex">
-          <TabsTrigger value="profile" className="px-6 data-[state=active]:bg-white data-[state=active]:shadow-sm">Profile</TabsTrigger>
-          <TabsTrigger value="preferences" className="px-6 data-[state=active]:bg-white data-[state=active]:shadow-sm">Preferences</TabsTrigger>
-          <TabsTrigger value="academic" className="px-6 data-[state=active]:bg-white data-[state=active]:shadow-sm">Academic Setup</TabsTrigger>
-          <TabsTrigger value="organization" className="px-6 data-[state=active]:bg-white data-[state=active]:shadow-sm">Organization</TabsTrigger>
+        <TabsList className="bg-muted p-1 gap-2 h-12 inline-flex">
+          <TabsTrigger value="profile" className="px-6 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Profile</TabsTrigger>
+          <TabsTrigger value="preferences" className="px-6 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Preferences</TabsTrigger>
+          <TabsTrigger value="academic" className="px-6 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Academic Setup</TabsTrigger>
+          <TabsTrigger value="organization" className="px-6 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Organization</TabsTrigger>
         </TabsList>
 
         {/* Profile Tab */}
@@ -114,20 +114,20 @@ const Settings = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-500">Full Name</p>
-                  <p className="text-lg font-semibold text-slate-800">{user?.first_name} {user?.last_name}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Full Name</p>
+                  <p className="text-lg font-semibold text-foreground">{user?.first_name} {user?.last_name}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-500">Email Address</p>
-                  <p className="text-lg font-semibold text-slate-800">{user?.email}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Email Address</p>
+                  <p className="text-lg font-semibold text-foreground">{user?.email}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-500">Role</p>
-                  <p className="text-lg font-semibold text-slate-800 capitalize">{user?.role}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Role</p>
+                  <p className="text-lg font-semibold text-foreground capitalize">{user?.role}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-500">Joined On</p>
-                  <p className="text-lg font-semibold text-slate-800">
+                  <p className="text-sm font-medium text-muted-foreground">Joined On</p>
+                  <p className="text-lg font-semibold text-foreground">
                     {user?.createdAt ? new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(new Date(user.createdAt)) : "N/A"}
                   </p>
                 </div>
@@ -154,22 +154,22 @@ const Settings = () => {
                 />
                 <label 
                   htmlFor="randomize"
-                  className="text-sm font-medium leading-none cursor-pointer"
+                  className="text-sm font-medium leading-none cursor-pointer text-foreground"
                 >
                   Randomize questions for students
                 </label>
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Custom Instructions for AI</label>
+                <label className="text-sm font-medium text-foreground/90">Custom Instructions for AI</label>
                 <Textarea 
                   placeholder="Enter custom instructions for grading or question generation..."
                   value={localSettings.customInstructions}
                   onChange={(e) => setLocalSettings(prev => ({ ...prev, customInstructions: e.target.value }))}
                   rows={4}
-                  className="bg-white border-slate-200"
+                  className="bg-background border-input"
                 />
-                <p className="text-xs text-slate-500 italic">These instructions are injected into the AI context during grading.</p>
+                <p className="text-xs text-muted-foreground italic">These instructions are injected into the AI context during grading.</p>
               </div>
 
               <Button 
@@ -200,29 +200,29 @@ const Settings = () => {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-slate-500">Organization Name</p>
-                      <p className="text-lg font-semibold text-slate-800">
+                      <p className="text-sm font-medium text-muted-foreground">Organization Name</p>
+                      <p className="text-lg font-semibold text-foreground">
                         {organizationData.organizationType === "individual" ? `${organizationData.name} (Personal Account)` : organizationData.name}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-slate-500">Contact Number</p>
-                      <p className="text-lg font-semibold text-slate-800">{organizationData?.phoneNumber || "N/A"}</p>
+                      <p className="text-sm font-medium text-muted-foreground">Contact Number</p>
+                      <p className="text-lg font-semibold text-foreground">{organizationData?.phoneNumber || "N/A"}</p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-slate-500">Account Type</p>
-                      <p className="text-lg font-semibold text-slate-800 capitalize">{organizationData.organizationType}</p>
+                      <p className="text-sm font-medium text-muted-foreground">Account Type</p>
+                      <p className="text-lg font-semibold text-foreground capitalize">{organizationData.organizationType}</p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-slate-500">Institutional Code</p>
-                      <code className="text-lg font-mono bg-slate-100 px-2 py-1 rounded text-primary">
+                      <p className="text-sm font-medium text-muted-foreground">Institutional Code</p>
+                      <code className="text-lg font-mono bg-muted px-2 py-1 rounded text-primary dark:text-blue-400">
                         {organizationData.tenant_code}
                       </code>
                     </div>
                     {organizationData.desktop_api_key && (
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-slate-500">Desktop API Key</p>
-                        <code className="text-lg font-mono bg-slate-100 px-2 py-1 rounded text-primary break-all">
+                        <p className="text-sm font-medium text-muted-foreground">Desktop API Key</p>
+                        <code className="text-lg font-mono bg-muted px-2 py-1 rounded text-primary dark:text-blue-400 break-all">
                           {organizationData.desktop_api_key}
                         </code>
                       </div>
@@ -230,10 +230,10 @@ const Settings = () => {
                   </div>
                   
                   {organizationData.organizationType === "individual" && (
-                    <div className="pt-4 border-t border-slate-100">
-                      <div className="bg-blue-50 p-4 rounded-xl mb-6">
-                        <p className="text-sm text-blue-800 font-medium mb-1">Individual Educator Mode</p>
-                        <p className="text-sm text-blue-600">
+                    <div className="pt-4 border-t border-border">
+                      <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 p-4 rounded-xl mb-6">
+                        <p className="text-sm text-blue-800 dark:text-blue-300 font-medium mb-1">Individual Educator Mode</p>
+                        <p className="text-sm text-blue-600 dark:text-blue-400">
                           You are currently using GradrAI as an individual. To join a larger institution and share resources with colleagues, enter their institutional code below.
                         </p>
                       </div>
@@ -242,7 +242,7 @@ const Settings = () => {
                           placeholder="Organization Code"
                           value={code}
                           onChange={(e) => setCode(e.target.value)}
-                          className="bg-white border-slate-300 max-w-sm"
+                          className="bg-background border-input max-w-sm"
                         />
                         <Button onClick={() => connectOrg(code)} disabled={isConnecting}>
                           {isConnecting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
@@ -254,11 +254,11 @@ const Settings = () => {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="bg-slate-50 text-slate-500 p-6 rounded-2xl mb-6 inline-flex flex-col items-center gap-3">
-                    <Loader2 size={32} className="animate-spin text-slate-300" />
+                  <div className="bg-muted text-muted-foreground p-6 rounded-2xl mb-6 inline-flex flex-col items-center gap-3">
+                    <Loader2 size={32} className="animate-spin text-slate-400" />
                     <p className="font-medium">Loading organization details...</p>
                   </div>
-                  <p className="text-slate-400 text-sm max-w-sm mx-auto">
+                  <p className="text-muted-foreground text-sm max-w-sm mx-auto">
                     If this takes too long, please ensure you are correctly logged in.
                   </p>
                 </div>

@@ -128,23 +128,23 @@ const Reports = () => {
     <div className="p-6 max-w-7xl mx-auto space-y-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800 flex items-center gap-2">
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
             <PieChart className="text-primary" /> Reports & Analytics
           </h1>
-          <p className="text-slate-500 mt-1">Generate broad sheets, report cards, and track institutional performance.</p>
+          <p className="text-muted-foreground mt-1">Generate broad sheets, report cards, and track institutional performance.</p>
         </div>
       </div>
 
       {/* Selectors Section */}
-      <Card className="border-none shadow-md bg-slate-50/50">
+      <Card className="border border-border bg-card">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+              <label className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
                 <Calendar size={14} /> Academic Session
               </label>
               <Select onValueChange={setSelectedCycle} value={selectedCycle}>
-                <SelectTrigger className="bg-white border-slate-200">
+                <SelectTrigger className="bg-background border-input">
                   <SelectValue placeholder="Select Session" />
                 </SelectTrigger>
                 <SelectContent>
@@ -158,7 +158,7 @@ const Reports = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+              <label className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
                 <RefreshCcw size={14} /> Period
               </label>
               <Select 
@@ -166,7 +166,7 @@ const Reports = () => {
                 value={selectedPeriod}
                 disabled={!selectedCycle}
               >
-                <SelectTrigger className="bg-white border-slate-200">
+                <SelectTrigger className="bg-background border-input">
                   <SelectValue placeholder={!selectedCycle ? "Select session first" : "Select Period"} />
                 </SelectTrigger>
                 <SelectContent>
@@ -178,7 +178,7 @@ const Reports = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+              <label className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
                 <BookOpen size={14} /> Course (Broadsheet)
               </label>
               <Select 
@@ -186,7 +186,7 @@ const Reports = () => {
                 value={selectedCourse}
                 disabled={!selectedPeriod}
               >
-                <SelectTrigger className="bg-white border-slate-200">
+                <SelectTrigger className="bg-background border-input">
                   <SelectValue placeholder={!selectedPeriod ? "Select period first" : "Select Course"} />
                 </SelectTrigger>
                 <SelectContent>
@@ -276,7 +276,7 @@ const Reports = () => {
                               {cs.percentage !== null ? (
                                 <div className="flex flex-col items-center">
                                   <span className="font-semibold text-primary">{cs.percentage}%</span>
-                                  <span className="text-[10px] font-bold text-slate-400">{cs.grade}</span>
+                                  <span className="text-[10px] font-bold text-muted-foreground">{cs.grade}</span>
                                 </div>
                               ) : "-"}
                             </TableCell>
@@ -288,9 +288,9 @@ const Reports = () => {
                             ))}
                             <TableCell className="font-bold text-primary">{row.aggregate.percentage}%</TableCell>
                             <TableCell>
-                              <span className={`px-2 py-1 rounded text-xs font-bold ${
-                                row.aggregate.overallGrade === 'F' ? 'bg-red-100 text-red-600' : 
-                                row.aggregate.overallGrade === 'A' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'
+                              <span className={`px-2 py-1 rounded text-xs font-bold border ${
+                                 row.aggregate.overallGrade === 'F' ? 'bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/50' : 
+                                 row.aggregate.overallGrade === 'A' ? 'bg-green-100 dark:bg-green-950/40 text-green-600 dark:text-green-400 border-green-200 dark:border-green-900/50' : 'bg-blue-100 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-900/50'
                               }`}>
                                 {row.aggregate.overallGrade}
                               </span>
@@ -302,7 +302,7 @@ const Reports = () => {
                   </TableBody>
                 </Table>
               ) : (
-                <div className="flex flex-col items-center justify-center h-64 text-slate-400 gap-2">
+                <div className="flex flex-col items-center justify-center h-64 text-muted-foreground gap-2">
                   <FileText size={48} strokeWidth={1} />
                   <p>Select a course or "All Courses" to view the Broad Sheet</p>
                 </div>
@@ -320,7 +320,7 @@ const Reports = () => {
             </CardHeader>
             <CardContent className="p-4">
               {!selectedPeriod ? (
-                <div className="text-center py-10 text-slate-400">
+                <div className="text-center py-10 text-muted-foreground">
                   <p className="text-sm">Select a period to list students</p>
                 </div>
               ) : isLoadingStudents ? (
@@ -332,21 +332,21 @@ const Reports = () => {
                   {studentsData.map((student: any) => (
                     <div 
                       key={student._id} 
-                      className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-primary/30 hover:bg-slate-50 transition-all group"
+                      className="flex items-center justify-between p-3 rounded-lg border border-border dark:border-zinc-800 hover:border-primary/30 hover:bg-muted/50 transition-all group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 text-xs font-bold">
+                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground text-xs font-bold">
                           {student.name?.[0] || <User size={14} />}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-slate-800">{student.name}</p>
-                          <p className="text-xs text-slate-500">{student.studentId || "No ID"}</p>
+                          <p className="text-sm font-semibold text-foreground">{student.name}</p>
+                          <p className="text-xs text-muted-foreground">{student.studentId || "No ID"}</p>
                         </div>
                       </div>
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="text-slate-400 hover:text-primary group-hover:bg-white"
+                        className="text-muted-foreground hover:text-primary group-hover:bg-card"
                         onClick={() => downloadPDF(student._id)}
                       >
                         <Download size={16} />
@@ -355,21 +355,21 @@ const Reports = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-10 text-slate-400">
+                <div className="text-center py-10 text-muted-foreground">
                   <p className="text-sm">No students found in this period</p>
                 </div>
               )}
             </CardContent>
-            <CardFooter className="bg-slate-50 p-4 rounded-b-lg flex flex-col items-start gap-2 border-t">
-              <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Quick Summary</p>
+            <CardFooter className="bg-muted/30 p-4 rounded-b-lg flex flex-col items-start gap-2 border-t border-border">
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Quick Summary</p>
               <div className="grid grid-cols-2 gap-4 w-full">
-                <div className="bg-white p-2 rounded border border-slate-200 shadow-sm">
-                  <p className="text-[10px] text-slate-400 uppercase">Total Students</p>
-                  <p className="text-lg font-bold text-slate-800">{studentsData?.length || 0}</p>
+                <div className="bg-card p-2 rounded border border-border shadow-sm">
+                  <p className="text-[10px] text-muted-foreground uppercase">Total Students</p>
+                  <p className="text-lg font-bold text-foreground">{studentsData?.length || 0}</p>
                 </div>
-                <div className="bg-white p-2 rounded border border-slate-200 shadow-sm">
-                  <p className="text-[10px] text-slate-400 uppercase">Graded Courses</p>
-                  <p className="text-lg font-bold text-slate-800">{coursesData?.length || 0}</p>
+                <div className="bg-card p-2 rounded border border-border shadow-sm">
+                  <p className="text-[10px] text-muted-foreground uppercase">Graded Courses</p>
+                  <p className="text-lg font-bold text-foreground">{coursesData?.length || 0}</p>
                 </div>
               </div>
             </CardFooter>

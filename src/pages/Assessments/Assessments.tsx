@@ -61,13 +61,13 @@ const Assessments = () => {
   if (isPeriodError) {
     return (
       <div className="flex flex-col items-center justify-center text-center py-20 px-4 animate-fade-in mt-10">
-        <div className="w-24 h-24 bg-gradient-to-tr from-amber-100 to-orange-100 text-amber-600 rounded-full flex items-center justify-center mb-6 shadow-sm border border-amber-50">
+        <div className="w-24 h-24 bg-gradient-to-tr from-amber-100 to-orange-100 dark:from-amber-950/20 dark:to-orange-950/20 text-amber-600 dark:text-amber-400 rounded-full flex items-center justify-center mb-6 shadow-sm border border-amber-50 dark:border-amber-900/50">
           <AlertCircle size={48} strokeWidth={1.5} />
         </div>
-        <h2 className="text-3xl font-bold text-slate-800 mb-3">
+        <h2 className="text-3xl font-bold text-foreground mb-3">
           No Active Period
         </h2>
-        <p className="text-lg text-slate-500 max-w-lg mb-8 leading-relaxed">
+        <p className="text-lg text-muted-foreground max-w-lg mb-8 leading-relaxed">
           You need to create and activate a period (e.g. "First Term") before you can manage assessments. Head to Settings to set up your academic cycle.
         </p>
       </div>
@@ -79,7 +79,7 @@ const Assessments = () => {
       {/* Period indicator */}
       {activePeriod && (
         <div className="mb-2 flex items-center gap-2">
-          <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Active Period:</span>
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Active Period:</span>
           <span className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">{activePeriod.name}</span>
         </div>
       )}
@@ -103,13 +103,13 @@ const Assessments = () => {
 
       {courseIsError && ((courseError as AxiosError<ErrorResponse>)?.response?.data?.error) === "No course for user" && (
         <div className="flex flex-col items-center justify-center text-center py-20 px-4 animate-fade-in mt-10">
-          <div className="w-24 h-24 bg-gradient-to-tr from-brand-100 to-brand-secondary-100 text-primary rounded-full flex items-center justify-center mb-6 shadow-sm border border-brand-50">
+          <div className="w-24 h-24 bg-gradient-to-tr from-brand-100 to-brand-secondary-100 dark:from-brand-900/20 dark:to-brand-secondary-900/20 text-primary rounded-full flex items-center justify-center mb-6 shadow-sm border border-brand-50 dark:border-brand-900/30">
             <GraduationCap size={48} strokeWidth={1.5} />
           </div>
-          <h2 className="text-3xl font-bold text-slate-800 mb-3">
+          <h2 className="text-3xl font-bold text-foreground mb-3">
             Welcome to GradrAI!
           </h2>
-          <p className="text-lg text-slate-500 max-w-lg mb-8 leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-lg mb-8 leading-relaxed">
             You don't have any assessments yet. Get started by grading your test papers or generating a brand new exam with AI!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -120,7 +120,7 @@ const Assessments = () => {
               </Button>
             </Link>
             <Link to="/app/exams">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto border-brand-200 text-brand-700 hover:bg-brand-50 gap-2 shadow-sm">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-300 hover:bg-brand-50 dark:hover:bg-brand-950/30 gap-2 shadow-sm">
                 <GraduationCap size={20} />
                 Generate Exam
               </Button>

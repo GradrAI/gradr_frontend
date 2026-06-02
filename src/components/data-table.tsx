@@ -32,6 +32,11 @@ import { Category } from "@/types/Category";
 import { Course } from "@/types/Course";
 import CategoryRow from "./CategoryRow";
 
+const TEXT_COLUMNS = "Columns";
+const TEXT_NO_RESULTS = "No results.";
+const TEXT_PREVIOUS = "Previous";
+const TEXT_NEXT = "Next";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -116,12 +121,12 @@ export function DataTable<TData, TValue>({
           placeholder="Filter..."
           value={globalFilter ?? ""}
           onChange={(event) => table.setGlobalFilter(event.target.value)}
-          className="max-w-sm bg-white"
+          className="max-w-sm bg-background"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns
+              {TEXT_COLUMNS}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -145,7 +150,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border bg-white p-2">
+      <div className="rounded-md border bg-card text-card-foreground p-2">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -213,7 +218,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {TEXT_NO_RESULTS}
                 </TableCell>
               </TableRow>
             )}
@@ -228,7 +233,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          {TEXT_PREVIOUS}
         </Button>
         <Button
           variant="outline"
@@ -236,7 +241,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          {TEXT_NEXT}
         </Button>
       </div>
     </div>
