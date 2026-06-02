@@ -9,9 +9,10 @@ export function ThemeToggle() {
     if (theme === "light") {
       setTheme("dark");
     } else if (theme === "dark") {
-      setTheme("system");
-    } else {
       setTheme("light");
+    } else {
+      const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      setTheme(isSystemDark ? "light" : "dark");
     }
   };
 
