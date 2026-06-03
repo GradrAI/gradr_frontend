@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -67,7 +68,7 @@ const KYC = () => {
     <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-6 animate-fade-in space-y-6 border border-gray-200">
       <div className="flex flex-col items-center text-center space-y-2">
         <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-          🧾
+          <FileText className="w-8 h-8 text-white" />
         </div>
         <h2 className="text-3xl font-bold text-gray-800">
           {isIndividual ? "Personal Information" : "Organization KYC"}

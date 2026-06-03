@@ -249,7 +249,7 @@ const SignInForm = () => {
         className="w-full border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 font-medium py-2 rounded-xl"
       >
         {googleIsPending && <Loader2Icon className="animate-spin" />}
-        <span className="mr-2">🔗</span> Sign in with Google
+        Sign in with Google
       </Button>
 
       <div className="text-center text-sm mt-6 text-gray-600">
