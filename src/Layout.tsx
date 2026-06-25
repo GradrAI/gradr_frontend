@@ -2,7 +2,7 @@ import { createContext, useState } from "react";
 import Header from "./components/Header";
 import { Outlet } from "react-router-dom";
 import useStore from "./state";
-import { Folder, Scan, Settings, Upload, Blocks, PieChart, ShieldCheck } from "lucide-react";
+import { Folder, Scan, Settings, Upload, Blocks, PieChart, ShieldCheck, GraduationCap } from "lucide-react";
 
 export const ModalContext = createContext<any>(null);
 
@@ -40,7 +40,15 @@ export default function Layout() {
       url: "/app/reports",
       icon: PieChart,
     },
-    // Admin-only item
+    ...(user?.role === "lecturer" || user?.role === "admin"
+      ? [
+          {
+            title: "Students",
+            url: "/app/students",
+            icon: GraduationCap,
+          },
+        ]
+      : []),
     ...(user?.role === "admin"
       ? [
           {
