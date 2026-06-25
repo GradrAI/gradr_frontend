@@ -1,6 +1,6 @@
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, GraduationCap, Download, FileText } from "lucide-react";
+import { ArrowLeft, GraduationCap, Download, FileText, AlertTriangle, BookOpen } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -40,6 +40,12 @@ interface StudentInfo {
   linkStatus: "linked" | "unlinked" | "pending";
   linkedUserId: string | null;
   group: string | null;
+  weaknessProfile: {
+    weakTopics: string[];
+    classWeakTopics: string[];
+    lastAnalyzedAt: string | null;
+    examType: string | null;
+  } | null;
 }
 
 interface CategoryResult {
@@ -174,6 +180,69 @@ const StudentDetail = () => {
               </div>
             </CardHeader>
           </Card>
+
+          {/* Weak Areas */}
+          {data.student.weaknessProfile && data.student.weaknessProfile.weakTopics.length > 0 && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <AlertTriangle className="text-amber-500" size={20} />
+                      Weak Areas
+                    </CardTitle>
+                    <CardDescription>
+                      Topics where this student scored below 60%.
+                      {data.student.weaknessProfile.lastAnalyzedAt && (
+                        <span className="ml-2">
+                          Last analyzed: {new Date(data.student.weaknessProfile.lastAnalyzedAt).toLocaleDateString()}
+                        </span>
+                      )}
+                    </CardDescription>
+                  </div>
+                  {data.student.weaknessProfile.examType && (
+                    <Badge variant="outline" className="capitalize">
+                      {data.student.weaknessProfile.examType}
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground mb-2">Student Weak Topics</p>
+                    <div className="flex flex-wrap gap-2">
+                      {data.student.weaknessProfile.weakTopics.map((topic) => (
+                        <span
+                          key={topic}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50"
+                        >
+                          <AlertTriangle size={12} />
+                          {topic}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  {data.student.weaknessProfile.classWeakTopics.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-2">Also Weak Across the Class</p>
+                      <div className="flex flex-wrap gap-2">
+                        {data.student.weaknessProfile.classWeakTopics.map((topic) => (
+                          <span
+                            key={topic}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50"
+                          >
+                            <BookOpen size={12} />
+                            {topic}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Performance Trend Chart */}
           {data.trend?.length > 0 && (

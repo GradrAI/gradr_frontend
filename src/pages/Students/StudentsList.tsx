@@ -16,6 +16,8 @@ import {
   Upload,
   X,
   FileSpreadsheet,
+  AlertTriangle,
+  BookOpen,
 } from "lucide-react";
 import {
   Card,
@@ -157,6 +159,24 @@ const StudentsList = () => {
     queryFn: async () => {
       const res = await api.get(`/students/lecturer?periodId=${selectedPeriod}`);
       return res.data.data as LecturerStudent[];
+    },
+    enabled: !!selectedPeriod,
+  });
+
+  // 4. Fetch class weakness summary
+  const { data: classWeaknessData } = useQuery<{
+    totalStudentsAnalyzed: number;
+    totalStudentsInCourses: number;
+    topWeaknesses: Array<{
+      topic: string;
+      count: number;
+      students: Array<{ _id: string; name: string; studentId: string }>;
+    }>;
+  }>({
+    queryKey: ["class-weaknesses", selectedPeriod],
+    queryFn: async () => {
+      const res = await api.get(`/students/lecturer/class-weaknesses?periodId=${selectedPeriod}`);
+      return res.data.data;
     },
     enabled: !!selectedPeriod,
   });
@@ -428,6 +448,48 @@ const StudentsList = () => {
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {/* Class Weakness Summary */}
+      {classWeaknessData && classWeaknessData.topWeaknesses.length > 0 && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <AlertTriangle className="text-amber-500" size={20} />
+                  Class Weak Areas
+                </CardTitle>
+                <CardDescription>
+                  Topics where multiple students scored below 60%.
+                  {classWeaknessData.totalStudentsAnalyzed > 0 && (
+                    <span className="ml-1">
+                      Based on {classWeaknessData.totalStudentsAnalyzed} of {classWeaknessData.totalStudentsInCourses} students analyzed.
+                    </span>
+                  )}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-3">
+              {classWeaknessData.topWeaknesses.slice(0, 10).map((w) => (
+                <div
+                  key={w.topic}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20"
+                >
+                  <AlertTriangle size={14} className="text-amber-500 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{w.topic}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {w.count} student{w.count !== 1 ? "s" : ""}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Search + Student Table */}
