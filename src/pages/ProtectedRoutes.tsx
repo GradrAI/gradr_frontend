@@ -7,14 +7,15 @@ const ProtectedRoutes = () => {
   const searchParams = new URLSearchParams(location.search);
   const code = searchParams.get("code");
 
-  return (
-    <>
-      {(user && Object.keys(user)?.length) || code ? (
-        <Outlet />
-      ) : (
-        <Navigate to="/" state={{ path: location.pathname }} replace />
-      )}
-    </>
+  // If there's a Google OAuth code, redirect to the dedicated callback route
+  if (code) {
+    return <Navigate to={`/auth/google/callback?code=${code}`} replace />;
+  }
+
+  return user && Object.keys(user)?.length ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/" state={{ path: location.pathname }} replace />
   );
 };
 

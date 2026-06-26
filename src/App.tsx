@@ -38,6 +38,7 @@ const Reports = lazy(() => import("./pages/Reports/Reports"));
 const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard"));
 const StudentsList = lazy(() => import("./pages/Students/StudentsList"));
 const StudentDetail = lazy(() => import("./pages/Students/StudentDetail"));
+const GoogleCallback = lazy(() => import("./pages/Auth/GoogleCallback"));
 
 // Blog pages
 const BlogIndex = lazy(() => import("./pages/blog/BlogIndex"));
@@ -97,6 +98,8 @@ function App() {
             <Route path="pricing" element={<Pricing />} />
             <Route path="confirmation" element={<PostPayment />} />
           </Route>
+
+          <Route path="auth/google/callback" element={<GoogleCallback />} />
 
           <Route path="blog">
             <Route index element={<BlogIndex />} />
