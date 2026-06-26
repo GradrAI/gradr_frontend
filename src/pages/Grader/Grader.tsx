@@ -107,12 +107,10 @@ const Grader = () => {
 
     exportMutate(sheetsObject, {
       onSuccess: (data: any, variables: any, context: any) => {
-        console.log("data(sheets): ", data);
         toast.success("Successfully exported data");
         setSheetsUri(data?.data?.spreadsheetUrl);
       },
       onError: (error: any, variables: any, context: any) => {
-        console.log("error", error);
         toast.error("An error occurred");
         setExportButtonText("Retry");
       },
@@ -166,7 +164,6 @@ const Grader = () => {
       { resultData: normalizedResultData },
       {
         onSuccess: (response: any) => {
-          console.log("data: ", response);
           if (response.status === 202) {
             toast.success(notifications.GRADE.QUEUED);
           } else {
@@ -185,7 +182,6 @@ const Grader = () => {
           }
         },
         onError: (error: any, variables: any, context: any) => {
-          console.log("error", error);
           toast.error(error?.response?.data?.message || notifications.GRADE.FAILURE);
         },
       }

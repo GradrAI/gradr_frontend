@@ -144,7 +144,6 @@ const Details = () => {
         setOpenDialog(false);
       },
       onError: (error: any, variables: any, context: any) => {
-        console.log("error", error);
         posthog.capture("score_edit_failed", { error: error.message });
         toast.error(notifications.RESULT.FAILURE);
       },

@@ -61,19 +61,10 @@ const StudentGrade: React.FC<StudentGradeProps> = ({
   });
 
   useEffect(() => {
-    if (postResultsIsSuccess && postResultsData?.data) {
-      console.log("postResultsData: ", postResultsData);
-    }
     if (postResultsIsError) {
-      console.log("postResultsError: ", postResultsError);
       toast.error("An error occurred while grading");
     }
-  }, [
-    postResultsIsSuccess,
-    postResultsData,
-    postResultsIsError,
-    postResultsError,
-  ]);
+  }, [postResultsIsError, postResultsError]);
 
   const handleGrade = () => {
     if (resourceInfo?.data && user?._id) {
@@ -96,7 +87,6 @@ const StudentGrade: React.FC<StudentGradeProps> = ({
         },
         {
           onSuccess: (data: any, variables: any, context: any) => {
-            console.log("data: ", data);
             toast.success(notifications.GRADE.SUCCESS);
             queryClient.invalidateQueries({
               queryKey: ["results", courseData?.course._id, uniqueCode],
@@ -104,7 +94,6 @@ const StudentGrade: React.FC<StudentGradeProps> = ({
             window.location.reload();
           },
           onError: (error: any, variables: any, context: any) => {
-            console.log("error", error);
             toast.error(notifications.GRADE.FAILURE);
           },
         }

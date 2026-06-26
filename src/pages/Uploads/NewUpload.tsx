@@ -72,7 +72,6 @@ const NewUpload = () => {
   };
 
   const handleSelectCategoryType = (selection: string) => {
-    console.log("selection: ", selection);
     // Ensure selection is one of the allowed values
     const allowedCategories = ["test", "assignment", "exam"] as const;
     if (allowedCategories.includes(selection as any)) {
@@ -116,7 +115,6 @@ const NewUpload = () => {
 
   useEffect(() => {
     if (isSuccess && data) setCourses(data);
-    if (!data) console.log("No exam record for current user");
   }, [data]);
 
   const handleAddCourse = () => {
@@ -146,7 +144,6 @@ const NewUpload = () => {
           }
         },
         onError: (error: any, variables: any, context: any) => {
-          console.log("error", error);
           posthog.capture("course_creation_failed", { error: error.message });
         },
       }

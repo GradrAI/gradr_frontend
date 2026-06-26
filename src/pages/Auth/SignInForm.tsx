@@ -139,7 +139,6 @@ const SignInForm = () => {
           return;
         }
 
-        console.log("error", error);
         posthog.capture("login_failed", { error: errorData?.error || (error as any)?.message });
         
         toast.error(errorData?.error || "Invalid credentials");

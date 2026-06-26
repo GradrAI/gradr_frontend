@@ -110,7 +110,6 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
     }
     mutate(formData, {
       onSuccess: (data: any) => {
-        console.log("data: ", data);
         posthog.capture("file_uploaded", { 
           file_type: uploadData.fileType, 
           category_type: uploadData.categoryType, 
@@ -121,7 +120,6 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
         form.reset();
       },
       onError: (error: any) => {
-        console.log("error", error);
         posthog.capture("upload_failed", { error: error.message });
         toast.error(notifications.UPLOAD.FAILURE);
       },

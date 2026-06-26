@@ -251,7 +251,7 @@ export default function ExamForm() {
             setCourseName("");
           }
         },
-        onError: (error: any) => console.log("error", error),
+        onError: (error: any) => toast.error("Failed to create course"),
       }
     );
   };

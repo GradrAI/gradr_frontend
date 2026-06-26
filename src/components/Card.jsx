@@ -1,5 +1,4 @@
 const Card = ({ user }) => {
-  console.log("user: ", user);
   const { image, name, position, icon, text } = user;
   return (
     <div className="bg-white w-[40%] h-[40%] rounded-2xl p-4 flex flex-col gap-4">

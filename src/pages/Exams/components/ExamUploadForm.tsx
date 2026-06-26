@@ -210,7 +210,6 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
       multiselect: true,
       callbackFunction: (data) => {
         if (data.action === "picked") {
-          console.log("Drive Picker data: ", data);
           toast("Drive file pickup not fully implemented for separate upload yet. Use local upload.");
         }
       },

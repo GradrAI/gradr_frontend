@@ -59,17 +59,6 @@ export const columns: ColumnDef<Partial<Category>>[] = [
       <DataTableColumnHeader column={column} title="Maximum Score Attainable" />
     ),
   },
-  // {
-  //   id: "status",
-  //   accessorKey: "",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Status" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     console.log("row.original(status): ", row.original);
-  //     return <p className=""></p>;
-  //   },
-  // },
   {
     id: "createdAt",
     accessorKey: "createdAt",
@@ -77,7 +66,6 @@ export const columns: ColumnDef<Partial<Category>>[] = [
       <DataTableColumnHeader column={column} title="Created At" />
     ),
     cell: ({ row }) => {
-      // console.log(' row.getValue("createdAt"): ', row.getValue("createdAt"));
       // const formattedDate = new Date(
 
       // ).toLocaleDateString("en-US");

@@ -46,7 +46,6 @@ const BlogPost = lazy(() => import("./pages/blog/BlogPost"));
 const Changelog = lazy(() => import("./pages/blog/Changelog"));
 
 
-import "./App.css";
 const ExamComponent = lazy(() => import("./pages/Student/pages/ExamComponent"));
 const StudentUpload = lazy(() => import("./pages/Student/pages/StudentUpload"));
 const StudentDashboard = lazy(() => import("./pages/Student/pages/StudentDashboard"));

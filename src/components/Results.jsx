@@ -55,7 +55,6 @@ const Results = () => {
   useEffect(() => {
     if (data) {
       toast.success("Successfully exported data");
-      console.log("data: ", data);
       setSheetsUri(data?.data?.data?.spreadsheetUrl);
     }
   }, [data]);
@@ -63,7 +62,6 @@ const Results = () => {
   useEffect(() => {
     if (isLoading) setButtonText("Exporting...");
     if (isError) {
-      console.log("error: ", error);
       toast.error("An error occurred");
       setButtonText("Retry");
     }

@@ -166,7 +166,6 @@ const StudentUploadForm: React.FC<StudentUploadFormProps> = ({
 
     mutate(formData, {
       onSuccess: (data: any, variables: any, context: any) => {
-        console.log("data: ", data);
         toast.success(notifications.UPLOAD.SUCCESS);
         queryClient.invalidateQueries({
           queryKey: ["getResources", courseData?.category._id, data.matricNo],
@@ -174,7 +173,6 @@ const StudentUploadForm: React.FC<StudentUploadFormProps> = ({
         window.location.reload();
       },
       onError: (error: any) => {
-        console.log("error", error);
         toast.error(error?.response?.data?.error || notifications.UPLOAD.FAILURE);
       },
     });
