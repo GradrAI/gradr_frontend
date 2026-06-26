@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 import { BrainCircuit, Clock, CheckCircle2, XCircle, ArrowRight, ArrowLeft } from "lucide-react";
 import { Loader2Icon } from "lucide-react";
+import DOMPurify from "dompurify";
+
+const sanitize = (html: string) => ({ __html: DOMPurify.sanitize(html) });
 
 export default function PracticeSession() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -234,7 +237,7 @@ export default function PracticeSession() {
                     <div className="w-8 h-8 shrink-0 bg-slate-100 rounded-lg flex items-center justify-center font-bold text-slate-500">
                       {idx + 1}
                     </div>
-                    <div className="prose prose-slate max-w-none text-slate-800 font-medium text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: q.questionText }} />
+                    <div className="prose prose-slate max-w-none text-slate-800 font-medium text-lg leading-relaxed" dangerouslySetInnerHTML={sanitize(q.questionText)} />
                   </div>
 
                   {q.image && (
@@ -267,7 +270,7 @@ export default function PracticeSession() {
                       return (
                         <div key={opt} className={`p-4 rounded-xl border-2 flex items-start gap-4 transition-all ${optClass}`}>
                           <div className="font-bold uppercase w-6 shrink-0">{opt}.</div>
-                          <div dangerouslySetInnerHTML={{ __html: optionText }} />
+                          <div dangerouslySetInnerHTML={sanitize(optionText)} />
                           {isThisCorrect && <CheckCircle2 className="w-5 h-5 ml-auto text-emerald-500" />}
                           {(isThisChosen && !isCorrect) && <XCircle className="w-5 h-5 ml-auto text-red-500" />}
                         </div>
@@ -283,7 +286,7 @@ export default function PracticeSession() {
                         <span className="text-xs font-bold text-indigo-700 tracking-wider uppercase">AI Explanation</span>
                       </div>
                       
-                      <div className="prose prose-indigo text-slate-700 text-sm leading-relaxed max-w-none" dangerouslySetInnerHTML={{ __html: q.explanation }} />
+                      <div className="prose prose-indigo text-slate-700 text-sm leading-relaxed max-w-none" dangerouslySetInnerHTML={sanitize(q.explanation)} />
                       
                       {q.conceptTags && q.conceptTags.length > 0 && (
                         <div className="mt-4 flex flex-wrap gap-2 pt-4 border-t border-indigo-200/50">
@@ -324,7 +327,7 @@ export default function PracticeSession() {
                   <div className="w-10 h-10 shrink-0 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold text-lg shadow-sm">
                     {currentIndex + 1}
                   </div>
-                  <div className="prose prose-lg max-w-none text-slate-800 font-medium leading-relaxed pt-1" dangerouslySetInnerHTML={{ __html: currentQText }} />
+                  <div className="prose prose-lg max-w-none text-slate-800 font-medium leading-relaxed pt-1" dangerouslySetInnerHTML={sanitize(currentQText)} />
                 </div>
 
                 {currentQImage && (
@@ -363,7 +366,7 @@ export default function PracticeSession() {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <div className={`prose max-w-none text-base ${isSelected ? "text-indigo-900 font-medium" : "text-slate-600"}`} dangerouslySetInnerHTML={{ __html: optValue }} />
+                      <div className={`prose max-w-none text-base ${isSelected ? "text-indigo-900 font-medium" : "text-slate-600"}`} dangerouslySetInnerHTML={sanitize(optValue)} />
                     </div>
                   </div>
                 );
