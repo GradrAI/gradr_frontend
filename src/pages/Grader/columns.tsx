@@ -66,11 +66,6 @@ export const columns: ColumnDef<Partial<Category>>[] = [
       <DataTableColumnHeader column={column} title="Created At" />
     ),
     cell: ({ row }) => {
-      // const formattedDate = new Date(
-
-      // ).toLocaleDateString("en-US");
-      // return <div className="font-medium">{formattedDate}</div>;
-
       const raw = row.original.createdAt;
       const date = raw ? new Date(raw) : null;
       return date instanceof Date && !isNaN(date.getTime())

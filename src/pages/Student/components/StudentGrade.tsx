@@ -49,9 +49,7 @@ const StudentGrade: React.FC<StudentGradeProps> = ({
 
   // for grading
   const {
-    isSuccess: postResultsIsSuccess,
     isPending: postResultsIsPending,
-    data: postResultsData,
     isError: postResultsIsError,
     error: postResultsError,
     mutate: postResultsMutate,

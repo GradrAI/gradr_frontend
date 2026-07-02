@@ -42,7 +42,7 @@ const formSchema = z
       .number()
       .positive("Must be a positive number")
       .gt(1, "Must be at least 2 questions"),
-    standard: z.enum(["GENERIC", "JAMB", "WASSCE"]).default("GENERIC"),
+    standard: z.string().default("GENERIC"),
     startDate: z.date().optional(),
     endDate: z.date().optional(),
     startTime: z.string().optional(),

@@ -55,6 +55,33 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider"
 
+const defaultStandards = [
+  {
+    id: "GENERIC",
+    name: "Generic / Custom",
+    description: "Flexible format with no specific constraints.",
+    constraints: { allowedTypes: ["multiple-choice", "essay", "hybrid"], fixedOptions: null }
+  },
+  {
+    id: "JAMB",
+    name: "JAMB (UTME)",
+    description: "Joint Admissions and Matriculation Board (Nigeria)",
+    constraints: { allowedTypes: ["multiple-choice"], fixedOptions: 4 }
+  },
+  {
+    id: "WASSCE",
+    name: "WASSCE (Senior)",
+    description: "West African Senior School Certificate Examination",
+    constraints: { allowedTypes: ["multiple-choice", "essay", "hybrid"], fixedOptions: 4 }
+  },
+  {
+    id: "NCEE",
+    name: "NCEE (Common Entrance)",
+    description: "National Common Entrance Examination (Nigeria)",
+    constraints: { allowedTypes: ["multiple-choice"], fixedOptions: 4 }
+  }
+];
+
 interface ExamUploadFormProps {
   setAddNew: (value: boolean) => void;
 }
@@ -233,6 +260,17 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
     },
   });
 
+  const { data: standardsResponse } = useQuery({
+    queryKey: ["examStandards"],
+    queryFn: async () => {
+      const res = await api.get("/exam/standards");
+      return res.data.data;
+    },
+  });
+
+  const examStandards = standardsResponse || defaultStandards;
+  const selectedStandardObj = examStandards.find((s: any) => s.id === standard);
+
   const {
     data: coursesData,
   } = useQuery({
@@ -269,18 +307,20 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
   }, [form, startDate, endDate, startTime, endTime]);
 
   useEffect(() => {
-    if (standard === "JAMB") {
-      form.setValue("type", "multiple-choice");
-      form.setValue("numberOfOptions", 4);
-    } else if (standard === "WASSCE") {
-      form.setValue("numberOfOptions", 4);
-      // WASSCE allows hybrid, so we don't force type
+    if (selectedStandardObj) {
+      const { constraints } = selectedStandardObj;
+      if (constraints.fixedOptions !== null) {
+        form.setValue("numberOfOptions", constraints.fixedOptions);
+      }
+      if (constraints.allowedTypes && !constraints.allowedTypes.includes(examType)) {
+        form.setValue("type", constraints.allowedTypes[0]);
+      }
     }
 
     if (examType === "hybrid" && hybridCount > totalQuestions) {
       form.setValue("hybridCount", Math.floor(totalQuestions / 2));
     }
-  }, [standard, form, examType, totalQuestions, hybridCount]);
+  }, [standard, selectedStandardObj, form, examType, totalQuestions, hybridCount]);
 
   const handleSelectCourse = (selection: string) => {
     if (selection === "addNew") {
@@ -420,9 +460,11 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 </FormControl>
                 <SelectContent>
                    <SelectGroup>
-                    <SelectItem value="GENERIC">Generic / Custom</SelectItem>
-                    <SelectItem value="JAMB">JAMB (UTME)</SelectItem>
-                    <SelectItem value="WASSCE">WASSCE (Senior)</SelectItem>
+                    {examStandards.map((s: any) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.name}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -722,16 +764,31 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                   <Select 
                     onValueChange={field.onChange} 
                     value={field.value}
-                    disabled={standard === "JAMB"}
+                    disabled={selectedStandardObj?.constraints?.allowedTypes?.length === 1}
                   >
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent className="bg-background">
                       <SelectGroup>
-                        <SelectItem value="multiple-choice">Multiple Choice</SelectItem>
-                        <SelectItem value="essay">Essay</SelectItem>
-                        <SelectItem value="hybrid">Hybrid</SelectItem>
+                        <SelectItem 
+                          value="multiple-choice"
+                          disabled={selectedStandardObj && !selectedStandardObj.constraints.allowedTypes.includes("multiple-choice")}
+                        >
+                          Multiple Choice
+                        </SelectItem>
+                        <SelectItem 
+                          value="essay"
+                          disabled={selectedStandardObj && !selectedStandardObj.constraints.allowedTypes.includes("essay")}
+                        >
+                          Essay
+                        </SelectItem>
+                        <SelectItem 
+                          value="hybrid"
+                          disabled={selectedStandardObj && !selectedStandardObj.constraints.allowedTypes.includes("hybrid")}
+                        >
+                          Hybrid
+                        </SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -893,7 +950,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                     {...field}
                     className="bg-background"
                     onChange={(e) => field.onChange(Number(e.target.value))}
-                    disabled={standard === "JAMB" || standard === "WASSCE"}
+                    disabled={selectedStandardObj?.constraints?.fixedOptions != null}
                   />
                 </FormControl>
                 <FormMessage />

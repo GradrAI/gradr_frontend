@@ -11,12 +11,18 @@ const EXAM_TYPES = [
   { id: "utme", label: "JAMB UTME" },
   { id: "wassce", label: "WASSCE" },
   { id: "post-utme", label: "Post-UTME" },
+  { id: "ncee", label: "Common Entrance (NCEE)" },
 ];
 
-const AVAILABLE_SUBJECTS = [
+const SECONDARY_SUBJECTS = [
   "english", "mathematics", "physics", "chemistry", "biology", 
   "economics", "government", "crk", "irk", "geography", 
   "commerce", "accounting", "englishlit", "history"
+];
+
+const NCEE_SUBJECTS = [
+  "mathematics", "basic_science", "english", 
+  "national_values", "quantitative_aptitude", "verbal_aptitude"
 ];
 
 export default function PracticeSetup() {
@@ -26,6 +32,18 @@ export default function PracticeSetup() {
   const [mode, setMode] = useState("quick");
   const [questionCount, setQuestionCount] = useState(20);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>(["english"]);
+
+  const availableSubjects = examType === "ncee" ? NCEE_SUBJECTS : SECONDARY_SUBJECTS;
+
+  const handleExamTypeChange = (id: string) => {
+    setExamType(id);
+    // Reset subjects when switching between NCEE and secondary exam types
+    if (id === "ncee") {
+      setSelectedSubjects(["mathematics"]);
+    } else if (examType === "ncee") {
+      setSelectedSubjects(["english"]);
+    }
+  };
 
   const toggleSubject = (subject: string) => {
     setSelectedSubjects((prev) => 
@@ -94,11 +112,11 @@ export default function PracticeSetup() {
           {/* Exam Type Selection */}
           <div className="space-y-4">
             <label className="text-sm font-bold text-slate-700 uppercase tracking-widest">1. Select Exam Type</label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               {EXAM_TYPES.map((type) => (
                 <div 
                   key={type.id}
-                  onClick={() => setExamType(type.id)}
+                  onClick={() => handleExamTypeChange(type.id)}
                   className={`p-4 rounded-xl cursor-pointer border-2 transition-all ${
                     examType === type.id 
                       ? "border-indigo-500 bg-indigo-50/50 shadow-sm" 
@@ -127,7 +145,7 @@ export default function PracticeSetup() {
               <span className="text-xs font-semibold text-slate-400">{selectedSubjects.length} selected</span>
             </div>
             <div className="flex flex-wrap gap-3 p-5 bg-slate-50 rounded-2xl border border-slate-100">
-              {AVAILABLE_SUBJECTS.map((subject) => (
+              {availableSubjects.map((subject) => (
                 <div 
                   key={subject}
                   onClick={() => toggleSubject(subject)}
