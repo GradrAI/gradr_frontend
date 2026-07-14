@@ -1,9 +1,15 @@
+import { useEffect } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import useStore from "@/state";
+import { loadRecaptcha } from "@/lib/recaptcha";
 
 const AuthLayout = () => {
   const { user } = useStore();
   const location = useLocation();
+
+  useEffect(() => {
+    loadRecaptcha().catch(() => {});
+  }, []);
 
   return (
     <div className="w-dvw h-dvh flex flex-col justify-between bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">

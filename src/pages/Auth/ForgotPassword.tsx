@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { getRecaptchaToken } from "@/lib/recaptcha";
 import { useNavigate } from "react-router-dom";
 import { Loader2Icon, ArrowLeft } from "lucide-react";
 
@@ -33,20 +34,22 @@ const ForgotPassword = () => {
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["forgotPassword"],
-    mutationFn: (data: z.infer<typeof formSchema>) => {
-      return axios.post(`/auth/forgot-password`, { email: data.email });
+    mutationFn: ({ values, token }: { values: z.infer<typeof formSchema>; token: string }) => {
+      return axios.post(`/auth/forgot-password`, { email: values.email }, { headers: { "X-Recaptcha-Token": token } });
     },
     onSuccess: (_, variables) => {
       toast.success("Password reset OTP sent to your email.");
-      nav(`/auth/reset-password?email=${variables.email}`);
+      nav(`/auth/reset-password?email=${variables.values.email}`);
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.error || "Error sending reset OTP");
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    mutate(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const recaptchaToken = await getRecaptchaToken("forgot_password");
+    if (!recaptchaToken) { toast.error("Verification failed, please try again."); return; }
+    mutate({ values, token: recaptchaToken });
   }
 
   return (

@@ -19,6 +19,7 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import useStore from "@/state";
 import { usePostHog } from '@posthog/react'
+import { getRecaptchaToken } from "@/lib/recaptcha";
 
 const formSchema = z
   .object({
@@ -81,13 +82,13 @@ const SignUpForm = () => {
     data,
   } = useMutation({
     mutationKey: ["register"],
-    mutationFn: (data: z.infer<typeof formSchema>) => {
-      const validatedData = formSchema.parse(data);
+    mutationFn: ({ values, token }: { values: z.infer<typeof formSchema>; token: string }) => {
+      const validatedData = formSchema.parse(values);
       return axios.post(`/auth/register`, {
         ...validatedData,
         accountType: isJoining ? "joining" : accountType,
         confirmPassword: undefined, // exclude confirmPassword before sending
-      });
+      }, { headers: { "X-Recaptcha-Token": token } });
     }
   });
 
@@ -107,14 +108,16 @@ const SignUpForm = () => {
     googleMutate();
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Validate org code is provided for joining flow
     if (isJoining && !values.tenant_code?.trim()) {
       toast.error("Organization code is required to join an institution.");
       return;
     }
 
-    registerMutate(values, {
+    const recaptchaToken = await getRecaptchaToken("signup");
+    if (!recaptchaToken) { toast.error("Verification failed, please try again."); return; }
+    registerMutate({ values, token: recaptchaToken }, {
       onSuccess: (data: any, variables: any, context: any) => {
         if (data.data.success) {
           const { email, membershipStatus } = data.data.data;

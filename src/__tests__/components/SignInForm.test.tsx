@@ -31,6 +31,10 @@ vi.mock("@/state", () => ({
     setAccountType: vi.fn(),
   }),
 }));
+vi.mock("@/lib/recaptcha", () => ({
+  getRecaptchaToken: vi.fn().mockResolvedValue("test-token"),
+  loadRecaptcha: vi.fn().mockResolvedValue(undefined),
+}));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -108,10 +112,11 @@ describe("SignInForm Component", () => {
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledWith("/auth/login", {
-        email: "test@example.com",
-        password: "password123",
-      });
+      expect(axios.post).toHaveBeenCalledWith(
+        "/auth/login",
+        { email: "test@example.com", password: "password123" },
+        { headers: { "X-Recaptcha-Token": "test-token" } }
+      );
     });
   });
 });

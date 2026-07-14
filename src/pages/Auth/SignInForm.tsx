@@ -19,6 +19,7 @@ import useStore from "@/state";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader2Icon, Eye, EyeOff } from "lucide-react";
 import { usePostHog } from '@posthog/react'
+import { getRecaptchaToken } from "@/lib/recaptcha";
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -52,9 +53,9 @@ const SignInForm = () => {
 
   const { mutate: loginMutate, isPending } = useMutation({
     mutationKey: ["login"],
-    mutationFn: (data: z.infer<typeof formSchema>) => {
-      const validatedData = formSchema.parse(data);
-      return axios.post(`/auth/login`, validatedData);
+    mutationFn: ({ values, token }: { values: z.infer<typeof formSchema>; token: string }) => {
+      const validatedData = formSchema.parse(values);
+      return axios.post(`/auth/login`, validatedData, { headers: { "X-Recaptcha-Token": token } });
     }
   });
 
@@ -85,8 +86,10 @@ const SignInForm = () => {
   }, [googleIsPending, googleIsError, googleError, googleData]);
 
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    loginMutate(values, {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const recaptchaToken = await getRecaptchaToken("login");
+    if (!recaptchaToken) { toast.error("Verification failed, please try again."); return; }
+    loginMutate({ values, token: recaptchaToken }, {
       onSuccess: (response) => {
         const { user, token, needsKYC, needsPayment, membershipStatus } = response.data;
         saveUser(user);
