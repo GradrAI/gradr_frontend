@@ -78,7 +78,7 @@ const defaultStandards = [
     id: "NCEE",
     name: "NCEE (Common Entrance)",
     description: "National Common Entrance Examination (Nigeria)",
-    constraints: { allowedTypes: ["multiple-choice"], fixedOptions: 4 }
+    constraints: { allowedTypes: ["multiple-choice"], fixedOptions: 5 }
   }
 ];
 
