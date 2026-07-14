@@ -44,6 +44,7 @@ import useStore from "@/state";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 import BackedBy from "@/components/landing/BackedBy";
+import ContactForm from "@/components/landing/ContactForm";
 
 const Landing = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -1011,9 +1012,18 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Contact Section */}
+      <section
+        ref={contactRef}
+        className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/30 border-t border-border/50"
+      >
+        <div className="max-w-7xl mx-auto">
+          <ContactForm />
+        </div>
+      </section>
+
       {/* Footer */}
       <footer
-        ref={contactRef}
         className="bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-900"
       >
         <div className="max-w-7xl mx-auto">
