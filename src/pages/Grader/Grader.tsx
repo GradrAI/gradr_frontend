@@ -193,7 +193,7 @@ const Grader = () => {
   const remainingCredits = typeof org === "object" ? (org?.creditsBalance || 0) : 0;
   const requiredCredits = selectedSubRows.length; // 1 credit per script
 
-  const isOverLimit = !isEnterprise && requiredCredits > remainingCredits;
+  const isOverLimit = !isEnterprise && requiredCredits > remainingCredits + 5;
 
   return (
     <div className="w-full p-4 flex flex-col justify-between gap-2">
@@ -283,14 +283,23 @@ const Grader = () => {
                     <p className="text-muted-foreground">
                       Grading Quota: Unlimited (Enterprise)
                     </p>
-                  ) : remainingCredits > 0 ? (
-                    <p className={isOverLimit ? "text-red-500 font-semibold" : "text-muted-foreground"}>
+                  ) : remainingCredits >= requiredCredits ? (
+                    <p className="text-muted-foreground">
                       Credit Balance: {remainingCredits} credits available
                     </p>
+                  ) : remainingCredits >= requiredCredits - 5 ? (
+                    <div>
+                      <p className="text-amber-600 dark:text-amber-500 font-semibold">
+                        Credit Balance: {remainingCredits} credits available
+                      </p>
+                      <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">
+                        You can use up to 5 grace credits; top up immediately after this batch if your balance goes negative.
+                      </p>
+                    </div>
                   ) : (
-                   <p className="text-red-500 font-semibold">
+                    <p className="text-red-500 font-semibold">
                       Your credit balance is exhausted. Please top up to grade scripts.
-                   </p>
+                    </p>
                   )}
                   {isOverLimit && (
                      <p className="text-xs text-red-500 mt-1">

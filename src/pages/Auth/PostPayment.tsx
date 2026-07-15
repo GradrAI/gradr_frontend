@@ -1,7 +1,7 @@
 import api from "@/lib/axios";
 import useStore from "@/state";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -20,58 +20,19 @@ import {
   ArrowLeft,
   CheckCircle2
 } from "lucide-react";
-import { usePostHog } from '@posthog/react'
-import { OrganizationData } from "@/types/OrganizationData";
+import { usePostHog } from "@posthog/react";
 
 const PostPayment = () => {
   const nav = useNavigate();
   const posthog = usePostHog();
-  const { user, selectedPaymentPlan, organizationData, saveUser } = useStore();
+  const { user, selectedPaymentPlan, saveUser } = useStore();
   const [searchParams] = useSearchParams();
   const reference = searchParams.get("reference");
+  const isFreeQuery = searchParams.get("free") === "1";
 
-  const isFreePlan = !reference && selectedPaymentPlan && selectedPaymentPlan.amount === 0;
   const isStudent = user?.role === "student";
 
-  // Mutation for creating organization (used for free plans)
-  const { 
-    mutate: organizationMutate, 
-    isPending: orgIsPending, 
-    isSuccess: orgIsSuccess, 
-    isError: orgIsError, 
-    error: orgError,
-    data: orgData,
-    isIdle: orgIsIdle
-  } = useMutation({
-    mutationKey: ["createOrganization"],
-    mutationFn: async (data: OrganizationData) => await api.post("/organizations", data),
-    onSuccess: (response) => {
-      if (processedRef.current) return;
-      processedRef.current = true;
-
-      toast.success("Account set up successfully!", { id: "org-creation" });
-      
-      posthog.capture("free_plan_activated", { 
-        plan_name: selectedPaymentPlan?.name 
-      });
-
-      const newOrg = response.data?.data;
-      if (newOrg) {
-        saveUser({
-          ...user,
-          organization: newOrg
-        } as any);
-      }
-
-      setTimeout(() => {
-        if (isStudent) nav("/student/dashboard");
-        else nav("/app/assessments");
-      }, 2000);
-    },
-    onError: () => {
-      toast.error("Failed to set up account", { id: "org-creation" });
-    }
-  });
+  const [retryCount, setRetryCount] = useState(0);
 
   // Query for verifying payment (used for paid plans)
   const { data, isSuccess, isLoading, isError, error, refetch } = useQuery({
@@ -83,54 +44,64 @@ const PostPayment = () => {
 
   const processedRef = useRef(false);
 
+  // 1. Handle Free plans
   useEffect(() => {
-    // Guards to ensure all data is ready
-    if (isLoading || !selectedPaymentPlan || !user || processedRef.current) return;
-
-    if (isFreePlan && orgIsIdle) {
-      // Free plans: Create organization manually
-      toast.loading("Setting up your free account...", { id: "org-creation" });
-
-      const finalOrgData = {
-        organizationType: (user?.role === "lecturer" || user?.role === "student") ? "individual" : "institution",
-        ...organizationData,
-        paymentPlan: String(selectedPaymentPlan?._id),
-      };
-
-      if (!finalOrgData.name) finalOrgData.name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username;
-      if (!finalOrgData.email) finalOrgData.email = user.email;
-      if (!finalOrgData.phoneNumber) finalOrgData.phoneNumber = "N/A";
-      if (!finalOrgData.physicalAddress) finalOrgData.physicalAddress = "N/A";
-      
-      organizationMutate(finalOrgData as OrganizationData);
-    } 
-    
-    if (reference && isSuccess && data?.data) {
+    if (isFreeQuery && !processedRef.current) {
       processedRef.current = true;
-      // Paid plans: The backend verifyTransaction already created the organization
-      toast.success("Payment verified successfully!", { id: "payment-verification" });
-      
-      posthog.capture("payment_completed", { 
-        plan_name: selectedPaymentPlan?.name,
-        payment_reference: reference 
-      });
-
-      // Update local user state if the backend returned the organization
-      if (data.data.organization) {
-        saveUser({
-          ...user,
-          organization: data.data.organization
-        });
-      }
-
+      toast.success("Account set up successfully!", { id: "org-creation" });
       setTimeout(() => {
         if (isStudent) nav("/student/dashboard");
         else nav("/app/assessments");
       }, 2000);
     }
-  }, [data, isSuccess, isLoading, isFreePlan, isStudent, nav, posthog, reference, selectedPaymentPlan, user, organizationData, organizationMutate, orgIsIdle, saveUser]);
+  }, [isFreeQuery, isStudent, nav]);
+
+  // 2. Handle Paid plans
+  useEffect(() => {
+    if (isLoading || !selectedPaymentPlan || !user || processedRef.current || isFreeQuery) return;
+
+    if (reference && isSuccess && data?.data) {
+      const responseData = data.data;
+
+      if (responseData.entitlementStatus === "processed") {
+        processedRef.current = true;
+        toast.success("Payment verified successfully!", { id: "payment-verification" });
+        
+        posthog.capture("payment_completed", { 
+          plan_name: selectedPaymentPlan?.name,
+          payment_reference: reference 
+        });
+
+        // Update local user state if the backend returned the organization
+        if (responseData.organization) {
+          saveUser({
+            ...user,
+            organization: responseData.organization
+          });
+        }
+
+        setTimeout(() => {
+          if (isStudent) nav("/student/dashboard");
+          else nav("/app/assessments");
+        }, 2000);
+      } else if (responseData.entitlementStatus === "webhook_pending") {
+        if (retryCount < 3) {
+          const timer = setTimeout(() => {
+            setRetryCount(prev => prev + 1);
+            refetch();
+          }, 3000);
+          return () => clearTimeout(timer);
+        } else {
+          // Bounded retries exhausted but transaction verified by gateway
+          processedRef.current = true;
+          toast.success("Payment received!", { id: "payment-verification" });
+        }
+      }
+    }
+  }, [data, isSuccess, isLoading, isFreeQuery, isStudent, nav, posthog, reference, selectedPaymentPlan, user, saveUser, retryCount, refetch]);
 
   const handleRetry = () => {
+    setRetryCount(0);
     refetch();
   };
 
@@ -142,17 +113,56 @@ const PostPayment = () => {
     window.location.href = "mailto:contact@gradrai.com";
   };
 
-  // Loading state (Verifying paid plan or creating free org)
-  if (isLoading || orgIsPending) {
+  const handleProceedToDashboard = () => {
+    if (isStudent) nav("/student/dashboard");
+    else nav("/app/assessments");
+  };
+
+  // Loading state
+  if ((isLoading && !isFreeQuery) || (reference && data?.data?.entitlementStatus === "webhook_pending" && retryCount < 3)) {
     return (
       <div className="w-full min-h-[600px] flex items-center justify-center">
         <Card className="w-full max-w-md border-0 shadow-none bg-transparent">
           <CardContent className="text-center flex flex-col items-center justify-center space-y-4">
             <Loader2 className="w-10 h-10 text-primary animate-spin" />
             <h2 className="text-xl font-semibold text-gray-800">
-              {orgIsPending ? "Setting up your account..." : "Verifying Payment..."}
+              {retryCount > 0 ? "Applying purchase to account..." : "Verifying Payment..."}
             </h2>
-            <p className="text-sm text-gray-500">Please wait while we finalize your setup.</p>
+            <p className="text-sm text-gray-500">
+              {retryCount > 0 
+                ? `Webhook confirmation is pending. Retrying application (Attempt ${retryCount}/3)...`
+                : "Please wait while we finalize your setup."}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Webhook Pending State (Retries exhausted but gateway success)
+  if (reference && isSuccess && data?.data?.entitlementStatus === "webhook_pending" && retryCount >= 3) {
+    return (
+      <div className="w-full min-h-[600px] flex items-center justify-center p-4">
+        <Card className="w-full max-w-md border-amber-100 shadow-lg text-center">
+          <CardHeader className="pb-2">
+            <div className="mx-auto mb-4 w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center animate-pulse">
+              <CheckCircle2 className="w-8 h-8 text-amber-500" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-gray-900">
+              Payment Received
+            </CardTitle>
+            <CardDescription className="text-base text-gray-600 mt-2">
+              Payment received. Your credits will appear once Paystack confirms the webhook.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-4">
+            <Button onClick={handleProceedToDashboard} className="w-full h-12 text-base">
+              Go to Dashboard
+            </Button>
+            <Button variant="outline" onClick={handleRetry} className="w-full h-12 text-base">
+              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+              Check Status Again
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -160,13 +170,10 @@ const PostPayment = () => {
   }
 
   // Error state
-  if (isError || orgIsError || (isSuccess && !data?.data)) {
-    const isServerError = (isError && (error as any)?.response?.status === 500) || orgIsError;
+  if (isError || (isSuccess && !data?.data)) {
     const errorMessage = isError 
       ? ((error as any)?.response?.data?.error || "Payment confirmation failed.")
-      : orgIsError 
-        ? "Failed to create your organization."
-        : "Your payment was not successful.";
+      : "Your payment was not successful.";
 
     return (
       <div className="w-full min-h-[600px] flex items-center justify-center p-4">
@@ -208,8 +215,8 @@ const PostPayment = () => {
     );
   }
 
-  // Success state (Success message while waiting for redirect)
-  if (orgIsSuccess || (isSuccess && data?.data)) {
+  // Success state (Free or Paid success redirection)
+  if (isFreeQuery || (isSuccess && data?.data?.entitlementStatus === "processed")) {
     return (
       <div className="w-full min-h-[600px] flex items-center justify-center p-4">
         <Card className="w-full max-w-md border-green-100 shadow-lg text-center">

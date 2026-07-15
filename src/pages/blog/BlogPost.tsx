@@ -252,7 +252,7 @@ const BlogPost = () => {
               Ready to transform your assessment workflow?
             </h2>
             <p className="text-white/80 text-lg md:text-xl mb-10 leading-relaxed">
-              Join leading institutions across Africa using GradrAI to save time, increase accuracy, and deliver better student outcomes.
+              Join leading institutions worldwide using GradrAI to save time, increase accuracy, and deliver better student outcomes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link 
