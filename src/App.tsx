@@ -39,6 +39,7 @@ const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard"));
 const StudentsList = lazy(() => import("./pages/Students/StudentsList"));
 const StudentDetail = lazy(() => import("./pages/Students/StudentDetail"));
 const GoogleCallback = lazy(() => import("./pages/Auth/GoogleCallback"));
+const BillingSuccess = lazy(() => import("./pages/Billing/Success"));
 
 // Blog pages
 const BlogIndex = lazy(() => import("./pages/blog/BlogIndex"));
@@ -99,6 +100,7 @@ function App() {
           </Route>
 
           <Route path="auth/google/callback" element={<GoogleCallback />} />
+          <Route path="billing/success" element={<BillingSuccess />} />
 
           <Route path="blog">
             <Route index element={<BlogIndex />} />

@@ -20,6 +20,8 @@ interface State {
   setStudentData: (studentData: StudentData) => void;
   selectedPaymentPlan: PaymentPlan | null;
   setSelectedPaymentPlan: (plan: PaymentPlan | null) => void;
+  selectedRail: "paystack_ngn" | "creem_usd" | null;
+  setSelectedRail: (rail: "paystack_ngn" | "creem_usd" | null) => void;
   organizationData: OrganizationData;
   appendOrganizationData: (data: OrganizationData) => void;
   expandedRowId: number | null;
@@ -53,6 +55,8 @@ const useStore = create<State>()(
         setStudentData: (studentData) => set({ studentData }),
         selectedPaymentPlan: null,
         setSelectedPaymentPlan: (plan) => set({ selectedPaymentPlan: plan }),
+        selectedRail: null,
+        setSelectedRail: (selectedRail) => set({ selectedRail }),
         organizationData: {} as OrganizationData,
         appendOrganizationData: (data) =>
           set((state) => ({
@@ -70,6 +74,7 @@ const useStore = create<State>()(
             code: "",
             studentData: null,
             selectedPaymentPlan: null,
+            selectedRail: null,
             organizationData: {} as OrganizationData,
             expandedRowId: null,
           });

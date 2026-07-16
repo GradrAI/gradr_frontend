@@ -18,7 +18,7 @@ const BlogIndex = () => {
 
   const updateMetaTags = () => {
     const title = 'Blog | GradrAI';
-    const description = 'Stay informed with the latest from GradrAI—your partner in modernizing assessment grading across Africa.';
+    const description = 'Stay informed with the latest from GradrAI—your partner in modernizing assessment grading worldwide.';
     
     document.title = title;
 
@@ -65,7 +65,7 @@ const BlogIndex = () => {
             EdTech insights and <span className="text-primary italic">product updates.</span>
           </h1>
           <p className="text-xl text-slate-600 max-w-2xl font-dm-sans leading-relaxed">
-            Stay informed with the latest from GradrAI—your partner in modernizing assessment grading across Africa.
+            Stay informed with the latest from GradrAI—your partner in modernizing assessment grading worldwide.
           </p>
         </div>
       </section>

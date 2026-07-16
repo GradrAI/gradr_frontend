@@ -1,5 +1,7 @@
 export type PaymentPlan = {
   _id: string;
+  planKey: string;
+  rail: "paystack_ngn" | "creem_usd";
   name: string;
   description: string;
   planType: "subscription" | "credit_pack";
@@ -14,5 +16,10 @@ export type PaymentPlan = {
   overageRate: string;
   highlight: boolean;
   sortOrder: number;
+  validityMonths: number;
+  billingLabel: string;
+  displayInterval: string;
+  creemProductId?: string;
+  creemProductType?: string;
   createdAt: string;
 };

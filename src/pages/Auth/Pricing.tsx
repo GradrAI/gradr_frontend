@@ -12,42 +12,59 @@ import api from "@/lib/axios";
 import { formatNumber } from "@/lib/formatNumber";
 import { PayStackResponse } from "@/types/PayStackResponse";
 import { useState, useMemo } from "react";
-import { usePostHog } from '@posthog/react'
+import { usePostHog } from "@posthog/react";
+import { usePaymentRail } from "@/hooks/usePaymentRail";
 
 const Pricing = () => {
   const nav = useNavigate();
-  const posthog = usePostHog()
-  const { user, selectedPaymentPlan, setSelectedPaymentPlan } =
-    useStore();
+  const posthog = usePostHog();
+  const { user, saveUser, selectedPaymentPlan, setSelectedPaymentPlan } = useStore();
+  const { selectedRail, setSelectedRail, isLoading: railLoading } = usePaymentRail();
 
   const { data: paymentPlanData, isLoading: plansLoading } = useQuery({
-    queryKey: ["paymentPlan"],
-    queryFn: async () => await api.get(`/paymentPlans`),
+    queryKey: ["paymentPlan", selectedRail],
+    queryFn: async () => await api.get(`/paymentPlans`, { params: { rail: selectedRail } }),
     retry: false,
+    enabled: !!selectedRail,
     select: (data) => data.data,
   });
 
   const [activeTab, setActiveTab] = useState<"subscription" | "credit_pack">("subscription");
 
-  const subscriptionPlans = useMemo(
-    () => (paymentPlanData?.data as PaymentPlanType[] || []).filter((p) => p.planType === "subscription"),
-    [paymentPlanData]
-  );
-  const creditPacks = useMemo(
-    () => (paymentPlanData?.data as PaymentPlanType[] || []).filter((p) => p.planType === "credit_pack"),
-    [paymentPlanData]
-  );
+  const subscriptionPlans = useMemo(() => {
+    return (paymentPlanData?.data as PaymentPlanType[] || [])
+      .filter((p) => p.planType === "subscription" && p.rail === selectedRail);
+  }, [paymentPlanData, selectedRail]);
+
+  const creditPacks = useMemo(() => {
+    return (paymentPlanData?.data as PaymentPlanType[] || [])
+      .filter((p) => p.planType === "credit_pack" && p.rail === selectedRail);
+  }, [paymentPlanData, selectedRail]);
 
   const activePlans = activeTab === "subscription" ? subscriptionPlans : creditPacks;
 
-  const { mutate: paymentMutate, isPending: paymentPending } = useMutation({
-    mutationKey: ["payment"],
-    mutationFn: async (data: { email: string; amount: number; planId: string }) =>
-      await api.post("/payment", data),
-  });
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleSubmit = () => {
-    if (selectedPaymentPlan?.name?.toLowerCase() === "enterprise") {
+  const formatPlanPrice = (plan: PaymentPlanType) => {
+    if (plan.name.toLowerCase() === "enterprise" || plan.planKey === "enterprise_custom") {
+      return "Custom";
+    }
+    if (plan.rail === "paystack_ngn") {
+      return `₦${formatNumber(plan.amount)}`;
+    } else {
+      return `$${plan.amountUsd}`;
+    }
+  };
+
+  const getDisplayInterval = (plan: PaymentPlanType) => {
+    if (plan.name.toLowerCase() === "enterprise" || plan.planKey === "enterprise_custom") {
+      return "";
+    }
+    return plan.displayInterval || plan.billingLabel || "";
+  };
+
+  const handleSubmit = async () => {
+    if (selectedPaymentPlan?.name?.toLowerCase() === "enterprise" || selectedPaymentPlan?.planKey === "enterprise_custom") {
       posthog.capture("payment_plan_selected", { 
         plan_name: selectedPaymentPlan.name, 
         plan_type: selectedPaymentPlan.planType, 
@@ -74,48 +91,86 @@ const Pricing = () => {
       plan_credits: selectedPaymentPlan.credits 
     });
 
-    // Handle free plans
-    if (selectedPaymentPlan.amount === 0) {
-      nav("../confirmation");
+    setIsProcessing(true);
+
+    // 1. Handle Free Plan
+    if (selectedPaymentPlan.amount === 0 && selectedPaymentPlan.amountUsd === 0) {
+      try {
+        const res = await api.post("/payment/freemium", { planKey: selectedPaymentPlan.planKey });
+        if (res.data?.organization && user) {
+          saveUser({
+            ...user,
+            organization: res.data.organization
+          });
+        }
+        toast.success("Free plan activated successfully!");
+        posthog.capture("free_plan_activated", { plan_name: selectedPaymentPlan.name });
+        nav("../confirmation?free=1");
+      } catch (err: any) {
+        console.error("Free plan activation failed:", err);
+        toast.error("Failed to activate free plan. Please try again.");
+      } finally {
+        setIsProcessing(false);
+      }
       return;
     }
 
     posthog.capture("payment_initiated", { 
       plan_name: selectedPaymentPlan.name, 
       plan_type: selectedPaymentPlan.planType, 
-      amount: selectedPaymentPlan.amount 
+      amount: selectedPaymentPlan.amount || selectedPaymentPlan.amountUsd
     });
 
-    paymentMutate(
-      {
-        email: user.email,
-        amount: selectedPaymentPlan.amount,
-        planId: selectedPaymentPlan._id,
-      },
-      {
-        onSuccess: (data: any) => {
-          if (data?.data?.data) {
-            const popup = new PaystackPop();
-            const { access_code } = data.data.data;
-            popup.resumeTransaction(access_code, {
-              onSuccess: async (tx: PayStackResponse) => {
-                nav(`../confirmation?reference=${tx.reference}`);
-              },
-              onError: (err: { message: String }) =>
-                toast.error("Payment failed: " + err.message),
-              onCancel: () => toast.error("Payment cancelled"),
-            });
-          }
-        },
-        onError: (error: any) => {
-          posthog.capture("payment_init_failed", { error: error.message });
-          toast.error("Payment initialization failed. Please try again.");
-        },
+    // 2. Handle Creem USD Plan
+    if (selectedRail === "creem_usd") {
+      try {
+        const res = await api.post("/payment/creem/checkout", { planId: selectedPaymentPlan._id });
+        if (res.data?.checkoutUrl) {
+          window.location.href = res.data.checkoutUrl;
+        } else {
+          throw new Error("Checkout URL was not returned by the server");
+        }
+      } catch (err: any) {
+        posthog.capture("payment_init_failed", { error: err.message, rail: "creem_usd" });
+        toast.error("Failed to redirect to Creem checkout. Please try again.");
+      } finally {
+        setIsProcessing(false);
       }
-    );
+      return;
+    }
+
+    // 3. Handle Paystack NGN Plan
+    try {
+      const res = await api.post("/payment", { planId: selectedPaymentPlan._id });
+      if (res.data?.data) {
+        const popup = new PaystackPop();
+        const { access_code } = res.data.data;
+        popup.resumeTransaction(access_code, {
+          onSuccess: async (tx: PayStackResponse) => {
+            nav(`../confirmation?reference=${tx.reference}`);
+          },
+          onError: (err: { message: string }) => {
+            toast.error("Payment failed: " + err.message);
+            setIsProcessing(false);
+          },
+          onCancel: () => {
+            toast.error("Payment cancelled");
+            setIsProcessing(false);
+          },
+        });
+      } else {
+        throw new Error("Invalid initialization response");
+      }
+    } catch (err: any) {
+      posthog.capture("payment_init_failed", { error: err.message, rail: "paystack_ngn" });
+      toast.error("Payment initialization failed. Please try again.");
+      setIsProcessing(false);
+    }
   };
 
-  if (plansLoading) {
+  const pageLoading = plansLoading || railLoading;
+
+  if (pageLoading) {
     return (
       <div className="w-full flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
@@ -133,7 +188,42 @@ const Pricing = () => {
           Choose Your Plan
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Select the perfect plan for your grading needs
+          Choose prepaid NGN credits or international USD checkout. Local credits roll over through the relevant academic period.
+        </p>
+      </div>
+
+      {/* Rail Toggle */}
+      <div className="flex flex-col items-center mb-8">
+        <div className="inline-flex items-center p-1 gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 mb-2">
+          <button
+            onClick={() => {
+              setSelectedRail("paystack_ngn");
+              setSelectedPaymentPlan(null);
+            }}
+            className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+              selectedRail === "paystack_ngn"
+                ? "bg-white dark:bg-slate-700 text-primary shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Pay in Naira (Paystack)
+          </button>
+          <button
+            onClick={() => {
+              setSelectedRail("creem_usd");
+              setSelectedPaymentPlan(null);
+            }}
+            className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+              selectedRail === "creem_usd"
+                ? "bg-white dark:bg-slate-700 text-primary shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Pay in USD (International)
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          We suggest a default based on your browser country. You can switch at any time before checkout.
         </p>
       </div>
 
@@ -152,7 +242,7 @@ const Pricing = () => {
             }`}
           >
             <CreditCard className="h-4 w-4" />
-            Subscriptions
+            Plans
           </button>
           <button
             onClick={() => {
@@ -198,21 +288,14 @@ const Pricing = () => {
                   {plan.description}
                 </p>
               )}
-              <div className="flex items-center justify-center gap-1 mt-3">
-                {plan.name.toLowerCase() === "enterprise" ? (
-                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    Custom
+              <div className="flex flex-col items-center justify-center mt-3">
+                <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                  {formatPlanPrice(plan)}
+                </span>
+                {getDisplayInterval(plan) && (
+                  <span className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">
+                    {getDisplayInterval(plan)}
                   </span>
-                ) : (
-                  <>
-                    <span className="text-sm text-gray-500">₦</span>
-                    <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                      {formatNumber(plan.amount)}
-                    </span>
-                    {activeTab === "subscription" && plan.amount > 0 && (
-                      <span className="text-sm text-gray-500">/month</span>
-                    )}
-                  </>
                 )}
               </div>
             </CardHeader>
@@ -278,21 +361,21 @@ const Pricing = () => {
 
         <Button
           onClick={handleSubmit}
-          disabled={!selectedPaymentPlan || paymentPending}
+          disabled={!selectedPaymentPlan || isProcessing}
           size="lg"
           className="min-w-[200px] bg-primary hover:bg-primary/90"
         >
-          {paymentPending ? (
+          {isProcessing ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               Processing...
             </>
-          ) : selectedPaymentPlan?.name?.toLowerCase() === "enterprise" ? (
+          ) : (selectedPaymentPlan?.name?.toLowerCase() === "enterprise" || selectedPaymentPlan?.planKey === "enterprise_custom") ? (
             <>
               <Mail className="w-4 h-4 mr-2" />
               Contact Us
             </>
-          ) : selectedPaymentPlan?.amount === 0 ? (
+          ) : (selectedPaymentPlan?.amount === 0 && selectedPaymentPlan?.amountUsd === 0) ? (
             "Get Started"
           ) : (
             "Proceed to Payment"
@@ -302,13 +385,15 @@ const Pricing = () => {
         {selectedPaymentPlan && (
           <div className="text-center text-sm text-gray-500 max-w-md">
             <p>
-              You've selected the <strong>{selectedPaymentPlan.name}</strong>{" "}
-              plan.
+              You've selected the <strong>{selectedPaymentPlan.name}</strong> plan.
             </p>
             {selectedPaymentPlan?.name?.toLowerCase() !== "enterprise" &&
-              selectedPaymentPlan?.amount > 0 && (
-                <p className="mt-1">
-                  You'll be redirected to Paystack for secure payment processing.
+              selectedPaymentPlan?.planKey !== "enterprise_custom" &&
+              (selectedPaymentPlan?.amount > 0 || selectedPaymentPlan?.amountUsd > 0) && (
+                <p className="mt-1 font-medium text-slate-600 dark:text-slate-300">
+                  {selectedRail === "paystack_ngn"
+                    ? "You'll pay securely with Paystack. This is a prepaid credit grant, not an automatic monthly card charge."
+                    : "You'll be redirected to Creem for secure international checkout."}
                 </p>
               )}
           </div>

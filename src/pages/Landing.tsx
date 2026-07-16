@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/axios";
 import { formatNumber } from "@/lib/formatNumber";
 import type { PaymentPlan } from "@/types/PaymentPlan";
+import { usePaymentRail } from "@/hooks/usePaymentRail";
 import {
   Clock,
   Users,
@@ -133,22 +134,25 @@ const Landing = () => {
     },
   ];
 
+  const { selectedRail, isLoading: railLoading } = usePaymentRail();
+
   const { data: paymentPlanData, isLoading: plansLoading } = useQuery({
-    queryKey: ["paymentPlan"],
-    queryFn: async () => await api.get(`/paymentPlans`),
+    queryKey: ["paymentPlan", selectedRail],
+    queryFn: async () => await api.get(`/paymentPlans`, { params: { rail: selectedRail } }),
     retry: false,
+    enabled: !!selectedRail,
     select: (data) => data.data,
   });
 
   const [pricingTab, setPricingTab] = useState<"subscriptions" | "credit_packs">("subscriptions");
 
   const subscriptionPlans = useMemo(
-    () => (paymentPlanData?.data as PaymentPlan[] || []).filter((p) => p.planType === "subscription"),
-    [paymentPlanData]
+    () => (paymentPlanData?.data as PaymentPlan[] || []).filter((p) => p.planType === "subscription" && p.rail === selectedRail),
+    [paymentPlanData, selectedRail]
   );
   const creditPacks = useMemo(
-    () => (paymentPlanData?.data as PaymentPlan[] || []).filter((p) => p.planType === "credit_pack"),
-    [paymentPlanData]
+    () => (paymentPlanData?.data as PaymentPlan[] || []).filter((p) => p.planType === "credit_pack" && p.rail === selectedRail),
+    [paymentPlanData, selectedRail]
   );
 
   const features = [
@@ -250,6 +254,21 @@ const Landing = () => {
       question: "Do you offer training and support?",
       answer:
         "Yes, we provide comprehensive onboarding, training sessions, and ongoing support to ensure you get the most out of GradrAI.",
+    },
+    {
+      question: "Do my NGN credits expire?",
+      answer:
+        "No. NGN plans are prepaid credit grants. Unlike traditional monthly recurring subscriptions, unused NGN credits roll over to the next academic period or semester, so you never lose what you pay for.",
+    },
+    {
+      question: "How do USD plans work?",
+      answer:
+        "USD plans run on international card processing via Creem. They are standard recurring subscription models suitable for international institutions, providing seamless automatic renewals.",
+    },
+    {
+      question: "Do I get billed every month?",
+      answer:
+        "For Nigerian customers, GradrAI uses prepaid credit grants through Paystack. You buy a plan or pack upfront, credits roll over through the relevant semester or academic year, and you top up when you need more. International customers can use Creem for USD subscriptions and credit packs, with credits applied only after verified payment webhooks.",
     },
   ];
 
@@ -417,7 +436,7 @@ const Landing = () => {
             </h1>
             <p className="text-xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
               Empowering educators, schools, and students with a unified infrastructure for 
-              paper-based exams, CBTs, and AI-driven mock tests. Trusted by institutions across Africa. 
+              paper-based exams, CBTs, and AI-driven mock tests. Trusted by institutions worldwide to deliver global-standard assessment grading. 
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Button
@@ -671,11 +690,11 @@ const Landing = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-3xl sm:text-5xl font-bold mb-8 leading-tight">
-                Built for the <span className="text-primary">Future of Education</span> in Africa.
+                Built for the <span className="text-primary">Future of Global Education</span>.
               </h2>
               <div className="space-y-8">
                 {[
-                  { title: "Affordable & Accessible", desc: "Pricing designed for local realities, with global-scale technology." },
+                  { title: "Affordable & Accessible", desc: "Localized regional pricing tailored for equity, powered by global-scale technology." },
                   { title: "Hybrid Workflow", desc: "The only platform that handles both paper scripts and digital tests seamlessly." },
                   { title: "Mobile-First", desc: "Optimised for scenarios with limited high-end hardware infrastructure." },
                 ].map((item, i) => (
@@ -720,7 +739,7 @@ const Landing = () => {
               Flexible Pricing for <span className="text-primary">Everyone.</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Simple, transparent subscriptions for institutions and pay-as-you-go SmartPrep credits for students.
+              Globally standard features with localized regional pricing options. Prepaid plans with rollover for local teams, and international USD checkout. NGN credits roll over through the relevant term or academic year — no forced monthly card billing.
             </p>
           </div>
 
@@ -736,7 +755,7 @@ const Landing = () => {
                 }`}
               >
                 <CreditCard className="h-4 w-4" />
-                Subscriptions
+                Prepaid Plans
               </button>
               <button
                 onClick={() => setPricingTab("credit_packs")}
@@ -786,9 +805,13 @@ const Landing = () => {
                           <>
                             <div className="flex items-baseline gap-1">
                               <span className="text-3xl font-bold">
-                                ₦{formatNumber(plan.amount)}
+                                {selectedRail === "paystack_ngn"
+                                  ? `₦${formatNumber(plan.amount)}`
+                                  : `$${plan.amountUsd}`}
                               </span>
-                              <span className="text-muted-foreground text-sm">/mo</span>
+                              <span className="text-muted-foreground text-sm">
+                                {plan.displayInterval || plan.billingLabel || (selectedRail === "paystack_ngn" ? "" : "/mo")}
+                              </span>
                             </div>
                           </>
                         )}
@@ -796,7 +819,7 @@ const Landing = () => {
                       {plan.credits > 0 && (
                         <div className="mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
                           <span className="text-sm font-semibold text-primary">
-                            {plan.credits} credits{plan.duration === "lifetime" ? " (lifetime)" : "/mo"}
+                            {plan.credits} credits{plan.duration === "lifetime" ? " (lifetime)" : (plan.displayInterval ? ` · ${plan.displayInterval}` : "")}
                           </span>
                         </div>
                       )}
@@ -828,7 +851,7 @@ const Landing = () => {
                       >
                         {plan.name.toLowerCase() === "enterprise"
                           ? "Contact Sales"
-                          : plan.amount === 0
+                          : (plan.amount === 0 && plan.amountUsd === 0)
                           ? "Get Started Free"
                           : "Get Started"}
                       </Button>
@@ -880,7 +903,9 @@ const Landing = () => {
                         <div className="mb-4">
                           <div className="flex items-baseline gap-1">
                             <span className="text-3xl font-bold">
-                              ₦{formatNumber(pack.amount)}
+                              {selectedRail === "paystack_ngn"
+                                ? `₦${formatNumber(pack.amount)}`
+                                : `$${pack.amountUsd}`}
                             </span>
                           </div>
                         </div>
@@ -916,7 +941,7 @@ const Landing = () => {
                 </div>
               </div>
               <p className="text-center mt-12 text-muted-foreground">
-                Want monthly credits instead?{" "}
+                Prefer a bundled plan with more credits?{" "}
                 <button
                   className="text-primary font-bold hover:underline"
                   onClick={() => setPricingTab("subscriptions")}
@@ -936,7 +961,7 @@ const Landing = () => {
             Ready to modernise your assessment lifecycle?
           </h2>
           <p className="text-xl text-primary-foreground/80 mb-12 leading-relaxed">
-            Join the leading institutions across Africa using GradrAI to deliver faster, 
+            Join the leading institutions worldwide using GradrAI to deliver faster, 
             fairer, and more consistent grades.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">

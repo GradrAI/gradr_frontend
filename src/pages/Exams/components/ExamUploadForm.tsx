@@ -33,6 +33,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import categories from "@/data/categories";
+
+const CBT_QUIZ_GENERATION_CREDITS = 15;
 import calculateDurationMinutes from "../helpers/calculateDurationMinutes";
 import { DateTime } from "luxon";
 import api from "@/lib/axios";
@@ -376,15 +378,13 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
       onSuccess: (res: any) => {
         if (res.data?.success) {
           toast.success(notifications.QUIZ.SUCCESS);
-          
           if (user && user.organization && typeof user.organization === "object") {
              const planName = user.organization.paymentPlan?.name?.toLowerCase();
              if (planName !== "enterprise") {
-               user.organization.creditsBalance = Math.max(0, (user.organization.creditsBalance || 0) - 5);
+               user.organization.creditsBalance = (user.organization.creditsBalance || 0) - CBT_QUIZ_GENERATION_CREDITS;
              }
              saveUser({...user});
           }
-          
           form.reset();
         } else {
           toast.error(res.data?.message || notifications.QUIZ.FAILURE);
@@ -399,9 +399,9 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
   const org = user?.organization;
   const isEnterprise = typeof org === "object" && org?.paymentPlan?.name?.toLowerCase() === "enterprise";
   const remainingCredits = typeof org === "object" ? (org?.creditsBalance || 0) : 0;
-  const requiredCredits = 5; // 5 credits to generate an exam
+  const requiredCredits = CBT_QUIZ_GENERATION_CREDITS; // 15 credits to generate an exam
 
-  const isOverLimit = !isEnterprise && requiredCredits > remainingCredits;
+  const isOverLimit = !isEnterprise && requiredCredits > remainingCredits + 5;
 
   return (
     <Form {...form}>
@@ -969,6 +969,15 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                <p className="text-foreground/90 dark:text-zinc-300">
                  Credit Balance: {remainingCredits} credits available (Cost: {requiredCredits} credits)
                </p>
+             ) : remainingCredits >= requiredCredits - 5 ? (
+               <div>
+                 <p className="text-amber-600 dark:text-amber-500 font-semibold">
+                   Credit Balance: {remainingCredits} credits available (Cost: {requiredCredits} credits)
+                 </p>
+                 <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">
+                   You can use up to 5 grace credits; top up immediately after this if your balance goes negative.
+                 </p>
+               </div>
              ) : (
                <p className="text-red-500 font-semibold">
                  Your credit balance is exhausted. You need {requiredCredits} credits to generate an exam.
