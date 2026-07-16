@@ -8,6 +8,13 @@ import { Loader2, Plus, Calendar, CheckCircle2, ChevronRight, AlertCircle } from
 import api from "@/lib/axios";
 import toast from "react-hot-toast";
 
+// Narrow axios-style errors without `any`; message lives at response.data.
+type ApiErrorShape = { response?: { data?: { message?: string; error?: string } } };
+const errMessage = (err: unknown, fallback: string): string => {
+  const resp = (err as ApiErrorShape)?.response;
+  return resp?.data?.message || resp?.data?.error || fallback;
+};
+
 const AcademicSetup = () => {
   const queryClient = useQueryClient();
   const [isAddingCycle, setIsAddingCycle] = useState(false);
@@ -72,6 +79,45 @@ const AcademicSetup = () => {
     },
     onError: (err: any) => toast.error(err.response?.data?.message || "Activation failed"),
   });
+
+  // Enterprise per-student-per-term billing (admin-initiated)
+  const [headcountInputs, setHeadcountInputs] = useState<Record<string, string>>({});
+  const [billingPeriodId, setBillingPeriodId] = useState<string | null>(null);
+
+  const lockHeadcountMutation = useMutation({
+    mutationFn: async ({ periodId, headcount }: { periodId: string; headcount: number }) =>
+      await api.patch(`/periods/${periodId}/lock-headcount`, { headcount }),
+    onSuccess: () => {
+      toast.success("Headcount locked");
+      queryClient.invalidateQueries({ queryKey: ["periods", selectedCycleId] });
+    },
+    onError: (err: unknown) => toast.error(errMessage(err, "Failed to lock headcount")),
+  });
+
+  const handleGenerateInvoice = async (periodId: string) => {
+    setBillingPeriodId(periodId);
+    try {
+      const quote = await api.get(`/periods/${periodId}/billing/quote`);
+      const { amount, currency, lockedHeadcount, ratePerStudent } = quote.data;
+      const symbol = currency === "USD" ? "$" : "₦";
+      const proceed = window.confirm(
+        `Bill ${lockedHeadcount} students at ${symbol}${ratePerStudent}/student = ${symbol}${amount}. Continue to payment?`
+      );
+      if (!proceed) return;
+      const checkout = await api.post(`/periods/${periodId}/billing/checkout`, {
+        rail: currency === "USD" ? "creem_usd" : "paystack_ngn",
+      });
+      if (checkout.data?.checkoutUrl) {
+        window.location.href = checkout.data.checkoutUrl;
+      } else {
+        toast.error("No checkout URL returned");
+      }
+    } catch (err: unknown) {
+      toast.error(errMessage(err, "Failed to generate invoice"));
+    } finally {
+      setBillingPeriodId(null);
+    }
+  };
 
   return (
     <div className="space-y-8 w-full">
@@ -225,9 +271,52 @@ const AcademicSetup = () => {
                           </div>
                           <div className="flex items-center gap-1">
                             <span className="font-medium">Headcount:</span>
-                            <span>{period.isHeadcountLocked ? "Locked" : "Open"}</span>
+                            <span>{period.lockedHeadcount != null ? `Locked (${period.lockedHeadcount})` : "Open"}</span>
                           </div>
                         </div>
+                        {period.billingStatus !== "paid" && (
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
+                            {period.lockedHeadcount == null ? (
+                              <>
+                                <Input
+                                  type="number"
+                                  min={1}
+                                  placeholder="Student headcount"
+                                  value={headcountInputs[period._id] || ""}
+                                  onChange={(e) =>
+                                    setHeadcountInputs((prev) => ({ ...prev, [period._id]: e.target.value }))
+                                  }
+                                  className="h-8 w-40 text-sm"
+                                />
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={lockHeadcountMutation.isPending || !headcountInputs[period._id]}
+                                  onClick={() =>
+                                    lockHeadcountMutation.mutate({
+                                      periodId: period._id,
+                                      headcount: Number(headcountInputs[period._id]),
+                                    })
+                                  }
+                                >
+                                  Lock headcount
+                                </Button>
+                              </>
+                            ) : (
+                              <Button
+                                size="sm"
+                                onClick={() => handleGenerateInvoice(period._id)}
+                                disabled={billingPeriodId === period._id}
+                              >
+                                {billingPeriodId === period._id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  "Generate invoice"
+                                )}
+                              </Button>
+                            )}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}

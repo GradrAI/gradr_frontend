@@ -941,7 +941,7 @@ const Landing = () => {
                 </div>
               </div>
               <p className="text-center mt-12 text-muted-foreground">
-                Want monthly credits instead?{" "}
+                Prefer a bundled plan with more credits?{" "}
                 <button
                   className="text-primary font-bold hover:underline"
                   onClick={() => setPricingTab("subscriptions")}
