@@ -161,15 +161,24 @@ const Settings = () => {
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground/90">Custom Instructions for AI</label>
-                <Textarea 
-                  placeholder="Enter custom instructions for grading or question generation..."
+                <label
+                  htmlFor="custom-instructions"
+                  className="text-sm font-medium text-foreground/90"
+                >
+                  Custom Instructions for AI
+                </label>
+                <Textarea
+                  id="custom-instructions"
+                  placeholder="e.g. Always use SI units. Prefer real-world Nigerian examples."
                   value={localSettings.customInstructions}
                   onChange={(e) => setLocalSettings(prev => ({ ...prev, customInstructions: e.target.value }))}
                   rows={4}
+                  maxLength={2000}
                   className="bg-background border-input"
                 />
-                <p className="text-xs text-muted-foreground italic">These instructions are injected into the AI context during grading.</p>
+                <p className="text-xs text-muted-foreground italic">
+                  Used as the default custom instruction when you create a new quiz. You can change it per quiz.
+                </p>
               </div>
 
               <Button 

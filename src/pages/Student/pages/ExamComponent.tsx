@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCourseInfo } from "../hooks/useCourseInfo";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,11 @@ import api from "@/lib/axios";
 import { Exam } from "@/types/Exam";
 import toast from "react-hot-toast";
 import { Loader2Icon } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { autoSaveAttempt } from "@/requests/exam";
+
+/** Ascending, so the first match is the tightest threshold still in play. */
+const ANNOUNCE_THRESHOLDS = [60, 300, 600];
 
 const ExamComponent = () => {
   const nav = useNavigate();
@@ -26,6 +31,9 @@ const ExamComponent = () => {
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [fullExam, setFullExam] = useState<Exam | null>(null);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
+  const [timeAnnouncement, setTimeAnnouncement] = useState("");
+  /** Largest countdown threshold already announced, in seconds. */
+  const lastAnnouncedRef = useRef<number | null>(null);
 
   const answersRef = useRef(answers);
   useEffect(() => {
@@ -78,8 +86,10 @@ const ExamComponent = () => {
   const hasTriggeredLockdown = useRef(false);
 
   const handleSubmit = useCallback(() => {
-    // if already triggered by anti-cheat lockdown, or a submission is already in-flight / completed, do nothing.
-    if (hasTriggeredLockdown.current || submitExamMutation.isPending || submitExamMutation.isSuccess) {
+    // De-duplication lives on the mutation, not on hasTriggeredLockdown: the
+    // anti-cheat and timer paths set that flag *before* calling in, so keying
+    // off it here would swallow the very submissions it is meant to trigger.
+    if (submitExamMutation.isPending || submitExamMutation.isSuccess) {
       return;
     }
     hasTriggeredLockdown.current = true;
@@ -109,7 +119,10 @@ const ExamComponent = () => {
   }, [state, previewData]);
 
   useEffect(() => {
-    if (state !== "in-progress") return;
+    // Relaxed (untimed / practice) quizzes must never lock down or auto-submit
+    // on a tab switch — only formal, strictly-proctored CBT does.
+    if (state !== "in-progress" || previewData?.proctoringMode !== "strict")
+      return;
 
     let lockdownActive = false;
     let gracePeriodTimeout: NodeJS.Timeout;
@@ -162,7 +175,7 @@ const ExamComponent = () => {
         );
       }
     };
-  }, [state]);
+  }, [state, previewData?.proctoringMode]);
 
   useEffect(() => {
     if (state !== "in-progress" || remainingSeconds <= 0) return;
@@ -182,6 +195,38 @@ const ExamComponent = () => {
 
     return () => clearInterval(interval);
   }, [state, remainingSeconds]);
+
+  // Announce the countdown only as it crosses 10, 5 and 1 minutes. A live
+  // region updating every second is unusable with a screen reader.
+  useEffect(() => {
+    if (state !== "in-progress" || remainingSeconds <= 0) return;
+    const threshold = ANNOUNCE_THRESHOLDS.find((t) => remainingSeconds <= t);
+    if (threshold === undefined || lastAnnouncedRef.current === threshold)
+      return;
+    lastAnnouncedRef.current = threshold;
+    setTimeAnnouncement(
+      `${threshold / 60} minute${threshold === 60 ? "" : "s"} remaining`
+    );
+  }, [state, remainingSeconds]);
+
+  // Persist answers every 30s and on unload so a refresh or dropped
+  // connection does not cost the student their attempt. Failures are
+  // swallowed: autosave must never interrupt an exam.
+  useEffect(() => {
+    if (state !== "in-progress" || !attemptId) return;
+
+    const persist = () => {
+      autoSaveAttempt(attemptId, answersRef.current).catch(() => {});
+    };
+
+    const interval = setInterval(persist, 30000);
+    window.addEventListener("beforeunload", persist);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("beforeunload", persist);
+    };
+  }, [state, attemptId]);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -251,7 +296,9 @@ const ExamComponent = () => {
                     Duration
                   </span>
                   <span className="font-semibold">
-                    {previewData.durationMinutes} minutes
+                    {previewData.durationMinutes
+                      ? `${previewData.durationMinutes} minutes`
+                      : "No time limit"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2">
@@ -301,20 +348,33 @@ const ExamComponent = () => {
             <Badge variant="secondary">
               Question {currentIndex + 1} / {questions.length}
             </Badge>
-            <span
-              className={`text-sm font-medium ${
-                remainingSeconds < 300
-                  ? "text-red-500"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Time Left: {formatTime(remainingSeconds)}
-            </span>
+            {previewData?.durationMinutes == null ? (
+              <span className="text-sm font-medium text-muted-foreground">
+                No time limit
+              </span>
+            ) : (
+              <>
+                <span
+                  role="timer"
+                  aria-live="off"
+                  className={`text-sm font-medium ${
+                    remainingSeconds < 300
+                      ? "text-red-500"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  Time Left: {formatTime(remainingSeconds)}
+                </span>
+                <span className="sr-only" aria-live="polite">
+                  {timeAnnouncement}
+                </span>
+              </>
+            )}
           </div>
-          <progress
+          <Progress
             value={progress}
-            max={100}
-            className="w-full h-2 rounded-full bg-primary/20"
+            aria-label="Quiz progress"
+            className="w-full"
           />
         </header>
 
@@ -405,6 +465,37 @@ const ExamComponent = () => {
               </Button>
             )}
           </div>
+          <div
+            role="group"
+            aria-label="Question navigator"
+            className="mx-auto mt-3 max-w-xl grid grid-cols-8 sm:grid-cols-10 gap-1.5"
+          >
+            {questions.map((question, index) => {
+              const answer = answers[question.id];
+              const answered = answer !== undefined && answer !== "";
+              const isCurrent = index === currentIndex;
+              return (
+                <button
+                  key={question.id}
+                  type="button"
+                  onClick={() => setCurrentIndex(index)}
+                  aria-label={`Question ${index + 1}${
+                    answered ? ", answered" : ", not answered"
+                  }`}
+                  aria-current={isCurrent ? "true" : undefined}
+                  className={`h-8 rounded-md border text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 ${
+                    answered ? "bg-primary/15" : "bg-background"
+                  } ${
+                    isCurrent
+                      ? "border-primary ring-2 ring-primary ring-offset-1"
+                      : "border-input"
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              );
+            })}
+          </div>
         </footer>
       </div>
     );
@@ -423,6 +514,15 @@ const ExamComponent = () => {
                 Your exam has been submitted successfully. You will receive your
                 results shortly.
               </p>
+              {previewData?.leaderboard?.enabled && previewData?.examId && (
+                <Button asChild className="w-full">
+                  <Link
+                    to={`/student/quiz/${previewData.examId}/leaderboard`}
+                  >
+                    View leaderboard
+                  </Link>
+                </Button>
+              )}
               <Button
                 variant="outline"
                 className="w-full"

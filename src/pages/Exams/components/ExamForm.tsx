@@ -28,12 +28,15 @@ import {
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import { CourseData } from "@/types/CourseData";
-import { AxiosResponse } from "axios";
+import { AxiosResponse, isAxiosError } from "axios";
 import useStore from "@/state";
 import { useNavigate } from "react-router-dom";
 import { usePostHog } from '@posthog/react'
 
 import ExamUploadForm from "./ExamUploadForm";
+import QuestionEditor from "./QuestionEditor";
+import { updateQuestions } from "@/requests/exam";
+import type { EditableQuestion, Question } from "@/types/Exam";
 
 export interface ExamData {
   id: string;
@@ -42,6 +45,23 @@ export interface ExamData {
   type: "multiple-choice" | "essay";
   options: { id: string | number; text: string }[];
   maxMarks: number;
+}
+
+interface NewCoursePayload {
+  lecturerId: string;
+  name: string;
+  periodId?: string;
+}
+
+/** The question endpoints return precise, user-facing failure reasons. */
+function extractMessage(error: unknown): string | undefined {
+  if (!isAxiosError(error)) return undefined;
+  const data: unknown = error.response?.data;
+  if (data && typeof data === "object" && "message" in data) {
+    const { message } = data;
+    if (typeof message === "string" && message.length > 0) return message;
+  }
+  return undefined;
 }
 
 // ─────────────────────────────────────────────
@@ -125,9 +145,10 @@ export default function ExamForm() {
   const [changeClipboardIcon, setChangeClipboardIcon] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // Local editable marks state: { [questionId]: number }
-  const [localMarks, setLocalMarks] = useState<Record<string, number>>({});
-  const [marksDirty, setMarksDirty] = useState(false);
+  // Editable copy of the generated questions. The client always sends this
+  // whole array, in display order — that is how reorder / add / delete persist.
+  const [localQuestions, setLocalQuestions] = useState<EditableQuestion[]>([]);
+  const [questionsDirty, setQuestionsDirty] = useState(false);
 
   // Fetch active period for course creation
   const { data: activePeriodData } = useQuery({
@@ -158,48 +179,58 @@ export default function ExamForm() {
 
   const exam = examQueryData?.data;
   const maxScoreAttainable: number = exam?.maxScoreAttainable ?? 0;
-  const fetchedQuestions: ExamData[] = exam?.questions ?? [];
+  const fetchedQuestions: Question[] = exam?.questions ?? [];
 
-  // Initialise / sync local marks from fetched exam
+  // Initialise / sync the editable questions from the fetched exam
   useEffect(() => {
     if (fetchedQuestions.length > 0) {
-      const initial: Record<string, number> = {};
-      fetchedQuestions.forEach((q) => {
-        initial[q.id] = q.maxMarks ?? 0;
-      });
-      setLocalMarks(initial);
-      setMarksDirty(false);
+      setLocalQuestions(
+        fetchedQuestions.map((q) => ({
+          id: q.id,
+          question: q.question,
+          description: q.description ?? "",
+          type: q.type,
+          difficulty: q.difficulty ?? "moderate",
+          explanation: q.explanation ?? "",
+          maxMarks: q.maxMarks ?? 0,
+          options: q.options?.map((option) => ({ ...option })),
+          correctOptionId: q.correctOptionId ?? null,
+        }))
+      );
+      setQuestionsDirty(false);
     }
   }, [exam]);
 
   // ── Computed budget values ──
   const totalAllocated = Math.round(
-    Object.values(localMarks).reduce((sum, v) => sum + v, 0) * 100
+    localQuestions.reduce((sum, q) => sum + (q.maxMarks || 0), 0) * 100
   ) / 100;
   const isOverBudget = totalAllocated > maxScoreAttainable;
 
-  // ── Save marks mutation ──
-  const { mutate: saveMarks, isPending: savingMarks } = useMutation({
+  const handleQuestionsChange = (next: EditableQuestion[]) => {
+    setLocalQuestions(next);
+    setQuestionsDirty(true);
+  };
+
+  // ── Save question edits mutation ──
+  const { mutate: saveQuestions, isPending: savingQuestions } = useMutation({
     mutationFn: async () => {
-      const questionMarks = Object.entries(localMarks).map(([id, maxMarks]) => ({
-        id,
-        maxMarks,
-      }));
-      return api.patch(`/exam/${examId}/question-marks`, { questionMarks });
+      if (!examId) throw new Error("Missing exam id");
+      return updateQuestions(examId, localQuestions);
     },
     onSuccess: () => {
-      posthog.capture("exam_marks_saved", { 
-        exam_id: examId, 
-        question_count: fetchedQuestions.length, 
-        total_allocated: totalAllocated, 
-        max_score: maxScoreAttainable 
+      posthog.capture("exam_questions_saved", {
+        exam_id: examId,
+        question_count: localQuestions.length,
+        total_allocated: totalAllocated,
+        max_score: maxScoreAttainable,
       });
-      toast.success("Marks saved successfully.");
-      setMarksDirty(false);
+      toast.success("Questions saved.");
+      setQuestionsDirty(false);
       queryClient.invalidateQueries({ queryKey: ["exam", examId] });
     },
-    onError: (err: any) =>
-      toast.error(err?.response?.data?.message || "Failed to save marks"),
+    onError: (error: unknown) =>
+      toast.error(extractMessage(error) || "Failed to save questions"),
   });
 
   // ── Publish mutation ──
@@ -212,27 +243,27 @@ export default function ExamForm() {
     mutationFn: async () =>
       await api.post("/exam/publish", { examId }),
     onMutate: () => toast.success("Publishing exam..."),
-    onSuccess: (data: any) => {
+    onSuccess: (data: AxiosResponse) => {
       posthog.capture("exam_published", { 
         exam_id: examId, 
-        question_count: fetchedQuestions.length, 
+        question_count: localQuestions.length,
         max_score: maxScoreAttainable, 
         share_link: data?.data?.data?.uploadLink 
       });
       setOpen(true);
     },
-    onError: (err: any) => {
-      posthog.capture("exam_publish_failed", { error: err?.message });
-      toast.error(
-        err?.response?.data?.message || err?.message || "Unable to publish exam"
-      );
+    onError: (error: unknown) => {
+      const message = extractMessage(error);
+      posthog.capture("exam_publish_failed", { error: message });
+      toast.error(message || "Unable to publish exam");
     },
   });
 
   // ── Course mutation ──
   const { mutate: courseMutate } = useMutation({
     mutationKey: ["courses"],
-    mutationFn: async (data: any) => await api.post(`/courses`, data),
+    mutationFn: async (data: NewCoursePayload) =>
+      await api.post(`/courses`, data),
   });
 
   const handleAddCourse = () => {
@@ -251,14 +282,9 @@ export default function ExamForm() {
             setCourseName("");
           }
         },
-        onError: (error: any) => toast.error("Failed to create course"),
+        onError: () => toast.error("Failed to create course"),
       }
     );
-  };
-
-  const handleMarkChange = (questionId: string, value: number) => {
-    setLocalMarks((prev) => ({ ...prev, [questionId]: value }));
-    setMarksDirty(true);
   };
 
   // ─────────────────────────────────────────────
@@ -288,12 +314,12 @@ export default function ExamForm() {
                 Review Generated Quiz
               </h2>
               <p className="text-sm text-muted-foreground mt-0.5">
-                Set marks for each question. Total must not exceed{" "}
+                Edit any question, then set marks. The total must not exceed{" "}
                 <strong>{maxScoreAttainable}</strong> marks.
               </p>
             </div>
             <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
-              {fetchedQuestions.length} Questions
+              {localQuestions.length} Questions
             </div>
           </div>
 
@@ -306,118 +332,49 @@ export default function ExamForm() {
             </div>
           )}
 
-          {/* Question list */}
-          <div className="space-y-4">
-            {examLoading
-              ? Array.from({ length: 3 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-32 rounded-xl bg-muted animate-pulse"
-                  />
-                ))
-              : fetchedQuestions.map((q, index) => (
-                  <div
-                    key={q.id}
-                    className="p-5 bg-card rounded-xl border border-border shadow-sm hover:border-primary/20 transition-colors"
-                  >
-                    <div className="flex justify-start items-start gap-3">
-                      {/* Question number badge */}
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-muted-foreground font-bold text-sm shrink-0 mt-0.5">
-                        {index + 1}
-                      </span>
-
-                      <div className="flex-1 min-w-0">
-                        {/* Type badge */}
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide mb-2 ${
-                            q.type === "essay"
-                              ? "bg-violet-100 dark:bg-violet-950/40 text-violet-700 dark:text-violet-400 border border-violet-200 dark:border-violet-800"
-                              : "bg-sky-100 dark:bg-sky-950/40 text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-800"
-                          }`}
-                        >
-                          {q.type === "essay" ? "Essay" : "MCQ"}
-                        </span>
-
-                        <h3 className="text-base font-semibold text-foreground mb-1">
-                          {q.question}
-                        </h3>
-                        {q.description && (
-                          <p className="text-muted-foreground text-sm mb-3">
-                            {q.description}
-                          </p>
-                        )}
-
-                        {/* MCQ options */}
-                        {q.options?.length > 0 && (
-                          <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                            {q.options.map(({ id: optionId, text }) => (
-                              <li
-                                key={optionId}
-                                className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/40 border border-border text-muted-foreground text-sm"
-                              >
-                                <div className="w-2 h-2 rounded-full bg-muted-foreground/30 shrink-0" />
-                                {text}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-
-                        {/* Marks input */}
-                        <div className="flex items-center gap-2 mt-2">
-                          <label
-                            htmlFor={`marks-${q.id}`}
-                            className="text-xs font-medium text-muted-foreground shrink-0"
-                          >
-                            Marks for this question:
-                          </label>
-                          <Input
-                            id={`marks-${q.id}`}
-                            type="number"
-                            min={0}
-                            step={0.5}
-                            value={localMarks[q.id] ?? 0}
-                            onChange={(e) =>
-                              handleMarkChange(
-                                q.id,
-                                Math.max(0, Number(e.target.value))
-                              )
-                            }
-                            className="h-8 w-24 text-sm bg-background border-input"
-                          />
-                          <span className="text-xs text-muted-foreground">
-                            / {maxScoreAttainable} total
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-          </div>
+          {/* Question editor */}
+          {examLoading ? (
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-32 rounded-xl bg-muted animate-pulse"
+                />
+              ))}
+            </div>
+          ) : (
+            <QuestionEditor
+              questions={localQuestions}
+              onChange={handleQuestionsChange}
+              maxScoreAttainable={maxScoreAttainable}
+              disabled={savingQuestions}
+            />
+          )}
 
           {/* Action bar */}
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            {/* Save marks */}
+            {/* Save question edits */}
             <Button
               variant="outline"
               className="h-11 px-5 gap-2"
-              onClick={() => saveMarks()}
-              disabled={savingMarks || !marksDirty || examLoading}
+              onClick={() => saveQuestions()}
+              disabled={savingQuestions || !questionsDirty || examLoading}
             >
-              {savingMarks ? (
+              {savingQuestions ? (
                 <Loader2Icon className="w-4 h-4 animate-spin" />
               ) : (
                 <Save className="w-4 h-4" />
               )}
-              {savingMarks ? "Saving..." : "Save Marks"}
+              {savingQuestions ? "Saving..." : "Save changes"}
             </Button>
 
             {/* Publish */}
             <Button
               className="h-11 px-8 text-base font-semibold"
               onClick={() => {
-                if (marksDirty) {
+                if (questionsDirty) {
                   toast.error(
-                    "You have unsaved mark changes. Please save first."
+                    "You have unsaved question changes. Please save first."
                   );
                   return;
                 }
@@ -428,6 +385,7 @@ export default function ExamForm() {
                 !examId ||
                 !!publishExamData?.data?.data?.success ||
                 isOverBudget ||
+                questionsDirty ||
                 examLoading
               }
             >
@@ -448,11 +406,21 @@ export default function ExamForm() {
               </p>
             )}
 
-            {!isOverBudget && !isGenerating && !examLoading && (
-              <p className="text-sm text-muted-foreground">
-                Only published quizzes can be shared with students.
+            {questionsDirty && !isOverBudget && (
+              <p className="flex items-center gap-1.5 text-sm text-amber-600">
+                <AlertTriangle className="w-4 h-4 shrink-0" />
+                You have unsaved changes. Save them before publishing.
               </p>
             )}
+
+            {!isOverBudget &&
+              !questionsDirty &&
+              !isGenerating &&
+              !examLoading && (
+                <p className="text-sm text-muted-foreground">
+                  Only published quizzes can be shared with students.
+                </p>
+              )}
           </div>
 
           {/* Share link dialog */}
