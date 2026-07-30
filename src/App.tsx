@@ -34,6 +34,7 @@ const StudentLayout = lazy(() => import("./pages/Student/components/StudentLayou
 const StudentRouter = lazy(() => import("./pages/Student/pages/StudentRouter"));
 const ExamCreate = lazy(() => import("./pages/Exams/pages/ExamCreate"));
 const Exams = lazy(() => import("./pages/Exams/pages/Exams"));
+const Leaderboard = lazy(() => import("./pages/Exams/pages/Leaderboard"));
 const Reports = lazy(() => import("./pages/Reports/Reports"));
 const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard"));
 const StudentsList = lazy(() => import("./pages/Students/StudentsList"));
@@ -117,6 +118,10 @@ function App() {
             <Route path="dashboard" element={<StudentDashboard />} />
             <Route path="results/:resultId" element={<StudentResultDetails />} />
             <Route path="quiz" element={<ExamComponent />} />
+            <Route
+              path="quiz/:examId/leaderboard"
+              element={<Leaderboard />}
+            />
             <Route path="grading" element={<StudentUpload />} />
             <Route path="practice" element={<PracticeDashboard />} />
             <Route path="practice/new" element={<PracticeSetup />} />
@@ -150,6 +155,10 @@ function App() {
               <Route path="exams">
                 <Route index element={<Exams />} />
                 <Route path="create" element={<ExamCreate />} />
+                <Route
+                  path=":examId/leaderboard"
+                  element={<Leaderboard />}
+                />
               </Route>
 
               <Route path="reports" element={<Reports />} />

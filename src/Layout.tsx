@@ -67,10 +67,19 @@ export default function Layout() {
 
   return (
     <ModalContext.Provider value={{ showModal, setShowModal }}>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded focus:bg-background focus:px-3 focus:py-2"
+      >
+        Skip to content
+      </a>
       <SidebarProvider>
         {user && Object.keys(user)?.length && <AppSidebar items={items} />}
-        <main className="w-screen h-screen">
-          <div className="w-full h-full flex flex-col bg-slate-50 dark:bg-zinc-950 text-foreground transition-colors duration-200 overflow-y-auto">
+        <main className="w-full h-screen min-w-0">
+          <div
+            id="main-content"
+            className="w-full h-full flex flex-col bg-slate-50 dark:bg-zinc-950 text-foreground transition-colors duration-200 overflow-y-auto"
+          >
             <Header />
             <Outlet />
           </div>

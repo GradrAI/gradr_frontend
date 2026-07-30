@@ -35,6 +35,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Exams = () => {
   const nav = useNavigate();
@@ -75,7 +80,7 @@ const Exams = () => {
         <Button onClick={() => nav("create")}>Create</Button>
       </div>
 
-      {isLoading && <Skeleton className="w-[400px] h-[150px] rounded-md" />}
+      {isLoading && <Skeleton className="w-full max-w-sm h-[150px] rounded-md" />}
       {!isLoading && exams.length === 0 && <p>No exams found.</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -108,14 +113,24 @@ const Exams = () => {
                     <span className="font-semibold">{exam.totalQuestions}</span>
                     <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-500 bg-slate-50 w-fit px-2 py-0.5 rounded border border-slate-200">
                       <span className="font-mono uppercase">ID: {exam._id}</span>
-                      <Copy 
-                        className="h-3 w-3 cursor-pointer hover:text-indigo-600 transition-colors" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigator.clipboard.writeText(exam._id);
-                          toast.success("Cloud ID Copied");
-                        }}
-                      />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Copy exam cloud ID"
+                            className="h-5 w-5 shrink-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(exam._id);
+                              toast.success("Cloud ID Copied");
+                            }}
+                          >
+                            <Copy className="h-3 w-3" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Copy exam cloud ID</TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
 
@@ -125,25 +140,39 @@ const Exams = () => {
                       key={copiedExams[exam._id] ? "checked" : "copy"}
                     >
                       {!copiedExams[exam._id] ? (
-                        <Paperclip
-                          onClick={() => {
-                            navigator.clipboard.writeText(exam.uniqueExamLink!);
-                            setCopiedExams((prev) => ({
-                              ...prev,
-                              [exam._id]: true,
-                            }));
-                            toast.success("Copied");
-                            setTimeout(() => {
-                              setCopiedExams((prev) => ({
-                                ...prev,
-                                [exam._id]: false,
-                              }));
-                            }, 2000);
-                          }}
-                          className="cursor-pointer hover:text-slate-400 border rounded-full"
-                        />
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Copy exam link"
+                              onClick={() => {
+                                navigator.clipboard.writeText(
+                                  exam.uniqueExamLink!
+                                );
+                                setCopiedExams((prev) => ({
+                                  ...prev,
+                                  [exam._id]: true,
+                                }));
+                                toast.success("Copied");
+                                setTimeout(() => {
+                                  setCopiedExams((prev) => ({
+                                    ...prev,
+                                    [exam._id]: false,
+                                  }));
+                                }, 2000);
+                              }}
+                            >
+                              <Paperclip className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Copy exam link</TooltipContent>
+                        </Tooltip>
                       ) : (
-                        <CheckCircle className="pointer-events-none" />
+                        <CheckCircle
+                          aria-hidden="true"
+                          className="pointer-events-none"
+                        />
                       )}
                     </div>
                   )}

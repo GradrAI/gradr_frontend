@@ -83,7 +83,7 @@ export default function CategoryRow({
               <p className="m-0">{resource?.type?.toUpperCase()}</p>
               <p
                 className="truncate max-w-xl text-sm text-primary/80 hover:text-primary cursor-pointer"
-                onClick={() => window.open(resource?.fileUrl, "_blank")}
+                onClick={() => resource?.fileUrl && window.open(resource.fileUrl, "_blank")}
               >
                 {resource?.fileUrl}
               </p>

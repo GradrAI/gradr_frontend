@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { isAxiosError } from "axios";
 import notifications from "@/requests/notifications";
 import {
   Form,
@@ -18,7 +18,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -39,25 +38,73 @@ import calculateDurationMinutes from "../helpers/calculateDurationMinutes";
 import { DateTime } from "luxon";
 import api from "@/lib/axios";
 import { CourseData, Category } from "@/types/CourseData";
-import { AxiosResponse } from "axios";
 import { Input } from "@/components/ui/input";
 import useStore from "@/state";
 import { Button } from "@/components/ui/button";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/components/ui/combobox"
-import useDrivePicker from "react-google-drive-picker";
-import { Resource } from "@/types/Resource";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Slider } from "@/components/ui/slider"
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { extractTopics } from "@/requests/exam";
+import SourcePicker from "./SourcePicker";
 
-const defaultStandards = [
+type ExamQuestionType = FormSchemaType["type"];
+
+type ExamStandard = {
+  id: string;
+  name: string;
+  description?: string;
+  constraints: {
+    allowedTypes: ExamQuestionType[];
+    fixedOptions: number | null;
+  };
+};
+
+type ExtractedTopic = { topic: string; weight: number };
+
+type CreateExamPayload = {
+  topic: string;
+  courseId: string;
+  categoryName: string;
+  categoryType: string;
+  maxScoreAttainable: number;
+  type: ExamQuestionType;
+  totalQuizQuestions: number;
+  numberOfOptions: number;
+  standard: string;
+  difficulty: "easy" | "moderate" | "hard" | "mixed";
+  difficultyMix?: { easy: number; moderate: number; hard: number };
+  durationMinutes: number | null;
+  proctoringMode: "strict" | "relaxed";
+  leaderboard: { enabled: boolean; visibility: "full" | "anonymized" };
+  customInstructions: string;
+  resourceIds: string[];
+  topicPriorities: { topic: string; weight: number; selected: boolean }[];
+  availabilityStartAt?: string;
+  availabilityEndAt?: string;
+  mcqCount?: number;
+  essayCount?: number;
+};
+
+const DIFFICULTY_LEVELS = ["easy", "moderate", "hard"] as const;
+
+/** Surfaces the backend's user-facing `error` string when it sent one. */
+const serverError = (error: unknown, fallback: string) => {
+  if (!isAxiosError(error)) return fallback;
+  const body: unknown = error.response?.data;
+  if (typeof body === "object" && body !== null) {
+    const { error: reason, message } = body as {
+      error?: unknown;
+      message?: unknown;
+    };
+    if (typeof reason === "string" && reason) return reason;
+    if (typeof message === "string" && message) return message;
+  }
+  return fallback;
+};
+
+const defaultStandards: ExamStandard[] = [
   {
     id: "GENERIC",
     name: "Generic / Custom",
@@ -93,11 +140,9 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
   const [courses, setCourses] = useState<CourseData[]>([]);
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
-  const [openPicker] = useDrivePicker();
-  const [resourceOpen, setResourceOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [instructionsPrefilled, setInstructionsPrefilled] = useState(false);
 
-    const form = useForm<FormSchemaType>({
+  const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       file: undefined,
@@ -119,10 +164,16 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
       standard: "GENERIC",
       topicPriorities: [],
       hybridCount: 0,
+      difficultyMode: "uniform",
+      difficultyMix: undefined,
+      timed: true,
+      proctoringMode: "strict",
+      leaderboardEnabled: false,
+      leaderboardVisibility: "anonymized",
+      customInstructions: "",
     },
   });
 
-  const type = "generatedExam";
   const courseId = form.watch("courseId");
   const categoryName = form.watch("categoryName");
   const categoryType = form.watch("categoryType");
@@ -133,34 +184,35 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
   const topicPriorities = form.watch("topicPriorities") || [];
   const totalQuestions = form.watch("totalQuizQuestions");
   const hybridCount = form.watch("hybridCount") || 0;
+  const difficultyMode = form.watch("difficultyMode");
+  const timed = form.watch("timed");
+  const proctoringMode = form.watch("proctoringMode");
+  const leaderboardEnabled = form.watch("leaderboardEnabled");
+  const customInstructions = form.watch("customInstructions");
 
-  const { data: resourceData, refetch: refetchResources } = useQuery({
-    queryKey: ["resourceData", courseId, user?._id, type],
-    queryFn: async () => {
-      return await api.get(`/resources/${user?.role || 'lecturer'}/${courseId}/${type}`);
-    },
-    enabled: Boolean(courseId && user?._id && type),
-    refetchOnWindowFocus: false,
-  });
+  const courseName = courses.find((c) => c._id === courseId)?.name || "";
 
   const extractTopicsMutation = useMutation({
     mutationFn: async (resourceIds: string[]) => {
-      const res = await api.post("/exam/extract-topics", { resourceIds });
-      return res.data;
+      const result = await extractTopics(resourceIds);
+      // The endpoint is typed `unknown` in the shared client; it answers
+      // { success, data: [{ topic, weight }] }.
+      const payload = result as { success?: boolean; data?: ExtractedTopic[] };
+      return payload.data ?? [];
     },
-    onSuccess: (data) => {
-      if (data.success && data.data) {
-        const formattedTopics = data.data.map((t: any) => ({
+    onSuccess: (topics) => {
+      form.setValue(
+        "topicPriorities",
+        topics.map((t) => ({
           topic: t.topic,
           weight: t.weight,
           selected: true,
-        }));
-        form.setValue("topicPriorities", formattedTopics);
-        toast.success("Topics extracted from resources!");
-      }
+        }))
+      );
+      if (topics.length) toast.success("Topics extracted from your sources!");
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.error || "Topic extraction failed");
+    onError: (error: unknown) => {
+      toast.error(serverError(error, "Topic extraction failed"));
     },
   });
 
@@ -176,7 +228,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
     return () => clearTimeout(handler);
   }, [JSON.stringify(selectedResourceIds)]);
 
-  // Reset resources and topics when course changes to avoid cross-course resource selection
+  // Reset sources and topics when course changes to avoid cross-course selection
   useEffect(() => {
     const currentResources = form.getValues("resourceIds");
     if (currentResources && currentResources.length > 0) {
@@ -185,101 +237,67 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
     }
   }, [courseId, form]);
 
-  const uploadMutation = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await api.post("/upload", formData);
-      return res.data;
-    },
-    onSuccess: (data) => {
-      if (data.success && data.resources) {
-        const newIds = data.resources.map((r: any) => r._id);
-        const currentIds = form.getValues("resourceIds") || [];
-        form.setValue("resourceIds", [...currentIds, ...newIds]);
-        toast.success("File uploaded and resource created!");
-        refetchResources();
-      }
-    },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.error || "Upload failed");
-    },
-    onSettled: () => setIsUploading(false),
-  });
-
-  const handleFileUpload = async (files: FileList | File[]) => {
-    if (!courseId || !categoryName || !categoryType) {
-      toast.error("Please select a course and set category details first.");
-      return;
-    }
-
-    if (!window.confirm("Do you want to upload this file and create a resource?")) return;
-
-    setIsUploading(true);
-    const formData = new FormData();
-    Array.from(files).forEach((file) => formData.append("file", file));
-    formData.append("lecturerId", user?._id || "");
-    formData.append("name", courses.find((c) => c._id === courseId)?.name || "");
-    formData.append("fileType", "generatedExam");
-    formData.append("categoryName", categoryName);
-    formData.append("categoryType", categoryType);
-    formData.append("maxScoreAttainable", String(maxScoreAttainable));
-    formData.append("uploader", JSON.stringify(user));
-    formData.append("uploaderType", "lecturer");
-
-    uploadMutation.mutate(formData);
-  };
-
-  const handleOpenPicker = () => {
-    openPicker({
-      clientId: import.meta.env.VITE_CLIENT_ID,
-      developerKey: "",
-      viewId: "DOCS",
-      showUploadView: true,
-      showUploadFolders: true,
-      supportDrives: true,
-      multiselect: true,
-      callbackFunction: (data) => {
-        if (data.action === "picked") {
-          toast("Drive file pickup not fully implemented for separate upload yet. Use local upload.");
-        }
-      },
-    });
-  };
-
   const {
     mutate: examMutate,
     isPending: examIsPending,
   } = useMutation({
     mutationKey: ["generateQuiz"],
-    mutationFn: async (data: any) => await api.post("/exam", data),
+    mutationFn: async (payload: CreateExamPayload) =>
+      await api.post<{ success?: boolean; message?: string }>("/exam", payload),
   });
 
   // Fetch active period
   const { data: activePeriodData } = useQuery({
     queryKey: ["activePeriod"],
     queryFn: async () => {
-      const res = await api.get("/periods/active");
-      return res.data.data;
+      const res = await api.get<{ data?: { _id: string } }>("/periods/active");
+      return res.data.data ?? null;
     },
   });
 
   const { data: standardsResponse } = useQuery({
     queryKey: ["examStandards"],
     queryFn: async () => {
-      const res = await api.get("/exam/standards");
-      return res.data.data;
+      const res = await api.get<{ data?: ExamStandard[] }>("/exam/standards");
+      return res.data.data ?? null;
     },
   });
 
-  const examStandards = standardsResponse || defaultStandards;
-  const selectedStandardObj = examStandards.find((s: any) => s.id === standard);
+  const examStandards = standardsResponse ?? defaultStandards;
+  const selectedStandardObj = examStandards.find((s) => s.id === standard);
+
+  const { data: userSettings } = useQuery({
+    queryKey: ["user-settings"],
+    queryFn: async () => {
+      const res = await api.get<{
+        data?: { randomizeQuestions?: boolean; customInstructions?: string };
+      }>("/user/settings");
+      return res.data.data ?? null;
+    },
+    enabled: Boolean(user?._id),
+    refetchOnWindowFocus: false,
+  });
+
+  // Seed the per-quiz instructions from the lecturer's saved default, once,
+  // and never over what they already typed.
+  useEffect(() => {
+    if (instructionsPrefilled || !userSettings) return;
+    const preferred = userSettings.customInstructions;
+    if (preferred && !form.getValues("customInstructions")) {
+      form.setValue("customInstructions", preferred);
+    }
+    setInstructionsPrefilled(true);
+  }, [userSettings, instructionsPrefilled, form]);
 
   const {
     data: coursesData,
   } = useQuery({
     queryKey: ["courses", user?._id, activePeriodData?._id],
     queryFn: async () => {
-      const res = await api.get(`/courses/users?periodId=${activePeriodData._id}`);
-      return res.data.data;
+      const res = await api.get<{ data?: CourseData[] }>(
+        `/courses/users?periodId=${activePeriodData?._id}`
+      );
+      return res.data.data ?? [];
     },
     enabled: Boolean(user?._id?.length) && !!activePeriodData?._id,
     refetchOnWindowFocus: false,
@@ -297,6 +315,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
   const endTime = form.watch("endTime");
 
   useEffect(() => {
+    if (!timed) return;
     const diff = calculateDurationMinutes(
       startDate,
       endDate,
@@ -306,7 +325,26 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
     if (diff !== null) {
       form.setValue("durationMinutes", diff);
     }
-  }, [form, startDate, endDate, startTime, endTime]);
+  }, [form, timed, startDate, endDate, startTime, endTime]);
+
+  // Seeds a mix that already sums to the total when the lecturer picks Mixed,
+  // and drops the field entirely otherwise — the backend forbids it when the
+  // difficulty is uniform. Done on the change itself, not in an effect, so the
+  // counts are in form state before the mix inputs first render.
+  const handleDifficultyModeChange = (mode: "uniform" | "mixed") => {
+    if (mode !== "mixed") {
+      form.setValue("difficultyMix", undefined);
+      return;
+    }
+    const total = form.getValues("totalQuizQuestions") || 0;
+    const easy = Math.ceil(total / 3);
+    const moderate = Math.ceil((total - easy) / 2);
+    form.setValue("difficultyMix", {
+      easy,
+      moderate,
+      hard: Math.max(0, total - easy - moderate),
+    });
+  };
 
   useEffect(() => {
     if (selectedStandardObj) {
@@ -331,21 +369,47 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
     }
   };
 
-  async function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: FormSchemaType) {
     if (!data.resourceIds?.length) {
-      toast.error("Please upload or select at least one resource.");
+      toast.error("Add at least one source for the quiz.");
       return;
     }
 
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const payload: any = { ...data };
+
+    const payload: CreateExamPayload = {
+      topic: data.topic,
+      courseId: data.courseId,
+      categoryName: data.categoryName,
+      categoryType: data.categoryType,
+      maxScoreAttainable: data.maxScoreAttainable,
+      type: data.type,
+      totalQuizQuestions: data.totalQuizQuestions,
+      numberOfOptions: data.numberOfOptions,
+      standard: data.standard,
+      difficulty: data.difficultyMode === "mixed" ? "mixed" : data.difficulty,
+      durationMinutes: data.timed ? data.durationMinutes ?? null : null,
+      proctoringMode: data.proctoringMode,
+      leaderboard: {
+        enabled: data.leaderboardEnabled,
+        visibility: data.leaderboardVisibility,
+      },
+      customInstructions: data.customInstructions,
+      resourceIds: data.resourceIds,
+      topicPriorities: (data.topicPriorities ?? []).filter((tp) => tp.selected),
+    };
+
+    // Joi forbids difficultyMix unless difficulty is "mixed".
+    if (data.difficultyMode === "mixed" && data.difficultyMix) {
+      payload.difficultyMix = data.difficultyMix;
+    }
 
     if (data.startDate && data.startTime) {
       const startLocal = DateTime.fromISO(
         `${DateTime.fromJSDate(data.startDate).toISODate()}T${data.startTime}`,
         { zone: tz }
       );
-      payload.availabilityStartAt = startLocal.toUTC().toISO();
+      payload.availabilityStartAt = startLocal.toUTC().toISO() ?? undefined;
     }
 
     if (data.endDate && data.endTime) {
@@ -353,7 +417,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
         `${DateTime.fromJSDate(data.endDate).toISODate()}T${data.endTime}`,
         { zone: tz }
       );
-      payload.availabilityEndAt = endLocal.toUTC().toISO();
+      payload.availabilityEndAt = endLocal.toUTC().toISO() ?? undefined;
     }
 
     if (data.type === "hybrid") {
@@ -361,21 +425,8 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
       payload.essayCount = data.hybridCount || 0;
     }
 
-
-    // Clean up payload
-    delete payload.file;
-    delete payload.startDate;
-    delete payload.endDate;
-    delete payload.startTime;
-    delete payload.endTime;
-
-    // Filter only selected topic priorities
-    if (payload.topicPriorities) {
-      payload.topicPriorities = payload.topicPriorities.filter((tp: any) => tp.selected);
-    }
-
     examMutate(payload, {
-      onSuccess: (res: any) => {
+      onSuccess: (res) => {
         if (res.data?.success) {
           toast.success(notifications.QUIZ.SUCCESS);
           if (user && user.organization && typeof user.organization === "object") {
@@ -390,8 +441,8 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
           toast.error(res.data?.message || notifications.QUIZ.FAILURE);
         }
       },
-      onError: () => {
-        toast.error(notifications.QUIZ.FAILURE);
+      onError: (error: unknown) => {
+        toast.error(serverError(error, notifications.QUIZ.FAILURE));
       },
     });
   }
@@ -405,7 +456,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full min-w-0">
         <FormField
           control={form.control}
           name="courseId"
@@ -460,7 +511,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 </FormControl>
                 <SelectContent>
                    <SelectGroup>
-                    {examStandards.map((s: any) => (
+                    {examStandards.map((s) => (
                       <SelectItem key={s.id} value={s.id}>
                         {s.name}
                       </SelectItem>
@@ -476,12 +527,12 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
           )}
         />
 
-        <div className="flex gap-4 flex-wrap justify-between items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="categoryName"
             render={({ field }) => (
-              <FormItem className="flex-1 min-w-[200px]">
+              <FormItem className="min-w-0">
                 <FormLabel>Category Name</FormLabel>
                 <FormControl>
                   <Input placeholder="e.g. Assignment II" className="bg-background" {...field} />
@@ -495,24 +546,24 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
             control={form.control}
             name="categoryType"
             render={({ field }) => (
-              <FormItem className="flex-1 min-w-[150px]">
+              <FormItem className="min-w-0">
                 <FormLabel>Category Type</FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {categories?.map(({ name, id, value }: Category) => (
-                          <SelectItem key={id} value={value}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectGroup>
+                      {categories?.map(({ name, id, value }: Category) => (
+                        <SelectItem key={id} value={value}>
+                          {name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -539,101 +590,33 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
           )}
         />
 
-        <div className="space-y-4 p-4 border rounded-lg bg-slate-50 dark:bg-zinc-900/40">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium">Resources & Uploads</h3>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleOpenPicker}
-              className="bg-background border-primary text-primary hover:bg-primary/5"
-            >
-              Google Drive
-            </Button>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-xs text-muted-foreground">Upload Local Files</Label>
-            <div className="flex gap-2">
-              <Input
-                type="file"
-                multiple
-                className="bg-background"
-                onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
-                disabled={isUploading}
-              />
-              {isUploading && <Loader2Icon className="animate-spin mt-2 shrink-0" />}
-            </div>
-            <p className="text-[10px] text-muted-foreground italic">
-              Uploading a file will automatically create a Knowledge Resource for the selected course/category.
-            </p>
-          </div>
+        <div className="space-y-4 p-4 border rounded-lg bg-slate-50 dark:bg-zinc-900/40 min-w-0">
+          <h3 className="text-sm font-medium">Quiz sources</h3>
+          <p className="text-[11px] text-muted-foreground">
+            Upload a document, add a web link or YouTube video, or paste text.
+            The quiz is generated only from the sources you add here.
+          </p>
 
           <FormField
             control={form.control}
             name="resourceIds"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Selected Resources</FormLabel>
-                <Combobox
-                  open={resourceOpen}
-                  onOpenChange={setResourceOpen}
-                  value={field.value?.[0] || ""}
-                  onValueChange={(val) => {
-                    if (!val) return;
-                    const current = field.value || [];
-                    const exists = current.includes(val);
-                    if (exists) {
-                      field.onChange(current.filter((id) => id !== val));
-                    } else {
-                      field.onChange([...current, val]);
-                    }
+              <FormItem className="min-w-0">
+                <SourcePicker
+                  courseId={courseId}
+                  value={field.value || []}
+                  onChange={field.onChange}
+                  disabled={examIsPending}
+                  uploadMeta={{
+                    courseName,
+                    categoryName,
+                    categoryType,
+                    maxScoreAttainable,
                   }}
-                >
-                  <FormControl>
-                    <ComboboxInput
-                      placeholder="Search and toggle resources..."
-                      className="bg-background"
-                    />
-                  </FormControl>
-                  <ComboboxContent>
-                    <ComboboxList>
-                      <ComboboxEmpty>No resource found.</ComboboxEmpty>
-                      {resourceData?.data?.data?.map((resource: Resource) => (
-                        <ComboboxItem
-                          key={resource._id}
-                          value={resource._id}
-                        >
-                          <div className="flex items-center gap-2">
-                             <div className={`w-2 h-2 rounded-full ${field.value?.includes(resource._id) ? 'bg-primary' : 'bg-transparent border'}`} />
-                             {resource?.name || "Untitled Resource"}
-                          </div>
-                        </ComboboxItem>
-                      ))}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {field.value?.map((id) => {
-                    const res = resourceData?.data?.data?.find((r: Resource) => r._id === id);
-                    if (!res) return null;
-                    return (
-                      <div key={id} className="flex items-center gap-1 bg-background dark:bg-zinc-900 border px-2 py-1 rounded-md text-xs">
-                        <span>{res.name}</span>
-                        <button 
-                          type="button" 
-                          onClick={() => field.onChange(field.value?.filter(i => i !== id))}
-                          className="text-muted-foreground hover:text-destructive"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
+                />
                 <FormDescription>
-                  {selectedResourceIds.length} resource(s) selected for exam generation.
+                  {selectedResourceIds.length} of 5 source(s) selected for exam
+                  generation.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -655,100 +638,109 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
           )}
         />
 
-
-          <div className="space-y-4 p-4 border rounded-lg bg-blue-50/30 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900/50">
-            <h3 className="text-sm font-medium flex items-center gap-2 w-full">
-              Topic Prioritization
-              <span className="text-[10px] font-normal text-muted-foreground bg-background px-2 py-0.5 rounded-full border">
-                AI Extracted
-              </span>
-              {selectedResourceIds.length > 0 && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 text-[10px] ml-auto gap-1 text-primary hover:text-primary hover:bg-primary/5"
-                  onClick={() => extractTopicsMutation.mutate(selectedResourceIds)}
-                  disabled={extractTopicsMutation.isPending}
-                >
-                  <RefreshCcw className={`w-3 h-3 ${extractTopicsMutation.isPending ? 'animate-spin' : ''}`} />
-                  Refetch
-                </Button>
-              )}
-            </h3>
-            <p className="text-[11px] text-muted-foreground">
-              Adjust the weights to prioritize specific topics in the generated exam. Uncheck a topic to exclude it.
-            </p>
-            <div className="space-y-3">
-              {extractTopicsMutation.isPending || (selectedResourceIds.length > 0 && topicPriorities.length === 0) ?
-                <div className="space-y-4"> 
-                  <Skeleton className="w-full h-12" />
-                  <Skeleton className="w-full h-12" />
-                  <Skeleton className="w-full h-12" />
+        <div className="space-y-4 p-4 border rounded-lg bg-blue-50/30 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900/50 min-w-0">
+          <h3 className="text-sm font-medium flex flex-wrap items-center gap-2 w-full">
+            Topic Prioritization
+            <span className="text-[10px] font-normal text-muted-foreground bg-background px-2 py-0.5 rounded-full border">
+              AI Extracted
+            </span>
+            {selectedResourceIds.length > 0 && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-6 text-[10px] ml-auto gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                onClick={() => extractTopicsMutation.mutate(selectedResourceIds)}
+                disabled={extractTopicsMutation.isPending}
+              >
+                <RefreshCcw className={`w-3 h-3 ${extractTopicsMutation.isPending ? 'animate-spin' : ''}`} />
+                Refetch
+              </Button>
+            )}
+          </h3>
+          <p className="text-[11px] text-muted-foreground">
+            Adjust the weights to prioritize specific topics in the generated exam. Uncheck a topic to exclude it.
+          </p>
+          <div className="space-y-3">
+            {extractTopicsMutation.isPending || (selectedResourceIds.length > 0 && topicPriorities.length === 0) ?
+              <div className="space-y-4">
+                <Skeleton className="w-full h-12" />
+                <Skeleton className="w-full h-12" />
+                <Skeleton className="w-full h-12" />
+              </div>
+            : selectedResourceIds.length === 0 ? (
+              <div className="text-center py-6 border-2 border-dashed rounded-md bg-background/50 dark:bg-zinc-900/50">
+                  <p className="text-xs text-muted-foreground italic">No sources added. Add a source above to extract topics.</p>
+              </div>
+            ) :
+            topicPriorities.map((tp, index) => (
+              <div key={tp.topic} className="flex items-center gap-3 bg-background dark:bg-zinc-900 p-2 rounded-md border shadow-sm min-w-0">
+                <Checkbox
+                  checked={tp.selected}
+                  aria-label={`Include the topic ${tp.topic}`}
+                  onCheckedChange={(checked) => {
+                    const newPriorities = [...topicPriorities];
+                    newPriorities[index].selected = !!checked;
+                    form.setValue("topicPriorities", newPriorities);
+                  }}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-medium truncate ${!tp.selected ? 'text-muted-foreground line-through' : ''}`}>
+                    {tp.topic}
+                  </p>
                 </div>
-              : selectedResourceIds.length === 0 ? (
-                <div className="text-center py-6 border-2 border-dashed rounded-md bg-background/50 dark:bg-zinc-900/50">
-                    <p className="text-xs text-muted-foreground italic">No resources selected. Select or upload resources to extract topics.</p>
-                </div>
-              ) :
-              topicPriorities.map((tp, index) => (
-                <div key={tp.topic} className="flex items-center gap-4 bg-background dark:bg-zinc-900 p-2 rounded-md border shadow-sm">
-                  <Checkbox 
-                    checked={tp.selected} 
-                    onCheckedChange={(checked) => {
+                <div className="flex items-center gap-2 w-24 shrink-0">
+                  <Input
+                    type="number"
+                    aria-label={`Weight for the topic ${tp.topic} in percent`}
+                    value={tp.weight}
+                    onChange={(e) => {
                       const newPriorities = [...topicPriorities];
-                      newPriorities[index].selected = !!checked;
+                      newPriorities[index].weight = Number(e.target.value);
                       form.setValue("topicPriorities", newPriorities);
                     }}
+                    className="h-8 text-xs min-w-0"
+                    min={0}
+                    max={100}
+                    disabled={!tp.selected}
                   />
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium truncate ${!tp.selected ? 'text-muted-foreground line-through' : ''}`}>
-                      {tp.topic}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 w-32">
-                    <Input
-                      type="number"
-                      value={tp.weight}
-                      onChange={(e) => {
-                        const newPriorities = [...topicPriorities];
-                        newPriorities[index].weight = Number(e.target.value);
-                        form.setValue("topicPriorities", newPriorities);
-                      }}
-                      className="h-8 text-xs"
-                      min={0}
-                      max={100}
-                      disabled={!tp.selected}
-                    />
-                    <span className="text-xs text-muted-foreground">%</span>
-                  </div>
+                  <span className="text-xs text-muted-foreground">%</span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        
+        </div>
 
-        <div className="flex gap-4 flex-wrap justify-between items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="difficulty"
+            name="difficultyMode"
             render={({ field }) => (
-              <FormItem className="flex-1 min-w-[150px]">
-                <FormLabel>Difficulty</FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
+              <FormItem className="min-w-0">
+                <FormLabel>Difficulty mode</FormLabel>
+                <Select
+                  value={field.value}
+                  onValueChange={(val) => {
+                    const mode = val === "mixed" ? "mixed" : "uniform";
+                    handleDifficultyModeChange(mode);
+                    field.onChange(mode);
+                  }}
+                >
+                  <FormControl>
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
-                    <SelectContent className="bg-background">
-                      <SelectGroup>
-                        <SelectItem value="easy">Easy</SelectItem>
-                        <SelectItem value="moderate">Moderate</SelectItem>
-                        <SelectItem value="hard">Hard</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
+                  </FormControl>
+                  <SelectContent className="bg-background">
+                    <SelectGroup>
+                      <SelectItem value="uniform">Uniform</SelectItem>
+                      <SelectItem value="mixed">Mixed</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <FormDescription className="text-[11px]">
+                  Mixed lets you set how many questions land at each level.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -758,46 +750,132 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
             control={form.control}
             name="type"
             render={({ field }) => (
-              <FormItem className="flex-1 min-w-[150px]">
+              <FormItem className="min-w-0">
                 <FormLabel>Type</FormLabel>
-                <FormControl>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    value={field.value}
-                    disabled={selectedStandardObj?.constraints?.allowedTypes?.length === 1}
-                  >
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={selectedStandardObj?.constraints?.allowedTypes?.length === 1}
+                >
+                  <FormControl>
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
-                    <SelectContent className="bg-background">
-                      <SelectGroup>
-                        <SelectItem 
-                          value="multiple-choice"
-                          disabled={selectedStandardObj && !selectedStandardObj.constraints.allowedTypes.includes("multiple-choice")}
-                        >
-                          Multiple Choice
-                        </SelectItem>
-                        <SelectItem 
-                          value="essay"
-                          disabled={selectedStandardObj && !selectedStandardObj.constraints.allowedTypes.includes("essay")}
-                        >
-                          Essay
-                        </SelectItem>
-                        <SelectItem 
-                          value="hybrid"
-                          disabled={selectedStandardObj && !selectedStandardObj.constraints.allowedTypes.includes("hybrid")}
-                        >
-                          Hybrid
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
+                  </FormControl>
+                  <SelectContent className="bg-background">
+                    <SelectGroup>
+                      <SelectItem
+                        value="multiple-choice"
+                        disabled={selectedStandardObj && !selectedStandardObj.constraints.allowedTypes.includes("multiple-choice")}
+                      >
+                        Multiple Choice
+                      </SelectItem>
+                      <SelectItem
+                        value="essay"
+                        disabled={selectedStandardObj && !selectedStandardObj.constraints.allowedTypes.includes("essay")}
+                      >
+                        Essay
+                      </SelectItem>
+                      <SelectItem
+                        value="hybrid"
+                        disabled={selectedStandardObj && !selectedStandardObj.constraints.allowedTypes.includes("hybrid")}
+                      >
+                        Hybrid
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+
+        {difficultyMode === "uniform" ? (
+          // Distinct keys: without them React reuses the same Controller
+          // instance across the two branches and the field reports the other
+          // field's value.
+          <FormField
+            key="difficulty"
+            control={form.control}
+            name="difficulty"
+            render={({ field }) => (
+              <FormItem className="min-w-0">
+                <FormLabel>Difficulty</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="bg-background">
+                    <SelectGroup>
+                      <SelectItem value="easy">Easy</SelectItem>
+                      <SelectItem value="moderate">Moderate</SelectItem>
+                      <SelectItem value="hard">Hard</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <FormField
+            key="difficultyMix"
+            control={form.control}
+            name="difficultyMix"
+            render={({ field }) => {
+              const mix = {
+                easy: field.value?.easy ?? 0,
+                moderate: field.value?.moderate ?? 0,
+                hard: field.value?.hard ?? 0,
+              };
+              const sum = mix.easy + mix.moderate + mix.hard;
+              return (
+                <FormItem className="space-y-3 p-4 border rounded-lg bg-background/50 min-w-0">
+                  <p className="text-sm font-medium">Questions per difficulty</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {DIFFICULTY_LEVELS.map((level) => (
+                      <div key={level} className="space-y-1 min-w-0">
+                        <Label
+                          htmlFor={`difficulty-mix-${level}`}
+                          className="text-xs capitalize"
+                        >
+                          {level}
+                        </Label>
+                        <Input
+                          id={`difficulty-mix-${level}`}
+                          type="number"
+                          min={0}
+                          className="bg-background min-w-0"
+                          value={mix[level]}
+                          onChange={(e) =>
+                            field.onChange({
+                              ...mix,
+                              [level]: Math.max(0, Number(e.target.value) || 0),
+                            })
+                          }
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <p
+                    aria-live="polite"
+                    className={`text-xs font-medium ${
+                      sum === totalQuestions
+                        ? "text-muted-foreground"
+                        : "text-destructive"
+                    }`}
+                  >
+                    {`Σ ${sum} / ${totalQuestions}`}
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+        )}
 
         <FormField
           control={form.control}
@@ -829,8 +907,8 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
             control={form.control}
             name="hybridCount"
             render={({ field }) => (
-              <FormItem className="space-y-4 p-4 border rounded-lg bg-orange-50/30 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/30">
-                <div className="flex justify-between items-center">
+              <FormItem className="space-y-4 p-4 border rounded-lg bg-orange-50/30 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/30 min-w-0">
+                <div className="flex flex-wrap justify-between items-center gap-2">
                   <FormLabel>Theory/Essay Ratio</FormLabel>
                   <span className="text-xs font-semibold text-primary bg-background px-2 py-1 rounded-md border">
                     {totalQuestions - (field.value || 0)} MCQ / {field.value || 0} Essay
@@ -838,6 +916,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 </div>
                 <FormControl>
                   <Slider
+                    aria-label="Number of theory or essay questions"
                     min={0}
                     max={totalQuestions}
                     step={1}
@@ -855,14 +934,16 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-4">
+          <div className="space-y-4 min-w-0">
             <Label>Start Date & Time</Label>
-            <div className="flex gap-2">
+            <div className="flex gap-2 min-w-0">
               <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start font-normal bg-background">
-                    {form.watch("startDate") ? form.watch("startDate")?.toLocaleDateString() : "Date"}
-                    <ChevronDownIcon className="ml-auto" />
+                  <Button variant="outline" aria-label="Start date" className="w-full min-w-0 justify-start font-normal bg-background">
+                    <span className="truncate">
+                      {form.watch("startDate") ? form.watch("startDate")?.toLocaleDateString() : "Date"}
+                    </span>
+                    <ChevronDownIcon className="ml-auto shrink-0" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -880,20 +961,22 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 control={form.control}
                 name="startTime"
                 render={({ field }) => (
-                  <Input type="time" {...field} className="bg-background w-32" />
+                  <Input type="time" aria-label="Start time" {...field} className="bg-background w-28 shrink-0" />
                 ) }
               />
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 min-w-0">
             <Label>End Date & Time</Label>
-            <div className="flex gap-2">
+            <div className="flex gap-2 min-w-0">
               <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start font-normal bg-background">
-                    {form.watch("endDate") ? form.watch("endDate")?.toLocaleDateString() : "Date"}
-                    <ChevronDownIcon className="ml-auto" />
+                  <Button variant="outline" aria-label="End date" className="w-full min-w-0 justify-start font-normal bg-background">
+                    <span className="truncate">
+                      {form.watch("endDate") ? form.watch("endDate")?.toLocaleDateString() : "Date"}
+                    </span>
+                    <ChevronDownIcon className="ml-auto shrink-0" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -911,27 +994,171 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
                 control={form.control}
                 name="endTime"
                 render={({ field }) => (
-                  <Input type="time" {...field} className="bg-background w-32" />
+                  <Input type="time" aria-label="End time" {...field} className="bg-background w-28 shrink-0" />
                 ) }
               />
             </div>
           </div>
         </div>
 
+        <div className="space-y-4 p-4 border rounded-lg min-w-0">
+          <FormField
+            control={form.control}
+            name="timed"
+            render={({ field }) => (
+              <FormItem className="flex items-center justify-between gap-4 min-w-0">
+                <div className="space-y-1 min-w-0">
+                  <FormLabel>Timed quiz</FormLabel>
+                  <FormDescription className="text-[11px]">
+                    Turn this off for a practice quiz with no countdown.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    className="shrink-0"
+                    onCheckedChange={(checked) => {
+                      field.onChange(checked);
+                      if (checked) {
+                        form.setValue("proctoringMode", "strict");
+                      } else {
+                        form.setValue("durationMinutes", undefined);
+                        form.setValue("proctoringMode", "relaxed");
+                      }
+                    }}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="durationMinutes"
+            render={({ field }) => (
+              <FormItem className="min-w-0">
+                <FormLabel>Duration (minutes)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1}
+                    className="bg-background min-w-0"
+                    disabled={!timed}
+                    value={field.value ?? ""}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === "" ? undefined : Number(e.target.value)
+                      )
+                    }
+                  />
+                </FormControl>
+                {!timed && (
+                  <FormDescription>
+                    Students can take as long as they need.
+                  </FormDescription>
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {!timed && (
+            <div className="flex items-start gap-2 min-w-0">
+              <Checkbox
+                id="enforce-lockdown"
+                checked={proctoringMode === "strict"}
+                onCheckedChange={(checked) =>
+                  form.setValue(
+                    "proctoringMode",
+                    checked === true ? "strict" : "relaxed"
+                  )
+                }
+              />
+              <Label
+                htmlFor="enforce-lockdown"
+                className="text-xs font-normal leading-snug"
+              >
+                Still enforce fullscreen lockdown
+              </Label>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-4 p-4 border rounded-lg min-w-0">
+          <FormField
+            control={form.control}
+            name="leaderboardEnabled"
+            render={({ field }) => (
+              <FormItem className="flex items-center justify-between gap-4 min-w-0">
+                <div className="space-y-1 min-w-0">
+                  <FormLabel>Show a leaderboard</FormLabel>
+                  <FormDescription className="text-[11px]">
+                    Students see the ranking only after they submit.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    className="shrink-0"
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          {leaderboardEnabled && (
+            <FormField
+              control={form.control}
+              name="leaderboardVisibility"
+              render={({ field }) => (
+                <FormItem className="min-w-0">
+                  <FormLabel>Leaderboard names</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-background">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="bg-background">
+                      <SelectGroup>
+                        <SelectItem value="anonymized">Anonymized</SelectItem>
+                        <SelectItem value="full">Show names</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+        </div>
+
         <FormField
           control={form.control}
-          name="durationMinutes"
+          name="customInstructions"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Duration (minutes)</FormLabel>
+            <FormItem className="min-w-0">
+              <FormLabel>Extra instructions for the AI (optional)</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
+                <Textarea
+                  rows={3}
+                  maxLength={2000}
+                  placeholder="e.g. Every question must reference a worked example from the notes."
+                  className="bg-background min-w-0"
                   {...field}
-                  className="bg-background"
-                  onChange={(e) => field.onChange(Number(e.target.value))}
                 />
               </FormControl>
+              <FormDescription>
+                Defaults to your saved preference. Changing it here affects only
+                this quiz.
+              </FormDescription>
+              <p
+                className="text-[11px] text-muted-foreground"
+                aria-live="polite"
+              >
+                {(customInstructions || "").length} / 2000
+              </p>
               <FormMessage />
             </FormItem>
           )}
@@ -959,8 +1186,8 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
           />
         )}
 
-        <div className="flex flex-col md:flex-row justify-between items-center bg-slate-50 dark:bg-zinc-900/40 p-4 rounded-lg border mt-8">
-           <div className="text-sm">
+        <div className="flex flex-col md:flex-row justify-between items-center bg-slate-50 dark:bg-zinc-900/40 p-4 rounded-lg border mt-8 min-w-0">
+           <div className="text-sm min-w-0">
              {isEnterprise ? (
                <p className="text-foreground/90 dark:text-zinc-300">
                  Generation Quota: Unlimited (Enterprise)

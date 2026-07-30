@@ -26,3 +26,13 @@ dist-ssr
 .env
 .vercel
 .env*
+
+# Package manager: bun only (pinned via "packageManager" in package.json).
+# bun.lock is the single source of truth and IS committed. Competing lockfiles
+# are ignored so a stray `npm i` / `yarn` cannot reintroduce one — Vercel picks
+# its package manager from whichever lockfile it finds, and a stale yarn.lock
+# previously drifted 3 months behind package.json.
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+bun.lockb

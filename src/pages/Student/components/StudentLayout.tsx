@@ -30,12 +30,20 @@ export default function StudentLayout() {
 
   return (
     <ModalContext.Provider value={{ showModal, setShowModal }}>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded focus:bg-background focus:px-3 focus:py-2"
+      >
+        Skip to content
+      </a>
       <SidebarProvider>
         {user && Object.keys(user)?.length && <AppSidebar items={studentItems} />}
-        <main className="w-screen h-screen">
+        <main className="w-full h-screen min-w-0">
           {user && <StudentHeader user={user} />}
 
-          <Outlet />
+          <div id="main-content">
+            <Outlet />
+          </div>
         </main>
       </SidebarProvider>
     </ModalContext.Provider>

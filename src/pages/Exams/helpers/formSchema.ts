@@ -51,7 +51,26 @@ const formSchema = z
       .number()
       .min(1, "Duration must be at least 1 minute")
       .optional(),
-    resourceIds: z.array(z.string()).optional(),
+    resourceIds: z
+      .array(z.string())
+      .min(1, "Add at least one source")
+      .max(5, "At most 5 sources"),
+    difficultyMode: z.enum(["uniform", "mixed"]).default("uniform"),
+    difficultyMix: z
+      .object({
+        easy: z.number().int().min(0),
+        moderate: z.number().int().min(0),
+        hard: z.number().int().min(0),
+      })
+      .optional(),
+    timed: z.boolean().default(true),
+    proctoringMode: z.enum(["strict", "relaxed"]).default("strict"),
+    leaderboardEnabled: z.boolean().default(false),
+    leaderboardVisibility: z.enum(["full", "anonymized"]).default("anonymized"),
+    customInstructions: z
+      .string()
+      .max(2000, "Custom instructions must be 2000 characters or fewer")
+      .default(""),
     topicPriorities: z.array(z.object({
       topic: z.string(),
       weight: z.number().min(0).max(100),
@@ -61,6 +80,8 @@ const formSchema = z
   })
   .refine(
     (data) => {
+      // An untimed quiz has no duration to check against the window.
+      if (data.timed === false) return true;
       // Only validate if all time fields and durationMinutes are provided
       if (
         data.startDate &&
@@ -84,7 +105,23 @@ const formSchema = z
         "Duration cannot exceed the total time window between start and end dates/times.",
       path: ["durationMinutes"], // Targets the error to this field
     }
-  );
+  )
+  .refine(
+    (data) => {
+      if (data.difficultyMode !== "mixed") return true;
+      if (!data.difficultyMix) return false;
+      const { easy, moderate, hard } = data.difficultyMix;
+      return easy + moderate + hard === data.totalQuizQuestions;
+    },
+    {
+      message: "Difficulty counts must add up to the total number of questions",
+      path: ["difficultyMix"],
+    }
+  )
+  .refine((data) => data.timed !== true || data.durationMinutes !== undefined, {
+    message: "Set a duration or turn the timer off",
+    path: ["durationMinutes"],
+  });
 
 export type FormSchemaType = z.infer<typeof formSchema>;
 
