@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { queryClient } from "@/lib/queryClient";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
+import posthog from "posthog-js";
 import { User } from "@/types/User";
 import { PaymentPlan } from "@/types/PaymentPlan";
 import { OrganizationData } from "@/types/OrganizationData";
@@ -79,6 +80,7 @@ const useStore = create<State>()(
             expandedRowId: null,
           });
           localStorage.removeItem("storage");
+          posthog.reset();
         },
       }),
       {

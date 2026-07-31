@@ -1,6 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/axios";
+import { useEffect } from "react";
+import { usePostHog } from '@posthog/react'
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,6 +18,13 @@ import { ChevronLeft, GraduationCap, FileText, CheckCircle2, Info } from "lucide
 const StudentResultDetails = () => {
     const { resultId } = useParams();
     const navigate = useNavigate();
+    const posthog = usePostHog();
+
+    useEffect(() => {
+      posthog.capture('student_result_viewed', {
+        result_id: resultId,
+      });
+    }, []);
 
     const { data: result, isLoading, isError } = useQuery({
         queryKey: ["result", resultId],
