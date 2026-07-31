@@ -2,6 +2,8 @@ import api from "@/lib/axios";
 import useStore from "@/state";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { usePostHog } from '@posthog/react'
 import {
   Card,
   CardContent,
@@ -14,6 +16,11 @@ import {
 const StudentDashboard = () => {
     const navigate = useNavigate();
     const { user } = useStore();
+    const posthog = usePostHog();
+
+    useEffect(() => {
+      posthog.capture('student_dashboard_viewed');
+    }, []);
     const { data: resultsResponse, isLoading, isError, error } = useQuery({
         queryKey: ["results", user?._id],
         queryFn: async () => await api.get(`/results/all`),

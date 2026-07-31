@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { ErrorBoundary } from "react-error-boundary";
 import Error from "./components/Error.jsx";
 import axios from "axios";
+import posthog from 'posthog-js';
 import { BASE_URL } from "./requests/constants";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "./components/ThemeProvider";
@@ -29,7 +30,12 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Toaster />
-        <ErrorBoundary fallback={<Error />}>
+        <ErrorBoundary fallback={<Error />} onError={(error, info) => {
+          posthog.capture('frontend_error', {
+            error: error.message,
+            componentStack: info.componentStack?.slice(0, 500),
+          });
+        }}>
           <ThemeProvider>
             <PostHogProvider apiKey={import.meta.env.VITE_POSTHOG_KEY} options={options}>
               <App />

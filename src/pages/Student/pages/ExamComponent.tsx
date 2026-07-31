@@ -14,12 +14,14 @@ import toast from "react-hot-toast";
 import { Loader2Icon } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { autoSaveAttempt } from "@/requests/exam";
+import { usePostHog } from '@posthog/react'
 
 /** Ascending, so the first match is the tightest threshold still in play. */
 const ANNOUNCE_THRESHOLDS = [60, 300, 600];
 
 const ExamComponent = () => {
   const nav = useNavigate();
+  const posthog = usePostHog();
   const {
     state: { courseId, uniqueCode },
   } = useLocation();
@@ -59,6 +61,12 @@ const ExamComponent = () => {
       }),
     onSuccess: () => {
       setState("submitted");
+      posthog.capture('exam_submitted', {
+        exam_id: previewData?.examId,
+        subject: previewData?.subject,
+        attempt_id: attemptIdRef.current,
+        question_count: fullExam?.questions?.length,
+      });
       toast.success("Exam submitted successfully!");
     },
     onError: (error: any) => {
@@ -76,6 +84,10 @@ const ExamComponent = () => {
       setAttemptId(newAttemptId);
       setState("in-progress");
       toast.success("Exam started!");
+      posthog.capture('exam_started', {
+        exam_id: previewData?.examId,
+        subject: previewData?.subject,
+      });
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || "Failed to start exam";

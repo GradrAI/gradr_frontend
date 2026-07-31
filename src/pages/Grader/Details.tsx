@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Student } from "@/types/Student";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -51,6 +51,13 @@ const Details = () => {
     },
   } = useLocation();
 
+
+  useEffect(() => {
+    posthog.capture('grading_result_viewed', {
+      result_id: _id,
+      status: latestResult?.result?.status,
+    });
+  }, []);
   const [searchParams] = useSearchParams();
 
   const courseId = searchParams.get("courseId");
@@ -126,6 +133,7 @@ const Details = () => {
         if (data.success) {
           posthog.capture("score_edited", { 
             result_id: _id, 
+            original_score: displayScore,
             new_score: values.score, 
             max_score: categoryData.maxScoreAttainable, 
             course_id: courseId, 
