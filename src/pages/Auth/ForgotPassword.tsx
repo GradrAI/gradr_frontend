@@ -39,7 +39,7 @@ const ForgotPassword = () => {
     },
     onSuccess: (_, variables) => {
       toast.success("Password reset OTP sent to your email.");
-      nav(`/auth/reset-password?email=${variables.values.email}`);
+      nav(`/auth/reset-password?email=${encodeURIComponent(variables.values.email)}`);
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.error || "Error sending reset OTP");

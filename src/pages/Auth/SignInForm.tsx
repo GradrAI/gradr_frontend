@@ -134,7 +134,11 @@ const SignInForm = () => {
         
         if (errorData?.isPending) {
           toast.error(errorData.error || "Please verify your email.");
-          return nav(`/auth/verify-otp?email=${form.getValues().email}`);
+          // `resend=1` triggers a fresh code on the verify page so the user
+          // isn't returned to a stale one.
+          return nav(
+            `/auth/verify-otp?email=${encodeURIComponent(form.getValues().email)}&resend=1`
+          );
         }
 
         if (errorData?.useGoogle) {

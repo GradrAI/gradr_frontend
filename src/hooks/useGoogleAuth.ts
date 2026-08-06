@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { usePostHog } from "@posthog/react";
 import useStore from "@/state";
+import { isAxiosError } from "axios";
 import api from "@/lib/axios";
 import { User } from "@/types/User";
 import toast from "react-hot-toast";
@@ -22,6 +24,7 @@ type GoogleAuthResponse = {
 
 export function useGoogleAuth(code: string | null) {
   const navigate = useNavigate();
+  const posthog = usePostHog();
   const { accountType, studentData, saveUser, saveUserToken, setCode } = useStore();
 
   const mutation = useMutation<GoogleAuthResponse, Error, string>({
@@ -36,8 +39,13 @@ export function useGoogleAuth(code: string | null) {
       const { data: { token, user, needsPassword, needsKYC, needsPayment, isPending, email } } = response;
 
       if (isPending) {
+        posthog?.capture("google_auth_pending", { account_type: accountType });
         toast.error(response.message || "Please verify your email.");
-        navigate(`/auth/verify-otp?email=${email}`);
+        // `resend=1` tells the verify page to send a fresh code on arrival so
+        // the user isn't bounced back onto a stale one.
+        navigate(
+          `/auth/verify-otp?email=${encodeURIComponent(email ?? "")}&resend=1`
+        );
         return;
       }
 
@@ -45,6 +53,13 @@ export function useGoogleAuth(code: string | null) {
         saveUser(user);
         saveUserToken(token);
         if (code) setCode(code);
+
+        posthog?.capture("google_auth_succeeded", {
+          role: user.role,
+          account_type: accountType,
+          needs_kyc: needsKYC,
+          needs_payment: needsPayment,
+        });
         
         // Unified onboarding flow for all roles
         if (needsPassword) {
@@ -69,12 +84,27 @@ export function useGoogleAuth(code: string | null) {
           navigate("/app/assessments", { replace: true });
         }
       }
+
+      // Unexpected: response succeeded but carried no user/token and wasn't
+      // a pending-account redirect either. Capture so the funnel doesn't leak.
+      posthog?.capture("google_auth_no_data", {
+        account_type: accountType,
+        has_user: !!user,
+        has_token: !!token,
+      });
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.error("Google auth mutation failed:", err);
-      if (err.response) {
+      if (isAxiosError(err) && err.response) {
         console.error("Error response data:", err.response.data);
       }
+      posthog?.capture("google_auth_failed", {
+        error: isAxiosError(err)
+          ? err.response?.data?.error || err.message
+          : err instanceof Error
+            ? err.message
+            : "Unknown error",
+      });
     },
   });
 

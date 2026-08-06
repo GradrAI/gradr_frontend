@@ -20,7 +20,10 @@ import { Loader2Icon, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
 const formSchema = z.object({
-  otp: z.string().length(6, "OTP must be exactly 6 characters"),
+  otp: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Enter the 6-digit code sent to your email"),
   newPassword: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Please confirm your password"),
 }).refine((data) => data.newPassword === data.confirmPassword, {
@@ -91,7 +94,13 @@ const ResetPassword = () => {
               <FormItem>
                 <FormLabel>One-Time Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="123456" maxLength={6} {...field} />
+                  <Input
+                    placeholder="123456"
+                    maxLength={6}
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

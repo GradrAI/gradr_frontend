@@ -12,21 +12,48 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import useStore from "@/state";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2Icon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { usePostHog } from "@posthog/react";
+
+const RESEND_COOLDOWN_SECONDS = 30;
 
 const formSchema = z.object({
-  otp: z.string().length(6, "OTP must be exactly 6 characters"),
+  // Forgiving by design: trim whitespace and constrain to 6 digits so a pasted
+  // code with stray spaces or a non-numeric character gives a clear message
+  // instead of the old bare `.length(6)` rejection.
+  otp: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Enter the 6-digit code sent to your email"),
 });
 
 const VerifyOtp = () => {
   const nav = useNavigate();
+  const posthog = usePostHog();
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
+  // A pending-account redirect (from Google or password sign-in) drops the user
+  // back here holding a stale code. Those sites tag the URL with `?resend=1` so
+  // we can send a fresh code on arrival instead of leaving them with a dead one.
+  const cameFromPendingRedirect = searchParams.get("resend") === "1";
   const { saveUser, saveUserToken } = useStore();
+
+  const attemptCountRef = useRef(0);
+  const autoResendFiredRef = useRef(false);
+
+  // Restore cooldown from sessionStorage so a remount doesn't reset the gate.
+  const [cooldown, setCooldown] = useState(() => {
+    const stored = sessionStorage.getItem("otp_resend_ts");
+    if (!stored) return 0;
+    const elapsed = Math.floor((Date.now() - Number(stored)) / 1000);
+    const remaining = RESEND_COOLDOWN_SECONDS - elapsed;
+    return remaining > 0 ? remaining : 0;
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,21 +74,73 @@ const VerifyOtp = () => {
     mutationFn: () => {
       return axios.post(`/auth/resend-otp`, { email });
     },
-    onSuccess: () => toast.success("OTP sent to your email."),
-    onError: () => toast.error("Failed to resend OTP."),
+    onSuccess: () => {
+      toast.success("A new code is on its way to your email.");
+      sessionStorage.setItem("otp_resend_ts", String(Date.now()));
+      setCooldown(RESEND_COOLDOWN_SECONDS);
+      posthog?.capture("otp_resend_succeeded");
+    },
+    onError: (error: unknown) => {
+      const status = isAxiosError(error) ? error.response?.status : undefined;
+      if (status === 429) {
+        const msg =
+          (isAxiosError(error) && error.response?.data?.error) ||
+          "Too many resend requests. Please wait before trying again.";
+        toast.error(msg);
+        // Start a cooldown even on 429 so the button stays disabled.
+        sessionStorage.setItem("otp_resend_ts", String(Date.now()));
+        setCooldown(RESEND_COOLDOWN_SECONDS);
+      } else {
+        toast.error("Failed to resend OTP.");
+      }
+      posthog?.capture("otp_resend_failed", {
+        rate_limited: status === 429,
+      });
+    },
   });
 
+  const requestNewCode = (automatic: boolean) => {
+    posthog?.capture("otp_resend_requested", { automatic });
+    resendMutate();
+  };
+
+  // Tick the resend cooldown down to zero.
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
+
+  // Break the closed loop: when a pending-account redirect lands here, the code
+  // the user is holding is stale, so request a fresh one automatically (once).
+  useEffect(() => {
+    if (cameFromPendingRedirect && email && !autoResendFiredRef.current) {
+      autoResendFiredRef.current = true;
+      requestNewCode(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cameFromPendingRedirect, email]);
+
+  useEffect(() => {
+    if (!email) nav("/auth/sign-in");
+  }, [email, nav]);
+
   if (!email) {
-    nav("/auth/sign-in");
     return null;
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    attemptCountRef.current += 1;
+    const attempt = attemptCountRef.current;
+    posthog?.capture("otp_verification_attempted", { attempt });
+
     verifyMutate(values, {
       onSuccess: (response) => {
         const { user, token, needsPassword, needsKYC, needsPayment } = response.data;
         saveUser(user);
         saveUserToken(token);
+
+        posthog?.capture("otp_verification_succeeded", { attempts: attempt });
 
         toast.success("Email verified successfully!");
 
@@ -71,8 +150,17 @@ const VerifyOtp = () => {
         else if (user.role === "student") nav("/student/dashboard");
         else nav("/app/assessments");
       },
-      onError: (error: any) => {
-        toast.error(error?.response?.data?.error || "Invalid OTP");
+      onError: (error: unknown) => {
+        const message = isAxiosError(error)
+          ? error.response?.data?.error || "Invalid or expired OTP"
+          : "Invalid or expired OTP";
+        posthog?.capture("otp_verification_failed", { attempt, error: message });
+        toast.error(message);
+
+        // The submitted code is dead — clear it and refocus so the user isn't
+        // left staring at a stale value they'll only retype.
+        form.resetField("otp");
+        form.setFocus("otp");
       },
     });
   }
@@ -86,6 +174,13 @@ const VerifyOtp = () => {
         </p>
       </div>
 
+      {cameFromPendingRedirect && (
+        <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800">
+          Your previous code may have expired, so we've sent a fresh 6-digit code
+          to your email. Enter the newest one below.
+        </div>
+      )}
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField
@@ -95,7 +190,14 @@ const VerifyOtp = () => {
               <FormItem>
                 <FormLabel>One-Time Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="123456" maxLength={6} {...field} />
+                  <Input
+                    placeholder="123456"
+                    maxLength={6}
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    autoFocus
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -116,13 +218,19 @@ const VerifyOtp = () => {
       <div className="text-center mt-4">
         <Button
           variant="link"
-          disabled={isResending}
-          onClick={() => resendMutate()}
+          disabled={isResending || cooldown > 0}
+          onClick={() => requestNewCode(false)}
           className="text-sm"
         >
           {isResending ? <Loader2Icon className="animate-spin w-4 h-4 mr-2" /> : null}
-          Resend OTP
+          {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend OTP"}
         </Button>
+      </div>
+
+      <div className="text-center text-sm text-gray-600">
+        <Link to="/auth/sign-in" className="text-primary hover:underline font-medium">
+          Back to sign in
+        </Link>
       </div>
     </div>
   );
