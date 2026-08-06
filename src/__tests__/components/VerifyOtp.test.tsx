@@ -27,23 +27,23 @@ vi.mock("@/state", () => ({
   }),
 }));
 
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: false } },
-});
+const createQueryClient = () =>
+  new QueryClient({ defaultOptions: { queries: { retry: false } } });
 
-const renderAt = (initialEntry: string) =>
-  render(
+const renderAt = (initialEntry: string) => {
+  const queryClient = createQueryClient();
+  return render(
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[initialEntry]}>
         <VerifyOtp />
       </MemoryRouter>
     </QueryClientProvider>
   );
+};
 
 describe("VerifyOtp Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    queryClient.clear();
   });
 
   it("rejects a non-numeric code with a clear message", async () => {

@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { usePostHog } from "@posthog/react";
 import useStore from "@/state";
+import { isAxiosError } from "axios";
 import api from "@/lib/axios";
 import { User } from "@/types/User";
 import toast from "react-hot-toast";
@@ -83,14 +84,26 @@ export function useGoogleAuth(code: string | null) {
           navigate("/app/assessments", { replace: true });
         }
       }
+
+      // Unexpected: response succeeded but carried no user/token and wasn't
+      // a pending-account redirect either. Capture so the funnel doesn't leak.
+      posthog?.capture("google_auth_no_data", {
+        account_type: accountType,
+        has_user: !!user,
+        has_token: !!token,
+      });
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.error("Google auth mutation failed:", err);
-      if (err.response) {
+      if (isAxiosError(err) && err.response) {
         console.error("Error response data:", err.response.data);
       }
       posthog?.capture("google_auth_failed", {
-        error: err?.response?.data?.error || err?.message,
+        error: isAxiosError(err)
+          ? err.response?.data?.error || err.message
+          : err instanceof Error
+            ? err.message
+            : "Unknown error",
       });
     },
   });

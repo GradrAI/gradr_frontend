@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import useStore from "@/state";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -45,7 +45,15 @@ const VerifyOtp = () => {
 
   const attemptCountRef = useRef(0);
   const autoResendFiredRef = useRef(false);
-  const [cooldown, setCooldown] = useState(0);
+
+  // Restore cooldown from sessionStorage so a remount doesn't reset the gate.
+  const [cooldown, setCooldown] = useState(() => {
+    const stored = sessionStorage.getItem("otp_resend_ts");
+    if (!stored) return 0;
+    const elapsed = Math.floor((Date.now() - Number(stored)) / 1000);
+    const remaining = RESEND_COOLDOWN_SECONDS - elapsed;
+    return remaining > 0 ? remaining : 0;
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -68,12 +76,26 @@ const VerifyOtp = () => {
     },
     onSuccess: () => {
       toast.success("A new code is on its way to your email.");
+      sessionStorage.setItem("otp_resend_ts", String(Date.now()));
       setCooldown(RESEND_COOLDOWN_SECONDS);
       posthog?.capture("otp_resend_succeeded");
     },
-    onError: () => {
-      toast.error("Failed to resend OTP.");
-      posthog?.capture("otp_resend_failed");
+    onError: (error: unknown) => {
+      const status = isAxiosError(error) ? error.response?.status : undefined;
+      if (status === 429) {
+        const msg =
+          (isAxiosError(error) && error.response?.data?.error) ||
+          "Too many resend requests. Please wait before trying again.";
+        toast.error(msg);
+        // Start a cooldown even on 429 so the button stays disabled.
+        sessionStorage.setItem("otp_resend_ts", String(Date.now()));
+        setCooldown(RESEND_COOLDOWN_SECONDS);
+      } else {
+        toast.error("Failed to resend OTP.");
+      }
+      posthog?.capture("otp_resend_failed", {
+        rate_limited: status === 429,
+      });
     },
   });
 
@@ -128,9 +150,10 @@ const VerifyOtp = () => {
         else if (user.role === "student") nav("/student/dashboard");
         else nav("/app/assessments");
       },
-      onError: (error: any) => {
-        const message =
-          error?.response?.data?.error || "Invalid or expired OTP";
+      onError: (error: unknown) => {
+        const message = isAxiosError(error)
+          ? error.response?.data?.error || "Invalid or expired OTP"
+          : "Invalid or expired OTP";
         posthog?.capture("otp_verification_failed", { attempt, error: message });
         toast.error(message);
 
