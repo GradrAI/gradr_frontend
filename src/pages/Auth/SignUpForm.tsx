@@ -129,7 +129,7 @@ const SignUpForm = () => {
           });
 
           toast.success(data.data.message || "Account created! Please verify your email.");
-          nav(`/auth/verify-otp?email=${email}`);
+          nav(`/auth/verify-otp?email=${encodeURIComponent(email)}`);
         }
       },
       onError: (error: any) => {
