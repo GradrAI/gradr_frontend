@@ -1,23 +1,15 @@
 import { ErrorResponse } from "@/types/ErrorResponse";
-import { useSearchParams, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AxiosError } from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "../../components/data-table";
 import { columns } from "./columns";
 import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/axios";
-import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, PenLine, AlertCircle } from "lucide-react";
 
 const Assessments = () => {
-  const [searchParams] = useSearchParams();
-
-  const code = searchParams.get("code");
-
-  // Handles token exchange, saving user, navigation
-  const googleAuthMutation = useGoogleAuth(code);
-
   // 1. Fetch the active period for this organization
   const {
     data: activePeriod,
@@ -29,7 +21,6 @@ const Assessments = () => {
       const res = await api.get("/periods/active");
       return res.data.data;
     },
-    enabled: !code,
   });
 
   // 2. Fetch courses scoped to the active period
@@ -45,17 +36,8 @@ const Assessments = () => {
       const res = await api.get(`/courses/users?periodId=${activePeriod._id}`);
       return res.data.data;
     },
-    enabled: !code && !!activePeriod?._id,
+    enabled: !!activePeriod?._id,
   });
-
-  if (code || googleAuthMutation.isPending) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        <p className="text-gray-500 animate-pulse">Authenticating securely...</p>
-      </div>
-    );
-  }
 
   // No active period configured
   if (isPeriodError) {

@@ -8,9 +8,11 @@ import { useGoogleAuth } from "@/hooks/useGoogleAuth";
  */
 const GoogleCallback = () => {
   const location = useLocation();
-  const code = new URLSearchParams(location.search).get("code");
+  const params = new URLSearchParams(location.search);
+  const code = params.get("code");
+  const state = params.get("state");
 
-  useGoogleAuth(code);
+  useGoogleAuth(code, state);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-4">

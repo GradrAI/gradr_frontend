@@ -14,6 +14,10 @@ import toast from "react-hot-toast";
 import { useEffect, useMemo, useState } from "react";
 import useStore from "@/state";
 import api from "@/lib/axios";
+import {
+  isGoogleSheetsReauthError,
+  redirectToGoogleSheetsAuth,
+} from "@/lib/googleSheetsAuth";
 
 const Results = () => {
   const nav = useNavigate();
@@ -62,6 +66,12 @@ const Results = () => {
   useEffect(() => {
     if (isLoading) setButtonText("Exporting...");
     if (isError) {
+      if (isGoogleSheetsReauthError(error)) {
+        toast.error("Connect Google Sheets to export.");
+        void redirectToGoogleSheetsAuth();
+        return;
+      }
+
       toast.error("An error occurred");
       setButtonText("Retry");
     }

@@ -1,6 +1,7 @@
 import { useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import api from "@/lib/axios";
 import { formatNumber } from "@/lib/formatNumber";
 import type { PaymentPlan } from "@/types/PaymentPlan";
@@ -43,11 +44,13 @@ import { Badge } from "@/components/ui/badge";
 import "./customMask.css";
 import useStore from "@/state";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 import BackedBy from "@/components/landing/BackedBy";
 import ContactForm from "@/components/landing/ContactForm";
 
 const Landing = () => {
+  const { t } = useTranslation();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -67,69 +70,69 @@ const Landing = () => {
     {
       id: "schools",
       icon: School,
-      title: "Schools & Universities",
-      description: "Complete digital transformation for institutional assessments.",
-      points: ["Bulk grading of paper scripts", "Class performance tracking", "LMS integration"],
+      title: t("audience.schools.title"),
+      description: t("audience.schools.description"),
+      points: [t("audience.schools.point1"), t("audience.schools.point2"), t("audience.schools.point3")],
     },
     {
       id: "corporate",
       icon: Briefcase,
-      title: "Corporate Organisations",
-      description: "Streamline recruitment and internal certification testing.",
-      points: ["Proctored online assessments", "Instant candidate screening", "Knowledge, Skills, and Aptitude Testing"],
+      title: t("audience.corporate.title"),
+      description: t("audience.corporate.description"),
+      points: [t("audience.corporate.point1"), t("audience.corporate.point2"), t("audience.corporate.point3")],
     },
     {
       id: "professional",
       icon: GraduationCap,
-      title: "Professional Bodies",
-      description: "Secure, large-scale certification exam delivery and grading.",
-      points: ["Standardised exam delivery", "Hybrid paper/digital workflows", "High-integrity proctoring"],
+      title: t("audience.professional.title"),
+      description: t("audience.professional.description"),
+      points: [t("audience.professional.point1"), t("audience.professional.point2"), t("audience.professional.point3")],
     },
     {
       id: "solo",
       icon: Users,
-      title: "Solo Tutors & TAs",
-      description: "Save time and provide better feedback to your students.",
-      points: ["Quick affordable grading", "Detailed student feedback", "Personalised analytics"],
+      title: t("audience.solo.title"),
+      description: t("audience.solo.description"),
+      points: [t("audience.solo.point1"), t("audience.solo.point2"), t("audience.solo.point3")],
     },
     {
       id: "students",
       icon: Brain,
-      title: "Students & Learners",
-      description: "Practice for JAMB UTME, WASSCE and more with AI-guided mock tests.",
-      points: ["Smart Mock Exams", "AI Explanations & Concept Tags", "Performance Tracking"],
+      title: t("audience.students.title"),
+      description: t("audience.students.description"),
+      points: [t("audience.students.point1"), t("audience.students.point2"), t("audience.students.point3")],
     },
   ];
 
   const solutions = [
     {
       icon: Scan,
-      title: "AI Paper Grading",
-      description: "Upload scanned handwritten scripts and get instant AI-powered grades and feedback.",
+      title: t("solutions.aiPaperGrading.title"),
+      description: t("solutions.aiPaperGrading.description"),
       color: "from-primary to-primary",
     },
     {
       icon: FileText,
-      title: "CBT Generation",
-      description: "Create, distribute, and manage digital assessments with ease.",
+      title: t("solutions.cbtGeneration.title"),
+      description: t("solutions.cbtGeneration.description"),
       color: "from-brand-success-500 to-brand-success-600",
     },
     {
       icon: MonitorCheck,
-      title: "Online Proctoring",
-      description: "AI-monitored sessions to ensure examiner integrity and prevent malpractice.",
+      title: t("solutions.onlineProctoring.title"),
+      description: t("solutions.onlineProctoring.description"),
       color: "from-secondary to-secondary",
     },
     {
       icon: Brain,
-      title: "SmartPrep Mode",
-      description: "AI-powered mock exams providing personalized pedagogical feedback for learners.",
+      title: t("solutions.smartPrep.title"),
+      description: t("solutions.smartPrep.description"),
       color: "from-purple-500 to-indigo-600",
     },
     {
       icon: PieChart,
-      title: "Advanced Analytics",
-      description: "Real-time performance reports for students, educators, and administrators.",
+      title: t("solutions.analytics.title"),
+      description: t("solutions.analytics.description"),
       color: "from-orange-500 to-amber-600",
     },
   ];
@@ -224,69 +227,23 @@ const Landing = () => {
     },
   ];
 
-  const faqs = [
-    {
-      question: "How accurate is AI grading compared to manual grading?",
-      answer:
-        "Our AI achieves 95%+ accuracy rates. Since 6 in 10 human-awarded grades often disagree across different teachers, GradrAI provides a more consistent, bias-free standard for student work.",
-    },
-    {
-      question: "What types of tests can GradrAI handle?",
-      answer:
-        "GradrAI can grade various formats including multiple choice, short answers, essays, mathematical problems, and structured responses across different subjects.",
-    },
-    {
-      question: "Is my student data secure?",
-      answer:
-        "Yes, we use enterprise-grade encryption and comply with educational data privacy standards. Your data is never shared with third parties.",
-    },
-    {
-      question: "How long does it take to grade papers?",
-      answer:
-        "Most assessments are graded within 2-5 minutes, regardless of the number of students or complexity of questions.",
-    },
-    {
-      question: "Can I customize grading criteria?",
-      answer:
-        "Absolutely! You can set custom marking schemes, rubrics, and weighting for different question types to match your teaching style.",
-    },
-    {
-      question: "Do you offer training and support?",
-      answer:
-        "Yes, we provide comprehensive onboarding, training sessions, and ongoing support to ensure you get the most out of GradrAI.",
-    },
-    {
-      question: "Do my NGN credits expire?",
-      answer:
-        "No. NGN plans are prepaid credit grants. Unlike traditional monthly recurring subscriptions, unused NGN credits roll over to the next academic period or semester, so you never lose what you pay for.",
-    },
-    {
-      question: "How do USD plans work?",
-      answer:
-        "USD plans run on international card processing via Creem. They are standard recurring subscription models suitable for international institutions, providing seamless automatic renewals.",
-    },
-    {
-      question: "Do I get billed every month?",
-      answer:
-        "For Nigerian customers, GradrAI uses prepaid credit grants through Paystack. You buy a plan or pack upfront, credits roll over through the relevant semester or academic year, and you top up when you need more. International customers can use Creem for USD subscriptions and credit packs, with credits applied only after verified payment webhooks.",
-    },
-  ];
+  const faqs = (t("faq.items", { returnObjects: true }) as Array<{ question: string; answer: string }>);
 
   const gradingStats = [
     {
       icon: <Clock className="w-7 h-7 text-primary" />,
-      title: "Save 20+ Hours / Period",
-      description: "Reclaim over 20 hours worth of your teaching time every exam season.",
+      title: t("hero.stats.saveHours.title"),
+      description: t("hero.stats.saveHours.description"),
     },
     {
       icon: <Brain className="w-7 h-7 text-secondary" />,
-      title: "8% Grade Improvement",
-      description: "Instant feedback prevents learning loss, directly improving exam performance.",
+      title: t("hero.stats.gradeImprovement.title"),
+      description: t("hero.stats.gradeImprovement.description"),
     },
     {
       icon: <Shield className="w-7 h-7 text-yellow-500" />,
-      title: "100% Fairness & Integrity",
-      description: "Eliminate the 60% variance found in manual, multi-teacher human grading.",
+      title: t("hero.stats.fairness.title"),
+      description: t("hero.stats.fairness.description"),
     },
   ];
 
@@ -313,30 +270,31 @@ const Landing = () => {
                   onClick={() => scrollToSection(featuresRef)}
                   className="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
                 >
-                  Solutions
+                  {t("nav.solutions")}
                 </button>
                 <button
                   onClick={() => scrollToSection(audienceRef)}
                   className="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
                 >
-                  Who it's for
+                  {t("nav.whoItsFor")}
                 </button>
                 <button
                   onClick={() => scrollToSection(pricingRef)}
                   className="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
                 >
-                  Pricing
+                  {t("nav.pricing")}
                 </button>
                 <button
                   onClick={() => scrollToSection(contactRef)}
                   className="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
                 >
-                  Contact
+                  {t("nav.contact")}
                 </button>
               </div>
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
+              <LanguageToggle />
               <ThemeToggle />
               <Button
                 variant="ghost"
@@ -345,23 +303,24 @@ const Landing = () => {
                   nav(`auth/sign-in`);
                 }}
               >
-                Sign In
+                {t("nav.signIn")}
               </Button>
               <Button
                 variant="outline"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 onClick={() => nav("auth/account-type")}
               >
-                Sign Up
+                {t("nav.signUp")}
               </Button>
             </div>
 
             <div className="md:hidden flex items-center space-x-2">
+              <LanguageToggle />
               <ThemeToggle />
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="text-muted-foreground hover:text-primary p-2"
-                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-label={mobileMenuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
                 aria-expanded={mobileMenuOpen}
               >
                 {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -378,25 +337,25 @@ const Landing = () => {
                 onClick={() => scrollToSection(featuresRef)}
                 className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary w-full text-left"
               >
-                Solutions
+                {t("nav.solutions")}
               </button>
               <button
                 onClick={() => scrollToSection(audienceRef)}
                 className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary w-full text-left"
               >
-                Who it's for
+                {t("nav.whoItsFor")}
               </button>
               <button
                 onClick={() => scrollToSection(pricingRef)}
                 className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary w-full text-left"
               >
-                Pricing
+                {t("nav.pricing")}
               </button>
               <button
                 onClick={() => scrollToSection(contactRef)}
                 className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary w-full text-left"
               >
-                Contact
+                {t("nav.contact")}
               </button>
               <div className="pt-4 pb-3 border-t border-border">
                 <Button
@@ -405,7 +364,7 @@ const Landing = () => {
                     nav(`auth/sign-in`);
                   }}
                 >
-                  Sign In
+                  {t("nav.signIn")}
                 </Button>
                 <Button
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-2"
@@ -413,7 +372,7 @@ const Landing = () => {
                     nav(`auth/account-type`);
                   }}
                 >
-                  Sign Up
+                  {t("nav.signUp")}
                 </Button>
               </div>
             </div>
@@ -426,17 +385,16 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
             <Badge className="mb-4 bg-brand-100 text-brand-700 hover:bg-brand-100 dark:bg-brand-900/50 dark:text-brand-300 border-0 px-4 py-1">
-              End-to-End Assessment Platform
+              {t("hero.badge")}
             </Badge>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-foreground mb-8 tracking-tight">
-              Generate, Deliver, Grade,{" "}
+              {t("hero.heading")}{" "}
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Analyse.
+                {t("hero.headingHighlight")}
               </span>
             </h1>
             <p className="text-xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
-              Empowering educators, schools, and students with a unified infrastructure for 
-              paper-based exams, CBTs, and AI-driven mock tests. Trusted by institutions worldwide to deliver global-standard assessment grading. 
+              {t("hero.body")}
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Button
@@ -444,7 +402,7 @@ const Landing = () => {
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6 text-xl rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105"
                 onClick={() => nav(`auth/account-type`)}
               >
-                Start Free Trial
+                {t("hero.startTrial")}
               </Button>
               <Button
                 size="lg"
@@ -457,7 +415,7 @@ const Landing = () => {
                   )
                 }
               >
-                Book a Demo
+                {t("hero.bookDemo")}
               </Button>
             </div>
           </div>
@@ -491,20 +449,19 @@ const Landing = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6 leading-tight">
-                Traditional Assessments are <br />
-                <span className="text-primary">Broken and Disconnected.</span>
+                {t("problem.heading")} <br />
+                <span className="text-primary">{t("problem.headingHighlight")}</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                From manual grading bottlenecks to high-cost digital infrastructure, maintaining 
-                assessment integrity and speed has never been harder for modern institutions.
+                {t("problem.body")}
               </p>
               <div className="space-y-4">
                 {[
-                  "6 in 10 grades disagree across different human teachers",
-                  "Delayed feedback reduces student performance by 8%",
-                  "High administrative burden (15+ mins per script)",
-                  "Expensive and rigid CBT infrastructure",
-                  "Disconnected tools for paper and digital exams",
+                  t("problem.points.disagree"),
+                  t("problem.points.delayed"),
+                  t("problem.points.burden"),
+                  t("problem.points.expensive"),
+                  t("problem.points.disconnected"),
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <X className="h-5 w-5 text-brand-danger-500" />
@@ -522,8 +479,8 @@ const Landing = () => {
                       <Clock className="h-6 w-6 text-brand-danger-600 dark:text-brand-danger-400" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-foreground">Manual Bottleneck</h4>
-                      <p className="text-sm text-muted-foreground">Average 15 mins per script</p>
+                      <h4 className="font-bold text-foreground">{t("problem.card.title")}</h4>
+                      <p className="text-sm text-muted-foreground">{t("problem.card.subtitle")}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
@@ -531,8 +488,8 @@ const Landing = () => {
                       <div className="h-full w-[85%] bg-brand-danger-500 rounded-full" />
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Admin Overload</span>
-                      <span className="font-bold text-brand-danger-500">85% High</span>
+                      <span className="text-muted-foreground">{t("problem.card.adminOverload")}</span>
+                      <span className="font-bold text-brand-danger-500">{t("problem.card.highPercent")}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -547,11 +504,10 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
-              One Platform, <span className="text-primary">Every Assessment.</span>
+              {t("solutions.heading")} <span className="text-primary">{t("solutions.headingHighlight")}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              GradrAI provides the infrastructure you need to generate, deliver, and grade 
-              assessments across the entire lifecycle.
+              {t("solutions.body")}
             </p>
           </div>
 
@@ -585,10 +541,10 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
-              Designed for Scale and <span className="text-primary">Impact.</span>
+              {t("audience.heading")} <span className="text-primary">{t("audience.headingHighlight")}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Whether you're a solo tutor or a national institution, GradrAI adapts to your workflow.
+              {t("audience.body")}
             </p>
           </div>
 
@@ -621,10 +577,10 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
-              Streamlined <span className="text-primary">Workflows.</span>
+              {t("howItWorks.heading")} <span className="text-primary">{t("howItWorks.headingHighlight")}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Choose the workflow that fits your assessment needs.
+              {t("howItWorks.body")}
             </p>
           </div>
 
@@ -634,22 +590,22 @@ const Landing = () => {
                 value="paper" 
                 className="w-full text-base sm:text-lg font-semibold rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary dark:data-[state=active]:bg-slate-700 py-3 sm:py-0 transition-all duration-200"
               >
-                Paper-based Grading
+                {t("howItWorks.paperTab")}
               </TabsTrigger>
               <TabsTrigger 
                 value="digital" 
                 className="w-full text-base sm:text-lg font-semibold rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary dark:data-[state=active]:bg-slate-700 py-3 sm:py-0 transition-all duration-200"
               >
-                Computer-based (CBT)
+                {t("howItWorks.digitalTab")}
               </TabsTrigger>
             </TabsList>
             <TabsContent value="paper">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {[
-                  { icon: Scan, title: "Scan", desc: "Scan handwritten scripts using any scanner or mobile app." },
-                  { icon: Upload, title: "Upload", desc: "Upload PDFs or images to our secure portal." },
-                  { icon: Brain, title: "AI Grade", desc: "AI reads handwriting and applies your marking scheme." },
-                  { icon: FileText, title: "Export", desc: "Review results and export to Sheets or LMS." },
+                  { icon: Scan, title: t("howItWorks.paper.scan.title"), desc: t("howItWorks.paper.scan.desc") },
+                  { icon: Upload, title: t("howItWorks.paper.upload.title"), desc: t("howItWorks.paper.upload.desc") },
+                  { icon: Brain, title: t("howItWorks.paper.aiGrade.title"), desc: t("howItWorks.paper.aiGrade.desc") },
+                  { icon: FileText, title: t("howItWorks.paper.export.title"), desc: t("howItWorks.paper.export.desc") },
                 ].map((step, i) => (
                   <div key={i} className="text-center px-4">
                     <div className="h-16 w-16 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
@@ -664,10 +620,10 @@ const Landing = () => {
             <TabsContent value="digital">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {[
-                  { icon: FileText, title: "Create", desc: "Generate quiz questions using AI or manual entry." },
-                  { icon: Globe, title: "Distribute", desc: "Share assessment links with students securely." },
-                  { icon: MonitorCheck, title: "Proctor", desc: "Monitor attempts with AI-powered integrity tools." },
-                  { icon: PieChart, title: "Analyse", desc: "Instant auto-grading and performance analytics." },
+                  { icon: FileText, title: t("howItWorks.digital.create.title"), desc: t("howItWorks.digital.create.desc") },
+                  { icon: Globe, title: t("howItWorks.digital.distribute.title"), desc: t("howItWorks.digital.distribute.desc") },
+                  { icon: MonitorCheck, title: t("howItWorks.digital.proctor.title"), desc: t("howItWorks.digital.proctor.desc") },
+                  { icon: PieChart, title: t("howItWorks.digital.analyse.title"), desc: t("howItWorks.digital.analyse.desc") },
                 ].map((step, i) => (
                   <div key={i} className="text-center px-4">
                     <div className="h-16 w-16 rounded-full bg-brand-success-100 dark:bg-brand-success-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
@@ -690,13 +646,13 @@ const Landing = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-3xl sm:text-5xl font-bold mb-8 leading-tight">
-                Built for the <span className="text-primary">Future of Global Education</span>.
+                {t("differentiation.heading")} <span className="text-primary">{t("differentiation.headingHighlight")}</span>.
               </h2>
               <div className="space-y-8">
                 {[
-                  { title: "Affordable & Accessible", desc: "Localized regional pricing tailored for equity, powered by global-scale technology." },
-                  { title: "Hybrid Workflow", desc: "The only platform that handles both paper scripts and digital tests seamlessly." },
-                  { title: "Mobile-First", desc: "Optimised for scenarios with limited high-end hardware infrastructure." },
+                  { title: t("differentiation.affordable.title"), desc: t("differentiation.affordable.desc") },
+                  { title: t("differentiation.hybrid.title"), desc: t("differentiation.hybrid.desc") },
+                  { title: t("differentiation.mobile.title"), desc: t("differentiation.mobile.desc") },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4">
                     <div className="shrink-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center mt-1">
@@ -711,18 +667,18 @@ const Landing = () => {
               </div>
             </div>
             <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-2xl">
-              <h3 className="text-2xl font-bold mb-6">Why GradrAI?</h3>
+              <h3 className="text-2xl font-bold mb-6">{t("differentiation.whyGradrAI")}</h3>
               <div className="space-y-4">
                 <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center group cursor-default">
-                  <span>Hybrid SaaS Model</span>
-                  <Badge variant="outline" className="text-primary border-primary">Unique</Badge>
+                  <span>{t("differentiation.hybridSaaS")}</span>
+                  <Badge variant="outline" className="text-primary border-primary">{t("differentiation.unique")}</Badge>
                 </div>
                 <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center">
-                  <span>Fraction of Global Competitor Cost</span>
+                  <span>{t("differentiation.fractionCost")}</span>
                   <CheckCircle2 className="h-5 w-5 text-brand-success-400" />
                 </div>
                 <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center">
-                  <span>Local Context Support</span>
+                  <span>{t("differentiation.localContext")}</span>
                   <CheckCircle2 className="h-5 w-5 text-brand-success-400" />
                 </div>
               </div>
@@ -736,10 +692,10 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
-              Flexible Pricing for <span className="text-primary">Everyone.</span>
+              {t("pricing.heading")} <span className="text-primary">{t("pricing.headingHighlight")}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Globally standard features with localized regional pricing options. Prepaid plans with rollover for local teams, and international USD checkout. NGN credits roll over through the relevant term or academic year — no forced monthly card billing.
+              {t("pricing.body")}
             </p>
           </div>
 
@@ -755,7 +711,7 @@ const Landing = () => {
                 }`}
               >
                 <CreditCard className="h-4 w-4" />
-                Prepaid Plans
+                {t("pricing.prepaidPlans")}
               </button>
               <button
                 onClick={() => setPricingTab("credit_packs")}
@@ -766,7 +722,7 @@ const Landing = () => {
                 }`}
               >
                 <Package className="h-4 w-4" />
-                Credit Packs
+                {t("pricing.creditPacks")}
               </button>
             </div>
           </div>
@@ -790,7 +746,7 @@ const Landing = () => {
                   >
                     {plan.highlight && (
                       <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-                        Most Popular
+                        {t("pricing.mostPopular")}
                       </div>
                     )}
                     <CardContent className="p-8 flex flex-col h-full">
@@ -800,7 +756,7 @@ const Landing = () => {
                       </p>
                       <div className="mb-6">
                         {plan.name.toLowerCase() === "enterprise" ? (
-                          <span className="text-3xl font-bold">Custom</span>
+                          <span className="text-3xl font-bold">{t("pricing.custom")}</span>
                         ) : (
                           <>
                             <div className="flex items-baseline gap-1">
@@ -819,7 +775,10 @@ const Landing = () => {
                       {plan.credits > 0 && (
                         <div className="mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
                           <span className="text-sm font-semibold text-primary">
-                            {plan.credits} credits{plan.duration === "lifetime" ? " (lifetime)" : (plan.displayInterval ? ` · ${plan.displayInterval}` : "")}
+                            {plan.duration === "lifetime"
+                              ? t("pricing.creditsLifetime", { count: plan.credits })
+                              : t("pricing.credits", { count: plan.credits })}
+                            {plan.displayInterval ? ` · ${plan.displayInterval}` : ""}
                           </span>
                         </div>
                       )}
@@ -833,7 +792,7 @@ const Landing = () => {
                         {plan.maxUsers > 1 && (
                           <li className="flex items-start gap-3 text-sm">
                             <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                            <span>Up to {plan.maxUsers} user seats</span>
+                            <span>{t("pricing.userSeats", { count: plan.maxUsers })}</span>
                           </li>
                         )}
                       </ul>
@@ -850,24 +809,24 @@ const Landing = () => {
                         }
                       >
                         {plan.name.toLowerCase() === "enterprise"
-                          ? "Contact Sales"
+                          ? t("pricing.contactSales")
                           : (plan.amount === 0 && plan.amountUsd === 0)
-                          ? "Get Started Free"
-                          : "Get Started"}
+                          ? t("pricing.getStartedFree")
+                          : t("pricing.getStarted")}
                       </Button>
                     </CardContent>
                   </Card>
                 ))}
               </div>
               <p className="text-center mt-12 text-muted-foreground">
-                Need more flexibility?{" "}
+                {t("pricing.flexibilityPrompt")}{" "}
                 <button
                   className="text-primary font-bold hover:underline"
                   onClick={() => setPricingTab("credit_packs")}
                 >
-                  Browse credit packs
+                  {t("pricing.browseCreditPacks")}
                 </button>{" "}
-                for pay-as-you-go grading.
+                {t("pricing.payAsYouGo")}
               </p>
             </>
           ) : (
@@ -876,8 +835,7 @@ const Landing = () => {
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
                   <p className="text-muted-foreground">
-                    One-time credit packs — no subscription required. Buy credits
-                    and use them at your own pace.
+                    {t("pricing.creditPacksIntro")}
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -892,7 +850,7 @@ const Landing = () => {
                     >
                       {pack.highlight && (
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-                          Best Value
+                          {t("pricing.bestValue")}
                         </div>
                       )}
                       <CardContent className="p-8 flex flex-col h-full">
@@ -911,10 +869,10 @@ const Landing = () => {
                         </div>
                         <div className="mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
                           <span className="text-sm font-semibold text-primary">
-                            {pack.credits} credits
+                            {t("pricing.credits", { count: pack.credits })}
                           </span>
                           <span className="text-xs text-muted-foreground ml-2">
-                            Valid for {pack.creditExpiry}
+                            {t("pricing.validFor", { expiry: pack.creditExpiry })}
                           </span>
                         </div>
                         <ul className="space-y-3 mb-8 flex-grow">
@@ -933,7 +891,7 @@ const Landing = () => {
                           }`}
                           onClick={() => nav(`auth/sign-in`)}
                         >
-                          Buy {pack.name}
+                          {t("pricing.buyPack", { name: pack.name })}
                         </Button>
                       </CardContent>
                     </Card>
@@ -941,12 +899,12 @@ const Landing = () => {
                 </div>
               </div>
               <p className="text-center mt-12 text-muted-foreground">
-                Prefer a bundled plan with more credits?{" "}
+                {t("pricing.bundledPrompt")}{" "}
                 <button
                   className="text-primary font-bold hover:underline"
                   onClick={() => setPricingTab("subscriptions")}
                 >
-                  View subscription plans
+                  {t("pricing.viewSubscriptionPlans")}
                 </button>.
               </p>
             </>
@@ -958,11 +916,10 @@ const Landing = () => {
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-primary text-primary-foreground">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl sm:text-5xl font-bold mb-8">
-            Ready to modernise your assessment lifecycle?
+            {t("cta.heading")}
           </h2>
           <p className="text-xl text-primary-foreground/80 mb-12 leading-relaxed">
-            Join the leading institutions worldwide using GradrAI to deliver faster, 
-            fairer, and more consistent grades.
+            {t("cta.body")}
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Button
@@ -970,7 +927,7 @@ const Landing = () => {
               className="bg-background text-primary hover:bg-background/90 px-10 py-7 text-xl font-bold rounded-2xl"
               onClick={() => nav(`auth/account-type`)}
             >
-              Start Free Trial
+              {t("cta.startTrial")}
             </Button>
             <Button
               size="lg"
@@ -983,7 +940,7 @@ const Landing = () => {
                 )
               }
             >
-              Request Demo
+              {t("cta.requestDemo")}
             </Button>
           </div>
         </div>
@@ -994,10 +951,10 @@ const Landing = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-4">
-              Common Questions
+              {t("faq.heading")}
             </h2>
             <p className="text-xl text-muted-foreground">
-              Everything you need to know about the platform.
+              {t("faq.body")}
             </p>
           </div>
 
@@ -1060,9 +1017,7 @@ const Landing = () => {
                 </span>
               </div>
               <p className="text-slate-400 mb-8 max-w-md text-lg leading-relaxed">
-                The next-generation assessment infrastructure for schools, 
-                professional bodies, and corporate organisations. Built for 
-                efficiency, integrity, and scale.
+                {t("footer.tagline")}
               </p>
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-slate-400">
@@ -1073,14 +1028,14 @@ const Landing = () => {
             </div>
 
             <div>
-              <h3 className="text-white font-bold mb-6 text-lg">Platform</h3>
+              <h3 className="text-white font-bold mb-6 text-lg">{t("footer.platform")}</h3>
               <ul className="space-y-4">
                 <li>
                   <button
                     className="text-slate-400 hover:text-white transition-colors"
                     onClick={() => scrollToSection(featuresRef)}
                   >
-                    Solutions
+                    {t("footer.solutions")}
                   </button>
                 </li>
                 <li>
@@ -1088,7 +1043,7 @@ const Landing = () => {
                     className="text-slate-400 hover:text-white transition-colors"
                     onClick={() => scrollToSection(howItWorksRef)}
                   >
-                    How it Works
+                    {t("footer.howItWorks")}
                   </button>
                 </li>
                 <li>
@@ -1096,14 +1051,14 @@ const Landing = () => {
                     className="text-slate-400 hover:text-white transition-colors"
                     onClick={() => scrollToSection(pricingRef)}
                   >
-                    Pricing
+                    {t("footer.pricing")}
                   </button>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="text-white font-bold mb-6 text-lg">Support</h3>
+              <h3 className="text-white font-bold mb-6 text-lg">{t("footer.support")}</h3>
               <ul className="space-y-4">
                 <li>
                   <button
@@ -1115,7 +1070,7 @@ const Landing = () => {
                       )
                     }
                   >
-                    Help Center
+                    {t("footer.helpCenter")}
                   </button>
                 </li>
                 <li>
@@ -1123,7 +1078,7 @@ const Landing = () => {
                     className="text-slate-400 hover:text-white transition-colors"
                     onClick={() => scrollToSection(contactRef)}
                   >
-                    Contact Us
+                    {t("footer.contactUs")}
                   </button>
                 </li>
               </ul>
@@ -1132,20 +1087,20 @@ const Landing = () => {
 
           <div className="border-t border-slate-900 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
             <p className="text-slate-500 text-sm">
-              © {new Date().getFullYear()} GradrAI. All rights reserved. Registered for the Nigerian & Global markets.
+              {t("footer.copyright", { year: new Date().getFullYear() })}
             </p>
             <div className="flex gap-8">
               <button
                 className="text-slate-500 hover:text-white text-sm transition-colors"
                 onClick={() => nav("privacy-policy")}
               >
-                Privacy
+                {t("footer.privacy")}
               </button>
               <button
                 className="text-slate-500 hover:text-white text-sm transition-colors"
                 onClick={() => nav("terms-of-service")}
               >
-                Terms
+                {t("footer.terms")}
               </button>
             </div>
           </div>

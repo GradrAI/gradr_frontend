@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from "react-i18next";
 
 const LogoImage = ({ src, alt, fallbackText, className }: { src: string; alt: string; fallbackText: string; className: string }) => {
   const [hasError, setHasError] = useState(false);
@@ -35,11 +36,12 @@ const partners = [
 ];
 
 const BackedBy = () => {
+  const { t } = useTranslation();
   return (
     <section className="py-8 bg-background border-b border-border/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-[12px] md:text-[13px] tracking-[0.08em] uppercase text-muted-foreground font-semibold mb-6">
-          Backed by
+          {t("backedBy.heading")}
         </h2>
         <div className="flex flex-col sm:flex-row justify-center items-center gap-6 md:gap-10">
           {partners.map((partner) => (
@@ -59,7 +61,7 @@ const BackedBy = () => {
                     className="h-[28px] md:h-[36px] w-auto object-contain"
                   />
                   <span className="text-lg md:text-xl font-medium text-muted-foreground group-hover:text-foreground tracking-tight transition-colors">
-                    {partner.label}
+                    {t("backedBy.forStartups")}
                   </span>
                 </>
               ) : (
@@ -71,7 +73,7 @@ const BackedBy = () => {
                     className="h-[28px] md:h-[36px] w-auto object-contain"
                   />
                   <span className="text-lg md:text-xl font-bold text-muted-foreground group-hover:text-[#00ED64] tracking-tight transition-colors">
-                    MongoDB <span className="font-normal text-muted-foreground group-hover:text-foreground transition-colors">for Startups</span>
+                    MongoDB <span className="font-normal text-muted-foreground group-hover:text-foreground transition-colors">{t("backedBy.forStartups")}</span>
                   </span>
                 </>
               )}

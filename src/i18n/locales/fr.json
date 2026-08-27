@@ -1,0 +1,275 @@
+{
+  "nav": {
+    "solutions": "Solutions",
+    "whoItsFor": "À qui s'adresse GradrAI",
+    "pricing": "Tarifs",
+    "contact": "Contact",
+    "signIn": "Connexion",
+    "signUp": "Inscription",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
+  },
+  "hero": {
+    "badge": "Plateforme d'évaluation de bout en bout",
+    "heading": "Générez, Distribuez, Notez,",
+    "headingHighlight": "Analysez.",
+    "body": "GradrAI est une plateforme d'évaluation par IA pour les enseignants, les écoles et les établissements. Elle aide à créer des examens, corriger les évaluations papier et en ligne, générer des retours aux étudiants, gérer les rapports et exporter les résultats pour les workflows académiques.",
+    "startTrial": "Essai gratuit",
+    "bookDemo": "Réserver une démo",
+    "stats": {
+      "saveHours": {
+        "title": "Économisez 20h+ / période",
+        "description": "Récupérez plus de 20 heures de temps d'enseignement à chaque session d'examens."
+      },
+      "gradeImprovement": {
+        "title": "8 % d'amélioration des notes",
+        "description": "Le retour instantané évite les lacunes d'apprentissage et améliore directement les résultats."
+      },
+      "fairness": {
+        "title": "100 % d'équité et d'intégrité",
+        "description": "Éliminez les 60 % d'écart constatés dans la notation manuelle par plusieurs correcteurs."
+      }
+    }
+  },
+  "backedBy": {
+    "heading": "Soutenu par",
+    "forStartups": "for Startups"
+  },
+  "problem": {
+    "heading": "Les évaluations traditionnelles sont",
+    "headingHighlight": "défaillantes et fragmentées.",
+    "body": "Entre les goulots d'étranglement de la correction manuelle et le coût élevé des infrastructures numériques, maintenir l'intégrité et la rapidité des évaluations n'a jamais été aussi difficile pour les institutions modernes.",
+    "points": {
+      "disagree": "6 notes sur 10 divergent entre différents correcteurs humains",
+      "delayed": "Le retour tardif réduit les performances des étudiants de 8 %",
+      "burden": "Charge administrative élevée (15+ min par copie)",
+      "expensive": "Infrastructure CBT coûteuse et rigide",
+      "disconnected": "Outils déconnectés entre examens papier et numériques"
+    },
+    "card": {
+      "title": "Goulot d'étranglement manuel",
+      "subtitle": "15 min en moyenne par copie",
+      "adminOverload": "Surcharge administrative",
+      "highPercent": "85 % élevé"
+    }
+  },
+  "solutions": {
+    "heading": "Une seule plateforme,",
+    "headingHighlight": "toutes les évaluations.",
+    "body": "GradrAI fournit l'infrastructure nécessaire pour créer, distribuer et corriger vos évaluations sur l'ensemble du cycle.",
+    "aiPaperGrading": {
+      "title": "Notation IA des copies papier",
+      "description": "Téléchargez des copies manuscrites numérisées et obtenez instantanément des notes et des commentaires par l'IA."
+    },
+    "cbtGeneration": {
+      "title": "Génération de CBT",
+      "description": "Créez, distribuez et gérez des évaluations numériques en toute simplicité."
+    },
+    "onlineProctoring": {
+      "title": "Surveillance en ligne",
+      "description": "Sessions surveillées par l'IA pour garantir l'intégrité et prévenir la fraude."
+    },
+    "smartPrep": {
+      "title": "Mode SmartPrep",
+      "description": "Examens blancs assistés par l'IA avec un retour pédagogique personnalisé pour les apprenants."
+    },
+    "analytics": {
+      "title": "Analyses avancées",
+      "description": "Rapports de performance en temps réel pour les étudiants, les enseignants et les administrateurs."
+    }
+  },
+  "audience": {
+    "heading": "Conçu pour le passage à l'échelle et",
+    "headingHighlight": "l'impact.",
+    "body": "Que vous soyez un tuteur indépendant ou une institution nationale, GradrAI s'adapte à votre flux de travail.",
+    "schools": {
+      "title": "Écoles et universités",
+      "description": "Transformation numérique complète pour les évaluations institutionnelles.",
+      "point1": "Correction en masse des copies papier",
+      "point2": "Suivi des performances de la classe",
+      "point3": "Intégration LMS"
+    },
+    "corporate": {
+      "title": "Organisations et entreprises",
+      "description": "Optimisez le recrutement et les tests de certification internes.",
+      "point1": "Évaluations en ligne surveillées",
+      "point2": "Présélection instantanée des candidats",
+      "point3": "Tests de connaissances, compétences et aptitudes"
+    },
+    "professional": {
+      "title": "Ordres et organismes professionnels",
+      "description": "Livraison et correction sécurisées d'examens de certification à grande échelle.",
+      "point1": "Livraison d'examens standardisée",
+      "point2": "Flux de travail hybrides papier/numérique",
+      "point3": "Surveillance haute intégrité"
+    },
+    "solo": {
+      "title": "Tuteurs et assistants",
+      "description": "Gagnez du temps et offrez de meilleurs retours à vos étudiants.",
+      "point1": "Correction rapide et abordable",
+      "point2": "Retour détaillé pour chaque étudiant",
+      "point3": "Analyses personnalisées"
+    },
+    "students": {
+      "title": "Étudiants et apprenants",
+      "description": "Entraînez-vous au JAMB UTME, au WASSCE et plus encore avec des examens blancs guidés par l'IA.",
+      "point1": "Examens blancs intelligents",
+      "point2": "Explications IA et tags de concepts",
+      "point3": "Suivi des performances"
+    }
+  },
+  "howItWorks": {
+    "heading": "Des flux de travail",
+    "headingHighlight": "optimisés.",
+    "body": "Choisissez le flux de travail adapté à vos besoins d'évaluation.",
+    "paperTab": "Correction des copies papier",
+    "digitalTab": "Tests en ligne (CBT)",
+    "paper": {
+      "scan": { "title": "Numériser", "desc": "Numérisez les copies manuscrites avec un scanner ou une application mobile." },
+      "upload": { "title": "Télécharger", "desc": "Envoyez les PDF ou les images sur notre portail sécurisé." },
+      "aiGrade": { "title": "Notation IA", "desc": "L'IA lit l'écriture manuscrite et applique votre barème." },
+      "export": { "title": "Exporter", "desc": "Consultez les résultats et exportez vers Sheets ou votre LMS." }
+    },
+    "digital": {
+      "create": { "title": "Créer", "desc": "Générez des questions de quiz par l'IA ou manuellement." },
+      "distribute": { "title": "Distribuer", "desc": "Partagez les liens d'évaluation avec les étudiants de manière sécurisée." },
+      "proctor": { "title": "Surveiller", "desc": "Suivez les tentatives avec des outils d'intégrité assistés par l'IA." },
+      "analyse": { "title": "Analyser", "desc": "Correction automatique instantanée et analyses de performance." }
+    }
+  },
+  "differentiation": {
+    "heading": "Conçu pour",
+    "headingHighlight": "l'avenir de l'éducation mondiale",
+    "affordable": {
+      "title": "Abordable et accessible",
+      "desc": "Tarification régionale adaptée à l'équité, portée par une technologie d'envergure mondiale."
+    },
+    "hybrid": {
+      "title": "Flux de travail hybride",
+      "desc": "La seule plateforme qui gère à la fois les copies papier et les tests numériques de manière transparente."
+    },
+    "mobile": {
+      "title": "Mobile d'abord",
+      "desc": "Optimisé pour les environnements disposant d'infrastructures matérielles limitées."
+    },
+    "whyGradrAI": "Pourquoi GradrAI ?",
+    "hybridSaaS": "Modèle SaaS hybride",
+    "unique": "Unique",
+    "fractionCost": "Coût inférieur aux concurrents internationaux",
+    "localContext": "Support du contexte local"
+  },
+  "pricing": {
+    "heading": "Tarifs flexibles pour",
+    "headingHighlight": "tous.",
+    "body": "Fonctionnalités de standard international avec des options de tarification régionale. Plans prépayés avec report de crédits pour les équipes locales, et paiement international en USD. Les crédits NGN sont reportés sur le trimestre ou l'année académique — pas de facturation mensuelle forcée.",
+    "prepaidPlans": "Plans prépayés",
+    "creditPacks": "Packs de crédits",
+    "mostPopular": "Le plus populaire",
+    "bestValue": "Meilleur rapport qualité-prix",
+    "custom": "Sur mesure",
+    "contactSales": "Contacter l'équipe commerciale",
+    "getStartedFree": "Commencer gratuitement",
+    "getStarted": "Commencer",
+    "credits": "{{count}} crédits",
+    "creditsLifetime": "{{count}} crédits (à vie)",
+    "userSeats": "Jusqu'à {{count}} postes utilisateurs",
+    "validFor": "Valable pour {{expiry}}",
+    "buyPack": "Acheter {{name}}",
+    "flexibilityPrompt": "Besoin de plus de flexibilité ?",
+    "browseCreditPacks": "Parcourir les packs de crédits",
+    "payAsYouGo": "pour une correction à la demande.",
+    "creditPacksIntro": "Packs de crédits ponctuels — aucun abonnement requis. Achetez des crédits et utilisez-les à votre rythme.",
+    "bundledPrompt": "Vous préférez un plan groupé avec plus de crédits ?",
+    "viewSubscriptionPlans": "Voir les plans d'abonnement"
+  },
+  "cta": {
+    "heading": "Prêt à moderniser votre cycle d'évaluation ?",
+    "body": "Rejoignez les institutions leaders dans le monde qui utilisent GradrAI pour des notes plus rapides, plus justes et plus cohérentes.",
+    "startTrial": "Essai gratuit",
+    "requestDemo": "Demander une démo"
+  },
+  "faq": {
+    "heading": "Questions fréquentes",
+    "body": "Tout ce que vous devez savoir sur la plateforme.",
+    "items": [
+      {
+        "question": "Quelle est la précision de la notation par l'IA comparée à la correction manuelle ?",
+        "answer": "Notre IA atteint un taux de précision supérieur à 95 %. Étant donné que 6 notes sur 10 divergent entre différents correcteurs humains, GradrAI offre un standard plus cohérent et impartial pour le travail des étudiants."
+      },
+      {
+        "question": "Quels types de tests GradrAI peut-il gérer ?",
+        "answer": "GradrAI peut corriger divers formats, notamment les QCM, les réponses courtes, les dissertations, les problèmes mathématiques et les réponses structurées dans différentes matières."
+      },
+      {
+        "question": "Les données de mes étudiants sont-elles protégées ?",
+        "answer": "Oui, nous utilisons un chiffrement de niveau entreprise et respectons les normes de confidentialité des données éducatives. Vos données ne sont jamais partagées avec des tiers."
+      },
+      {
+        "question": "Combien de temps faut-il pour corriger des copies ?",
+        "answer": "La plupart des évaluations sont corrigées en 2 à 5 minutes, quel que soit le nombre d'étudiants ou la complexité des questions."
+      },
+      {
+        "question": "Puis-je personnaliser les critères de notation ?",
+        "answer": "Absolument ! Vous pouvez définir des barèmes, des grilles d'évaluation et des pondérations personnalisés pour différents types de questions afin de correspondre à votre style d'enseignement."
+      },
+      {
+        "question": "Proposez-vous de la formation et du support ?",
+        "answer": "Oui, nous proposons une prise en main complète, des sessions de formation et un support continu pour que vous tiriez le meilleur parti de GradrAI."
+      },
+      {
+        "question": "Mes crédits NGN expirent-ils ?",
+        "answer": "Non. Les plans NGN sont des enveloppes de crédits prépayés. Contrairement aux abonnements mensuels récurrents classiques, les crédits NGN non utilisés sont reportés sur la période académique ou le semestre suivant — vous ne perdez jamais ce que vous avez payé."
+      },
+      {
+        "question": "Comment fonctionnent les plans en USD ?",
+        "answer": "Les plans USD fonctionnent via un traitement de carte internationale par Creem. Ce sont des abonnements récurrents standard adaptés aux institutions internationales, offrant des renouvellements automatiques sans interruption."
+      },
+      {
+        "question": "Suis-je facturé(e) chaque mois ?",
+        "answer": "Pour les clients nigérians, GradrAI utilise des enveloppes de crédits prépayés via Paystack. Vous achetez un plan ou un pack à l'avance, les crédits sont reportés sur le semestre ou l'année académique correspondant(e), et vous rechargez quand vous en avez besoin. Les clients internationaux peuvent utiliser Creem pour les abonnements et packs de crédits en USD, les crédits étant appliqués uniquement après vérification du paiement par webhook."
+      }
+    ]
+  },
+  "contact": {
+    "heading": "Contactez-nous",
+    "body": "Vous avez une question, souhaitez une démonstration ou explorez GradrAI pour votre institution ? Envoyez-nous un message et notre équipe vous répondra dans les meilleurs délais.",
+    "labels": {
+      "name": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "message": "Message"
+    },
+    "optional": "(facultatif)",
+    "placeholders": {
+      "name": "Jean Dupont",
+      "email": "vous@domaine.com",
+      "phone": "+33 6 00 00 00 00",
+      "message": "Dites-nous comment nous pouvons vous aider..."
+    },
+    "validation": {
+      "name": "Veuillez entrer votre nom",
+      "email": "Entrez une adresse e-mail valide",
+      "phone": "Le numéro de téléphone est trop long",
+      "message": "Veuillez entrer un message"
+    },
+    "sending": "Envoi en cours...",
+    "send": "Envoyer le message",
+    "toast": {
+      "success": "Merci de nous avoir contactés ! Nous vous répondrons dans les meilleurs délais.",
+      "error": "Impossible d'envoyer votre message pour le moment. Veuillez réessayer plus tard."
+    }
+  },
+  "footer": {
+    "tagline": "L'infrastructure d'évaluation de nouvelle génération pour les écoles, les organismes professionnels et les entreprises. Conçue pour l'efficacité, l'intégrité et le passage à l'échelle.",
+    "platform": "Plateforme",
+    "solutions": "Solutions",
+    "howItWorks": "Comment ça marche",
+    "pricing": "Tarifs",
+    "support": "Support",
+    "helpCenter": "Centre d'aide",
+    "contactUs": "Nous contacter",
+    "copyright": "© {{year}} GradrAI. Tous droits réservés. Enregistré pour les marchés nigérian et international.",
+    "privacy": "Confidentialité",
+    "terms": "Conditions"
+  }
+}

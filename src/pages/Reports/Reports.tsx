@@ -40,6 +40,11 @@ import toast from "react-hot-toast";
 import api from "@/lib/axios";
 import useStore from "@/state";
 import { BASE_URL } from "@/requests/constants";
+import { isAxiosError } from "axios";
+import {
+  isGoogleSheetsReauthError,
+  redirectToGoogleSheetsAuth,
+} from "@/lib/googleSheetsAuth";
 
 const Reports = () => {
   const { user } = useStore();
@@ -109,8 +114,17 @@ const Reports = () => {
         window.open(data.spreadsheetUrl, "_blank");
       }
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.error || "Failed to export to Google Sheets");
+    onError: async (err: unknown) => {
+      if (isGoogleSheetsReauthError(err)) {
+        toast.error("Connect Google Sheets to export.");
+        await redirectToGoogleSheetsAuth();
+        return;
+      }
+
+      const message = isAxiosError(err)
+        ? err.response?.data?.error || "Failed to export to Google Sheets"
+        : "Failed to export to Google Sheets";
+      toast.error(message);
     }
   });
 

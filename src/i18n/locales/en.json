@@ -1,0 +1,275 @@
+{
+  "nav": {
+    "solutions": "Solutions",
+    "whoItsFor": "Who it's for",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "hero": {
+    "badge": "End-to-End Assessment Platform",
+    "heading": "Generate, Deliver, Grade,",
+    "headingHighlight": "Analyse.",
+    "body": "GradrAI is an AI assessment platform for educators, schools, and institutions. It helps teachers create exams, grade paper-based and computer-based assessments, generate student feedback, manage reports, and export results for academic workflows.",
+    "startTrial": "Start Free Trial",
+    "bookDemo": "Book a Demo",
+    "stats": {
+      "saveHours": {
+        "title": "Save 20+ Hours / Period",
+        "description": "Reclaim over 20 hours worth of your teaching time every exam season."
+      },
+      "gradeImprovement": {
+        "title": "8% Grade Improvement",
+        "description": "Instant feedback prevents learning loss, directly improving exam performance."
+      },
+      "fairness": {
+        "title": "100% Fairness & Integrity",
+        "description": "Eliminate the 60% variance found in manual, multi-teacher human grading."
+      }
+    }
+  },
+  "backedBy": {
+    "heading": "Backed by",
+    "forStartups": "for Startups"
+  },
+  "problem": {
+    "heading": "Traditional Assessments are",
+    "headingHighlight": "Broken and Disconnected.",
+    "body": "From manual grading bottlenecks to high-cost digital infrastructure, maintaining assessment integrity and speed has never been harder for modern institutions.",
+    "points": {
+      "disagree": "6 in 10 grades disagree across different human teachers",
+      "delayed": "Delayed feedback reduces student performance by 8%",
+      "burden": "High administrative burden (15+ mins per script)",
+      "expensive": "Expensive and rigid CBT infrastructure",
+      "disconnected": "Disconnected tools for paper and digital exams"
+    },
+    "card": {
+      "title": "Manual Bottleneck",
+      "subtitle": "Average 15 mins per script",
+      "adminOverload": "Admin Overload",
+      "highPercent": "85% High"
+    }
+  },
+  "solutions": {
+    "heading": "One Platform,",
+    "headingHighlight": "Every Assessment.",
+    "body": "GradrAI provides the infrastructure you need to generate, deliver, and grade assessments across the entire lifecycle.",
+    "aiPaperGrading": {
+      "title": "AI Paper Grading",
+      "description": "Upload scanned handwritten scripts and get instant AI-powered grades and feedback."
+    },
+    "cbtGeneration": {
+      "title": "CBT Generation",
+      "description": "Create, distribute, and manage digital assessments with ease."
+    },
+    "onlineProctoring": {
+      "title": "Online Proctoring",
+      "description": "AI-monitored sessions to ensure examiner integrity and prevent malpractice."
+    },
+    "smartPrep": {
+      "title": "SmartPrep Mode",
+      "description": "AI-powered mock exams providing personalized pedagogical feedback for learners."
+    },
+    "analytics": {
+      "title": "Advanced Analytics",
+      "description": "Real-time performance reports for students, educators, and administrators."
+    }
+  },
+  "audience": {
+    "heading": "Designed for Scale and",
+    "headingHighlight": "Impact.",
+    "body": "Whether you're a solo tutor or a national institution, GradrAI adapts to your workflow.",
+    "schools": {
+      "title": "Schools & Universities",
+      "description": "Complete digital transformation for institutional assessments.",
+      "point1": "Bulk grading of paper scripts",
+      "point2": "Class performance tracking",
+      "point3": "LMS integration"
+    },
+    "corporate": {
+      "title": "Corporate Organisations",
+      "description": "Streamline recruitment and internal certification testing.",
+      "point1": "Proctored online assessments",
+      "point2": "Instant candidate screening",
+      "point3": "Knowledge, Skills, and Aptitude Testing"
+    },
+    "professional": {
+      "title": "Professional Bodies",
+      "description": "Secure, large-scale certification exam delivery and grading.",
+      "point1": "Standardised exam delivery",
+      "point2": "Hybrid paper/digital workflows",
+      "point3": "High-integrity proctoring"
+    },
+    "solo": {
+      "title": "Solo Tutors & TAs",
+      "description": "Save time and provide better feedback to your students.",
+      "point1": "Quick affordable grading",
+      "point2": "Detailed student feedback",
+      "point3": "Personalised analytics"
+    },
+    "students": {
+      "title": "Students & Learners",
+      "description": "Practice for JAMB UTME, WASSCE and more with AI-guided mock tests.",
+      "point1": "Smart Mock Exams",
+      "point2": "AI Explanations & Concept Tags",
+      "point3": "Performance Tracking"
+    }
+  },
+  "howItWorks": {
+    "heading": "Streamlined",
+    "headingHighlight": "Workflows.",
+    "body": "Choose the workflow that fits your assessment needs.",
+    "paperTab": "Paper-based Grading",
+    "digitalTab": "Computer-based (CBT)",
+    "paper": {
+      "scan": { "title": "Scan", "desc": "Scan handwritten scripts using any scanner or mobile app." },
+      "upload": { "title": "Upload", "desc": "Upload PDFs or images to our secure portal." },
+      "aiGrade": { "title": "AI Grade", "desc": "AI reads handwriting and applies your marking scheme." },
+      "export": { "title": "Export", "desc": "Review results and export to Sheets or LMS." }
+    },
+    "digital": {
+      "create": { "title": "Create", "desc": "Generate quiz questions using AI or manual entry." },
+      "distribute": { "title": "Distribute", "desc": "Share assessment links with students securely." },
+      "proctor": { "title": "Proctor", "desc": "Monitor attempts with AI-powered integrity tools." },
+      "analyse": { "title": "Analyse", "desc": "Instant auto-grading and performance analytics." }
+    }
+  },
+  "differentiation": {
+    "heading": "Built for the",
+    "headingHighlight": "Future of Global Education",
+    "affordable": {
+      "title": "Affordable & Accessible",
+      "desc": "Localized regional pricing tailored for equity, powered by global-scale technology."
+    },
+    "hybrid": {
+      "title": "Hybrid Workflow",
+      "desc": "The only platform that handles both paper scripts and digital tests seamlessly."
+    },
+    "mobile": {
+      "title": "Mobile-First",
+      "desc": "Optimised for scenarios with limited high-end hardware infrastructure."
+    },
+    "whyGradrAI": "Why GradrAI?",
+    "hybridSaaS": "Hybrid SaaS Model",
+    "unique": "Unique",
+    "fractionCost": "Fraction of Global Competitor Cost",
+    "localContext": "Local Context Support"
+  },
+  "pricing": {
+    "heading": "Flexible Pricing for",
+    "headingHighlight": "Everyone.",
+    "body": "Globally standard features with localized regional pricing options. Prepaid plans with rollover for local teams, and international USD checkout. NGN credits roll over through the relevant term or academic year — no forced monthly card billing.",
+    "prepaidPlans": "Prepaid Plans",
+    "creditPacks": "Credit Packs",
+    "mostPopular": "Most Popular",
+    "bestValue": "Best Value",
+    "custom": "Custom",
+    "contactSales": "Contact Sales",
+    "getStartedFree": "Get Started Free",
+    "getStarted": "Get Started",
+    "credits": "{{count}} credits",
+    "creditsLifetime": "{{count}} credits (lifetime)",
+    "userSeats": "Up to {{count}} user seats",
+    "validFor": "Valid for {{expiry}}",
+    "buyPack": "Buy {{name}}",
+    "flexibilityPrompt": "Need more flexibility?",
+    "browseCreditPacks": "Browse credit packs",
+    "payAsYouGo": "for pay-as-you-go grading.",
+    "creditPacksIntro": "One-time credit packs — no subscription required. Buy credits and use them at your own pace.",
+    "bundledPrompt": "Prefer a bundled plan with more credits?",
+    "viewSubscriptionPlans": "View subscription plans"
+  },
+  "cta": {
+    "heading": "Ready to modernise your assessment lifecycle?",
+    "body": "Join the leading institutions worldwide using GradrAI to deliver faster, fairer, and more consistent grades.",
+    "startTrial": "Start Free Trial",
+    "requestDemo": "Request Demo"
+  },
+  "faq": {
+    "heading": "Common Questions",
+    "body": "Everything you need to know about the platform.",
+    "items": [
+      {
+        "question": "How accurate is AI grading compared to manual grading?",
+        "answer": "Our AI achieves 95%+ accuracy rates. Since 6 in 10 human-awarded grades often disagree across different teachers, GradrAI provides a more consistent, bias-free standard for student work."
+      },
+      {
+        "question": "What types of tests can GradrAI handle?",
+        "answer": "GradrAI can grade various formats including multiple choice, short answers, essays, mathematical problems, and structured responses across different subjects."
+      },
+      {
+        "question": "Is my student data secure?",
+        "answer": "Yes, we use enterprise-grade encryption and comply with educational data privacy standards. Your data is never shared with third parties."
+      },
+      {
+        "question": "How long does it take to grade papers?",
+        "answer": "Most assessments are graded within 2-5 minutes, regardless of the number of students or complexity of questions."
+      },
+      {
+        "question": "Can I customize grading criteria?",
+        "answer": "Absolutely! You can set custom marking schemes, rubrics, and weighting for different question types to match your teaching style."
+      },
+      {
+        "question": "Do you offer training and support?",
+        "answer": "Yes, we provide comprehensive onboarding, training sessions, and ongoing support to ensure you get the most out of GradrAI."
+      },
+      {
+        "question": "Do my NGN credits expire?",
+        "answer": "No. NGN plans are prepaid credit grants. Unlike traditional monthly recurring subscriptions, unused NGN credits roll over to the next academic period or semester, so you never lose what you pay for."
+      },
+      {
+        "question": "How do USD plans work?",
+        "answer": "USD plans run on international card processing via Creem. They are standard recurring subscription models suitable for international institutions, providing seamless automatic renewals."
+      },
+      {
+        "question": "Do I get billed every month?",
+        "answer": "For Nigerian customers, GradrAI uses prepaid credit grants through Paystack. You buy a plan or pack upfront, credits roll over through the relevant semester or academic year, and you top up when you need more. International customers can use Creem for USD subscriptions and credit packs, with credits applied only after verified payment webhooks."
+      }
+    ]
+  },
+  "contact": {
+    "heading": "Get in touch",
+    "body": "Have a question, want a demo, or exploring GradrAI for your institution? Send us a message and our team will respond as soon as possible.",
+    "labels": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "message": "Message"
+    },
+    "optional": "(optional)",
+    "placeholders": {
+      "name": "Jane Doe",
+      "email": "you@domain.com",
+      "phone": "+234 800 000 0000",
+      "message": "Tell us how we can help..."
+    },
+    "validation": {
+      "name": "Please enter your name",
+      "email": "Enter a valid email",
+      "phone": "Phone number is too long",
+      "message": "Please enter a message"
+    },
+    "sending": "Sending...",
+    "send": "Send Message",
+    "toast": {
+      "success": "Thanks for reaching out! We'll get back to you shortly.",
+      "error": "Unable to send your message right now. Please try again later."
+    }
+  },
+  "footer": {
+    "tagline": "The next-generation assessment infrastructure for schools, professional bodies, and corporate organisations. Built for efficiency, integrity, and scale.",
+    "platform": "Platform",
+    "solutions": "Solutions",
+    "howItWorks": "How it Works",
+    "pricing": "Pricing",
+    "support": "Support",
+    "helpCenter": "Help Center",
+    "contactUs": "Contact Us",
+    "copyright": "© {{year}} GradrAI. All rights reserved. Registered for the Nigerian & Global markets.",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  }
+}

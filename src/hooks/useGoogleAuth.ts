@@ -19,10 +19,12 @@ type GoogleAuthResponse = {
     needsPayment?: boolean;
     isPending?: boolean;
     email?: string;
+    authFlow?: "signin" | "sheets";
+    returnTo?: string | null;
   };
 };
 
-export function useGoogleAuth(code: string | null) {
+export function useGoogleAuth(code: string | null, state?: string | null) {
   const navigate = useNavigate();
   const posthog = usePostHog();
   const { accountType, studentData, saveUser, saveUserToken, setCode } = useStore();
@@ -30,13 +32,18 @@ export function useGoogleAuth(code: string | null) {
   const mutation = useMutation<GoogleAuthResponse, Error, string>({
     mutationKey: ["profileData"],
     mutationFn: async (code: string) => {
-      const res = await api.get(
-        `getGoogleUser?code=${code}&accountType=${accountType}`
-      );
+      const params = new URLSearchParams({
+        code,
+        accountType,
+      });
+
+      if (state) params.set("state", state);
+
+      const res = await api.get(`getGoogleUser?${params.toString()}`);
       return res.data as GoogleAuthResponse;
     },
     onSuccess: (response) => {
-      const { data: { token, user, needsPassword, needsKYC, needsPayment, isPending, email } } = response;
+      const { data: { token, user, needsPassword, needsKYC, needsPayment, isPending, email, authFlow, returnTo } } = response;
 
       if (isPending) {
         posthog?.capture("google_auth_pending", { account_type: accountType });
@@ -53,6 +60,16 @@ export function useGoogleAuth(code: string | null) {
         saveUser(user);
         saveUserToken(token);
         if (code) setCode(code);
+
+        if (authFlow === "sheets") {
+          posthog?.capture("google_sheets_connected", {
+            role: user.role,
+            account_type: accountType,
+          });
+          toast.success("Google Sheets connected. Try the export again.");
+          navigate(returnTo || "/app/reports", { replace: true });
+          return;
+        }
 
         posthog?.capture("google_auth_succeeded", {
           role: user.role,
@@ -83,6 +100,7 @@ export function useGoogleAuth(code: string | null) {
         } else {
           navigate("/app/assessments", { replace: true });
         }
+        return;
       }
 
       // Unexpected: response succeeded but carried no user/token and wasn't
@@ -111,7 +129,7 @@ export function useGoogleAuth(code: string | null) {
   // Trigger mutation only when code is present
   useEffect(() => {
     if (code) mutation.mutate(code);
-  }, [code]);
+  }, [code, state]);
 
   return mutation;
 }

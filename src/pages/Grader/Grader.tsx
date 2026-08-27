@@ -22,6 +22,10 @@ import { Category } from "@/types/Category";
 import { DataTable } from "./data-table";
 import api from "@/lib/axios";
 import { Loader2Icon } from "lucide-react";
+import {
+  isGoogleSheetsReauthError,
+  redirectToGoogleSheetsAuth,
+} from "@/lib/googleSheetsAuth";
 
 const postResults = async (data: any) =>
   await api.post<Result[]>(`/results`, data);
@@ -106,11 +110,17 @@ const Grader = () => {
     }
 
     exportMutate(sheetsObject, {
-      onSuccess: (data: any, variables: any, context: any) => {
+      onSuccess: (data: { data?: { spreadsheetUrl?: string } }) => {
         toast.success("Successfully exported data");
-        setSheetsUri(data?.data?.spreadsheetUrl);
+        setSheetsUri(data?.data?.spreadsheetUrl ?? "");
       },
-      onError: (error: any, variables: any, context: any) => {
+      onError: async (error: unknown) => {
+        if (isGoogleSheetsReauthError(error)) {
+          toast.error("Connect Google Sheets to export.");
+          await redirectToGoogleSheetsAuth();
+          return;
+        }
+
         toast.error("An error occurred");
         setExportButtonText("Retry");
       },
