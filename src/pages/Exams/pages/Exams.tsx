@@ -18,11 +18,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { ExamData } from "../components/ExamForm";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle, Copy, Paperclip } from "lucide-react";
 import toast from "react-hot-toast";
-import { Exam, Option, Question } from "@/types/Exam";
+import { ExamSummary, Option, Question } from "@/types/Exam";
 import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
@@ -40,6 +39,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getExam, listExams } from "@/requests/exam";
 
 const Exams = () => {
   const nav = useNavigate();
@@ -47,10 +47,10 @@ const Exams = () => {
 
   const { data: examData, isLoading } = useQuery({
     queryKey: ["exam"],
-    queryFn: async () => await api.get(`/exam`),
+    queryFn: listExams,
   });
 
-  const { data: deleteExamData, mutate: deleteExamMutate } = useMutation({
+  const { mutate: deleteExamMutate } = useMutation({
     mutationFn: async (examId: string) => await api.delete(`/exam/${examId}`),
     onSuccess: () => {
       toast.success("Exam deleted successfully");
@@ -61,14 +61,23 @@ const Exams = () => {
     },
   });
 
-  const exams = examData?.data?.data ?? [];
+  const exams = examData?.data ?? [];
 
   const [open, setOpen] = useState(false);
-  const [activeExam, setActiveExam] = useState<Exam | null>(null);
-  const [changeClipboardIcon, setChangeClipboardIcon] = useState(false);
+  const [activeExam, setActiveExam] = useState<ExamSummary | null>(null);
   const [copiedExams, setCopiedExams] = useState<Record<string, boolean>>({});
 
-  const openExam = (exam: Exam) => {
+  const {
+    data: activeExamDetail,
+    isLoading: isExamDetailLoading,
+    isError: isExamDetailError,
+  } = useQuery({
+    queryKey: ["exam", activeExam?._id],
+    queryFn: () => getExam(activeExam!._id),
+    enabled: open && Boolean(activeExam?._id),
+  });
+
+  const openExam = (exam: ExamSummary) => {
     setActiveExam(exam);
     setOpen(true);
   };
@@ -84,7 +93,7 @@ const Exams = () => {
       {!isLoading && exams.length === 0 && <p>No exams found.</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {exams.map((exam: Exam) => (
+        {exams.map((exam: ExamSummary) => (
           <Card key={exam._id} className="p-4">
             <CardHeader>
               <CardTitle>
@@ -287,41 +296,55 @@ const Exams = () => {
           <div className="mt-4 overflow-y-scroll max-h-[70vh] md:max-h-[400px] p-2">
             <h3 className="font-medium">Questions</h3>
             <ol className="list-none space-y-4 mt-2">
-              {activeExam?.questions?.map((q: Question, qIdx: number) => (
-                <li key={q.id} className="flex gap-2">
-                  <span className="font-medium">{qIdx + 1}.</span>
-                  <div>
-                    <div className="font-semibold">{q.question}</div>
-                    {q?.description && (
-                      <div className="text-sm text-slate-500">
-                        {q.description}
-                      </div>
-                    )}
-
-                    <ul className="md:pl-4 mt-2 text-sm">
-                      {q?.options?.map((opt: Option, idx: number) => (
-                        <li
-                          key={`${q.id}-${opt.id}`}
-                          className="flex gap-1 md:gap-2 items-start"
-                        >
-                          <span className="w-6 font-medium">
-                            {String.fromCharCode(65 + idx)}.
-                          </span>
-                          <span>{opt.text}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+              {isExamDetailLoading && (
+                <li className="text-sm text-slate-500">
+                  Loading exam questions…
                 </li>
-              ))}
+              )}
+              {isExamDetailError && (
+                <li className="text-sm text-red-600">
+                  Failed to load exam questions.
+                </li>
+              )}
+              {!isExamDetailLoading &&
+                !isExamDetailError &&
+                (activeExamDetail?.questions ?? []).map(
+                  (q: Question, qIdx: number) => (
+                    <li key={q.id} className="flex gap-2">
+                      <span className="font-medium">{qIdx + 1}.</span>
+                      <div>
+                        <div className="font-semibold">{q.question}</div>
+                        {q?.description && (
+                          <div className="text-sm text-slate-500">
+                            {q.description}
+                          </div>
+                        )}
+
+                        <ul className="md:pl-4 mt-2 text-sm">
+                          {q?.options?.map((opt: Option, idx: number) => (
+                            <li
+                              key={`${q.id}-${opt.id}`}
+                              className="flex gap-1 md:gap-2 items-start"
+                            >
+                              <span className="w-6 font-medium">
+                                {String.fromCharCode(65 + idx)}.
+                              </span>
+                              <span>{opt.text}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </li>
+                  )
+                )}
             </ol>
           </div>
 
           <DialogFooter>
             <div className="flex items-center justify-between w-full">
-              {activeExam?.fileUri ? (
+              {activeExamDetail?.fileUri ?? activeExam?.fileUri ? (
                 <a
-                  href={activeExam.fileUri}
+                  href={activeExamDetail?.fileUri ?? activeExam?.fileUri}
                   target="_blank"
                   rel="noreferrer"
                   className="text-indigo-600 underline"

@@ -11,6 +11,7 @@ import { MemoryRouter } from "react-router-dom";
 import ExamForm from "@/pages/Exams/components/ExamForm";
 import api from "@/lib/axios";
 import toast from "react-hot-toast";
+import { getExam, updateQuestions } from "@/requests/exam";
 
 // ExamUploadForm is a sibling concern (source picking); stub it out so this
 // file exercises only the generated-quiz review + question-editing flow.
@@ -27,6 +28,11 @@ vi.mock("react-hot-toast", () => ({
 vi.mock("@/lib/axios", () => ({
   default: { get: vi.fn(), post: vi.fn(), patch: vi.fn(), delete: vi.fn() },
 }));
+vi.mock("@/requests/exam", () => ({
+  getExam: vi.fn(),
+  updateQuestions: vi.fn(),
+}));
+
 
 const EXAM = {
   _id: "exam-1",
@@ -64,12 +70,9 @@ describe("ExamForm question editing", () => {
     vi.clearAllMocks();
     Element.prototype.scrollIntoView = vi.fn();
     Element.prototype.hasPointerCapture = vi.fn(() => false);
-    vi.mocked(api.get).mockImplementation(async (url: string) =>
-      url.includes("/exam/")
-        ? { data: { data: EXAM } }
-        : { data: { data: { _id: "period-1" } } }
-    );
-    vi.mocked(api.patch).mockResolvedValue({ data: { success: true } });
+    vi.mocked(api.get).mockResolvedValue({ data: { data: { _id: "period-1" } } });
+    vi.mocked(getExam).mockResolvedValue(EXAM);
+    vi.mocked(updateQuestions).mockResolvedValue({ success: true });
   });
 
   it("renders the editor, saves edits and gates publish on dirty state", async () => {
@@ -107,18 +110,16 @@ describe("ExamForm question editing", () => {
     await user.click(save);
 
     await waitFor(() =>
-      expect(api.patch).toHaveBeenCalledWith("/exam/exam-1/questions", {
-        questions: [
-          expect.objectContaining({
-            id: "Q1",
-            question: "What is photosynthesis??",
-            difficulty: "easy",
-            explanation: "",
-            maxMarks: 10,
-            correctOptionId: 1,
-          }),
-        ],
-      })
+      expect(updateQuestions).toHaveBeenCalledWith("exam-1", [
+        expect.objectContaining({
+          id: "Q1",
+          question: "What is photosynthesis??",
+          difficulty: "easy",
+          explanation: "",
+          maxMarks: 10,
+          correctOptionId: 1,
+        }),
+      ])
     );
     await waitFor(() =>
       expect(toast.success).toHaveBeenCalledWith("Questions saved.")
@@ -127,7 +128,7 @@ describe("ExamForm question editing", () => {
 
   it("surfaces the backend's precise failure message", async () => {
     const user = userEvent.setup();
-    vi.mocked(api.patch).mockRejectedValue(
+    vi.mocked(updateQuestions).mockRejectedValue(
       Object.assign(new Error("Request failed"), {
         isAxiosError: true,
         response: { data: { message: "Total marks exceed the maximum score" } },

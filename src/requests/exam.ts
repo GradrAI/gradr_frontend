@@ -1,7 +1,20 @@
 import api from "@/lib/axios";
 import type { CreateSourceBody, Resource } from "@/types/Resource";
-import type { EditableQuestion, LeaderboardResponse } from "@/types/Exam";
+import type {
+  EditableQuestion,
+  Exam,
+  ExamSummary,
+  LeaderboardResponse,
+} from "@/types/Exam";
 
+
+export interface ExamListResponse {
+  data: ExamSummary[];
+  totalCount: number;
+  page: number;
+  limit: number;
+  message?: string;
+}
 /**
  * Normalises any source — uploaded file, web URL, YouTube video or pasted
  * text — into a Resource of type "material" holding plain text.
@@ -28,6 +41,22 @@ export const listMaterials = async (role: string, courseId: string) => {
 export const extractTopics = async (resourceIds: string[]) => {
   const res = await api.post("/exam/extract-topics", { resourceIds });
   return res.data;
+};
+
+export const listExams = async () => {
+  const res = await api.get("/exam");
+  return {
+    data: res.data?.data ?? [],
+    totalCount: res.data?.totalCount ?? 0,
+    page: res.data?.page ?? 1,
+    limit: res.data?.limit ?? 10,
+    message: res.data?.message,
+  } as ExamListResponse;
+};
+
+export const getExam = async (examId: string) => {
+  const res = await api.get(`/exam/${examId}`);
+  return res.data.data as Exam;
 };
 
 /**

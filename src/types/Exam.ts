@@ -38,6 +38,22 @@ export interface Exam {
   updatedAt: string;
 }
 
+export type ExamSummary = Pick<
+  Exam,
+  | "_id"
+  | "courseId"
+  | "categoryId"
+  | "topic"
+  | "difficulty"
+  | "totalQuestions"
+  | "examType"
+  | "status"
+  | "uniqueExamLink"
+  | "createdAt"
+  | "updatedAt"
+> &
+  Pick<Partial<Exam>, "fileUri">;
+
 export type ProctoringMode = "strict" | "relaxed";
 
 export interface LeaderboardSettings {

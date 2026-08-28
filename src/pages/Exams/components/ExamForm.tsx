@@ -35,7 +35,7 @@ import { usePostHog } from '@posthog/react'
 
 import ExamUploadForm from "./ExamUploadForm";
 import QuestionEditor from "./QuestionEditor";
-import { updateQuestions } from "@/requests/exam";
+import { getExam, updateQuestions } from "@/requests/exam";
 import type { EditableQuestion, Question } from "@/types/Exam";
 
 export interface ExamData {
@@ -169,15 +169,15 @@ export default function ExamForm() {
   // ── Fetch full exam (with per-question maxMarks) after generation ──
   const { data: examQueryData, isLoading: examLoading } = useQuery({
     queryKey: ["exam", examId],
-    queryFn: async () => {
-      const res = await api.get(`/exam/${examId}`);
-      return res.data;
+    queryFn: () => {
+      if (!examId) throw new Error("Missing exam id");
+      return getExam(examId);
     },
     enabled: Boolean(examId),
     staleTime: 0,
   });
 
-  const exam = examQueryData?.data;
+  const exam = examQueryData;
   const maxScoreAttainable: number = exam?.maxScoreAttainable ?? 0;
   const fetchedQuestions: Question[] = exam?.questions ?? [];
 
