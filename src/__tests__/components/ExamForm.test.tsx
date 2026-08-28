@@ -12,6 +12,7 @@ import ExamForm from "@/pages/Exams/components/ExamForm";
 import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import { getExam, updateQuestions } from "@/requests/exam";
+import type { Exam } from "@/types/Exam";
 
 // ExamUploadForm is a sibling concern (source picking); stub it out so this
 // file exercises only the generated-quiz review + question-editing flow.
@@ -36,6 +37,16 @@ vi.mock("@/requests/exam", () => ({
 
 const EXAM = {
   _id: "exam-1",
+  courseId: "course-1",
+  categoryId: "category-1",
+  lecturerId: "lecturer-1",
+  topic: "Photosynthesis",
+  difficulty: "easy",
+  totalQuestions: 1,
+  examType: "multiple-choice",
+  status: "draft",
+  createdAt: "2026-01-15T10:00:00.000Z",
+  updatedAt: "2026-01-15T10:00:00.000Z",
   maxScoreAttainable: 100,
   questions: [
     {
@@ -53,7 +64,7 @@ const EXAM = {
       correctOptionId: 1,
     },
   ],
-};
+} satisfies Exam;
 
 /** Seeds the ["generateQuiz"] mutation ExamForm reads via useMutationState. */
 function SeedGeneration() {
