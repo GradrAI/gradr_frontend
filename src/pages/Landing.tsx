@@ -7,7 +7,6 @@ import { formatNumber } from "@/lib/formatNumber";
 import type { PaymentPlan } from "@/types/PaymentPlan";
 import { usePaymentRail } from "@/hooks/usePaymentRail";
 import {
-  Clock,
   Users,
   Brain,
   Loader2,
@@ -22,11 +21,9 @@ import {
   X,
   FileText,
   Globe,
-  Building2,
   PieChart,
   CheckCircle2,
   School,
-  GraduationCap,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -95,9 +92,14 @@ const Landing = () => {
     setMobileMenuOpen(false);
   };
 
-  const scrollToPilot = (): void => {
+  const scrollToDemo = (): void => {
     scrollToSection(contactRef);
     contactRef.current?.querySelector<HTMLInputElement>('input[name="name"]')?.focus({ preventScroll: true });
+  };
+
+  const scrollToWorkflow = (): void => {
+    scrollToSection(howItWorksRef);
+    howItWorksRef.current?.focus({ preventScroll: true });
   };
 
   const scrollToEvidence = (): void => {
@@ -107,25 +109,11 @@ const Landing = () => {
 
   const audiences = [
     {
-      id: "schools",
+      id: "institutions",
       icon: School,
-      title: t("audience.schools.title"),
-      description: t("audience.schools.description"),
-      points: [t("audience.schools.point1"), t("audience.schools.point2"), t("audience.schools.point3")],
-    },
-    {
-      id: "departments",
-      icon: Building2,
-      title: t("audience.departments.title"),
-      description: t("audience.departments.description"),
-      points: [t("audience.departments.point1"), t("audience.departments.point2"), t("audience.departments.point3")],
-    },
-    {
-      id: "examTeams",
-      icon: GraduationCap,
-      title: t("audience.examTeams.title"),
-      description: t("audience.examTeams.description"),
-      points: [t("audience.examTeams.point1"), t("audience.examTeams.point2"), t("audience.examTeams.point3")],
+      title: t("audience.institutions.title"),
+      description: t("audience.institutions.description"),
+      points: [t("audience.institutions.point1"), t("audience.institutions.point2"), t("audience.institutions.point3")],
     },
     {
       id: "solo",
@@ -176,7 +164,7 @@ const Landing = () => {
     },
   ];
 
-  const { selectedRail, isLoading: railLoading } = usePaymentRail();
+  const { selectedRail } = usePaymentRail();
 
   const { data: paymentPlanData, isLoading: plansLoading } = useQuery({
     queryKey: ["paymentPlan", selectedRail],
@@ -213,22 +201,24 @@ const Landing = () => {
   };
 
   const faqs = (t("faq.items", { returnObjects: true }) as Array<{ question: string; answer: string }>);
+  const pricingFaqs = (t("pricing.faq.items", { returnObjects: true }) as Array<{ question: string; answer: string }>);
 
-  const assessmentPrinciples = [
+
+  const assessmentBenefits = [
     {
-      icon: <FileText className="w-7 h-7 text-primary" />,
-      title: t("hero.principles.rubric.title"),
-      description: t("hero.principles.rubric.description"),
+      icon: <Scan className="w-7 h-7 text-primary" />,
+      title: t("hero.benefits.paperDigital.title"),
+      description: t("hero.benefits.paperDigital.description"),
     },
     {
-      icon: <Users className="w-7 h-7 text-secondary" />,
-      title: t("hero.principles.review.title"),
-      description: t("hero.principles.review.description"),
+      icon: <FileText className="w-7 h-7 text-secondary" />,
+      title: t("hero.benefits.markingGuide.title"),
+      description: t("hero.benefits.markingGuide.description"),
     },
     {
       icon: <Brain className="w-7 h-7 text-yellow-500" />,
-      title: t("hero.principles.practice.title"),
-      description: t("hero.principles.practice.description"),
+      title: t("hero.benefits.feedbackPractice.title"),
+      description: t("hero.benefits.feedbackPractice.description"),
     },
   ];
 
@@ -269,7 +259,7 @@ const Landing = () => {
                   {t("nav.pricing")}
                 </button>
                 <button
-                  onClick={scrollToPilot}
+                  onClick={scrollToDemo}
                   className="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
                 >
                   {t("nav.contact")}
@@ -336,7 +326,7 @@ const Landing = () => {
                 {t("nav.pricing")}
               </button>
               <button
-                onClick={scrollToPilot}
+                onClick={scrollToDemo}
                 className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary w-full text-left"
               >
                 {t("nav.contact")}
@@ -384,23 +374,23 @@ const Landing = () => {
               <Button
                 size="lg"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6 text-xl rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 max-w-full whitespace-normal h-auto"
-                onClick={scrollToPilot}
+                onClick={scrollToDemo}
               >
-                {t("hero.pilotCta")}
+                {t("hero.demoCta")}
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-2 border-primary text-primary hover:bg-primary/5 px-10 py-6 text-xl rounded-full transition-all hover:scale-105 max-w-full whitespace-normal h-auto"
-                onClick={scrollToEvidence}
+                onClick={scrollToWorkflow}
               >
-                {t("hero.researchCta")}
+                {t("hero.workflowCta")}
               </Button>
             </div>
           </div>
 
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto px-4">
-            {assessmentPrinciples.map((stat, i) => (
+            {assessmentBenefits.map((stat, i) => (
               <div
                 key={i}
                 className="flex items-start gap-4 p-5 rounded-xl bg-white/70 dark:bg-white/5 border border-border shadow-sm backdrop-blur-sm transition duration-300 hover:shadow-md"
@@ -436,11 +426,9 @@ const Landing = () => {
               </p>
               <div className="space-y-4">
                 {[
-                  t("problem.points.criteria"),
-                  t("problem.points.delayed"),
-                  t("problem.points.burden"),
-                  t("problem.points.connectivity"),
-                  t("problem.points.disconnected"),
+                  t("problem.points.marking"),
+                  t("problem.points.feedback"),
+                  t("problem.points.admin"),
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <X className="h-5 w-5 text-brand-danger-500" />
@@ -454,8 +442,8 @@ const Landing = () => {
               <Card className="relative border-2 border-border/50 shadow-2xl overflow-hidden">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="h-12 w-12 rounded-full bg-brand-danger-100 dark:bg-brand-danger-900/30 flex items-center justify-center">
-                      <Clock className="h-6 w-6 text-brand-danger-600 dark:text-brand-danger-400" />
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <FileText className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <h4 className="font-bold text-foreground">{t("problem.card.title")}</h4>
@@ -467,6 +455,13 @@ const Landing = () => {
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
+                  <Button
+                    variant="outline"
+                    className="mt-6 w-full h-auto whitespace-normal"
+                    onClick={scrollToWorkflow}
+                  >
+                    {t("problem.card.workflowCta")}
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -511,44 +506,9 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Use Case / Audience Section */}
-      <section ref={audienceRef} className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/10">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
-              {t("audience.heading")} <span className="text-primary">{t("audience.headingHighlight")}</span>
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t("audience.body")}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center">
-            {audiences.map((audience, index) => (
-              <Card key={index} className="border-none shadow-md hover:shadow-lg transition-all h-full">
-                <CardContent className="p-6 flex flex-col h-full">
-                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-                    <audience.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">{audience.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-6 flex-grow">{audience.description}</p>
-                  <ul className="space-y-3">
-                    {audience.points.map((point, pIdx) => (
-                      <li key={pIdx} className="flex items-start gap-2 text-sm text-foreground/80">
-                        <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* How It Works Section */}
-      <section ref={howItWorksRef} className="py-24 px-4 sm:px-6 lg:px-8">
+      <section ref={howItWorksRef} id="how-it-works" tabIndex={-1} className="scroll-mt-24 py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
@@ -611,9 +571,41 @@ const Landing = () => {
               </div>
             </TabsContent>
           </Tabs>
-          <p className="mt-8 max-w-5xl mx-auto text-sm text-muted-foreground leading-relaxed">
-            {t("howItWorks.reviewNote")}
-          </p>
+        </div>
+      </section>
+      {/* Use Case / Audience Section */}
+      <section ref={audienceRef} className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-6">
+              {t("audience.heading")} <span className="text-primary">{t("audience.headingHighlight")}</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              {t("audience.body")}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center">
+            {audiences.map((audience, index) => (
+              <Card key={index} className="border-none shadow-md hover:shadow-lg transition-all h-full">
+                <CardContent className="p-6 flex flex-col h-full">
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                    <audience.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">{audience.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-6 flex-grow">{audience.description}</p>
+                  <ul className="space-y-3">
+                    {audience.points.map((point, pIdx) => (
+                      <li key={pIdx} className="flex items-start gap-2 text-sm text-foreground/80">
+                        <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -649,23 +641,35 @@ const Landing = () => {
               <Badge variant="outline" className="mb-4 max-w-full whitespace-normal text-sm text-blue-200 border-blue-300/50">
                 {t("research.badge")}
               </Badge>
-              <p className="text-slate-200 mb-6 leading-relaxed">{t("research.scope")}</p>
-              <dl className="space-y-4 mb-6">
-                <div className="p-4 rounded-xl bg-slate-700/50">
-                  <dt className="font-semibold mb-2">{t("research.noContext.title")}</dt>
-                  <dd className="text-sm text-slate-200 leading-relaxed">{t("research.noContext.result")}</dd>
+              <p className="text-slate-200 mb-4 leading-relaxed">{t("research.intro")}</p>
+              <p className="text-sm text-slate-200 mb-6 leading-relaxed">{t("research.scope")}</p>
+              <details className="rounded-2xl border border-slate-700 bg-slate-900/40 p-4">
+                <summary className="cursor-pointer text-sm font-semibold text-blue-100">
+                  {t("research.detailsLabel")}
+                </summary>
+                <div className="mt-4 space-y-4">
+                  <p className="text-sm text-slate-200 leading-relaxed">{t("research.method")}</p>
+                  <dl className="space-y-4">
+                    <div className="p-4 rounded-xl bg-slate-700/50">
+                      <dt className="font-semibold mb-2">{t("research.noContext.title")}</dt>
+                      <dd className="text-sm text-slate-200 leading-relaxed">{t("research.noContext.result")}</dd>
+                    </div>
+                    <div className="p-4 rounded-xl bg-slate-700/50">
+                      <dt className="font-semibold mb-2">{t("research.withContext.title")}</dt>
+                      <dd className="text-sm text-slate-200 leading-relaxed">{t("research.withContext.result")}</dd>
+                    </div>
+                  </dl>
+                  <p className="text-sm text-slate-200 leading-relaxed">{t("research.reference")}</p>
+                  <p className="text-sm text-slate-200 leading-relaxed">{t("research.limits")}</p>
+                  <p className="text-sm text-slate-300 leading-relaxed">{t("research.citation")}</p>
+                  <a
+                    href="mailto:contact@gradrai.com?subject=GradrAI%20research%20paper%20request"
+                    className="inline-flex text-sm font-semibold text-blue-200 underline underline-offset-4 hover:text-white"
+                  >
+                    {t("research.requestStudy")}
+                  </a>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-700/50">
-                  <dt className="font-semibold mb-2">{t("research.withContext.title")}</dt>
-                  <dd className="text-sm text-slate-200 leading-relaxed">{t("research.withContext.result")}</dd>
-                </div>
-              </dl>
-              <p className="text-sm text-slate-200 mb-4 leading-relaxed">{t("research.reference")}</p>
-              <p className="text-sm text-slate-200 mb-4 leading-relaxed">{t("research.limits")}</p>
-              <p className="text-sm text-slate-300 mb-6 leading-relaxed">{t("research.citation")}</p>
-              <Button onClick={scrollToPilot} className="max-w-full whitespace-normal h-auto">
-                {t("research.requestStudy")}
-              </Button>
+              </details>
             </div>
           </div>
         </div>
@@ -781,7 +785,7 @@ const Landing = () => {
                         }`}
                         onClick={() =>
                           plan.name.toLowerCase() === "enterprise"
-                            ? scrollToPilot()
+                            ? scrollToDemo()
                             : nav(`auth/sign-in`)
                         }
                       >
@@ -881,37 +885,24 @@ const Landing = () => {
           <p className="mt-8 mx-auto max-w-4xl text-center text-sm text-muted-foreground leading-relaxed">
             {t("pricing.notice")}
           </p>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-primary text-primary-foreground">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-8">
-            {t("cta.heading")}
-          </h2>
-          <p className="text-xl text-primary-foreground/80 mb-12 leading-relaxed">
-            {t("cta.body")}
-          </p>
-          <div className="flex flex-col sm:flex-row flex-wrap gap-6 justify-center">
-            <Button
-              size="lg"
-              className="bg-background text-primary hover:bg-background/90 px-10 py-7 text-xl font-bold rounded-2xl max-w-full whitespace-normal h-auto"
-              onClick={scrollToPilot}
-            >
-              {t("cta.pilotCta")}
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2 border-white text-primary-foreground bg-transparent hover:bg-white/10 px-10 py-7 text-xl font-bold rounded-2xl max-w-full whitespace-normal h-auto"
-              onClick={scrollToEvidence}
-            >
-              {t("cta.researchCta")}
-            </Button>
+          <div className="mt-8 mx-auto max-w-4xl space-y-3">
+            <h3 className="text-center text-sm font-semibold text-foreground">
+              {t("pricing.faq.heading")}
+            </h3>
+            {pricingFaqs.map((item, index) => (
+              <details key={index} className="rounded-xl border border-border bg-card p-4">
+                <summary className="cursor-pointer text-sm font-semibold text-foreground">
+                  {item.question}
+                </summary>
+                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                  {item.answer}
+                </p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
+
 
       {/* FAQ Section */}
       <section ref={faqRef} className="py-24 px-4 sm:px-6 lg:px-8">
@@ -965,9 +956,37 @@ const Landing = () => {
             <a href="/terms-of-service" className="text-primary underline underline-offset-4">
               {t("faq.termsLink")}
             </a>
-            <button onClick={scrollToPilot} className="text-primary underline underline-offset-4">
+            <button onClick={scrollToDemo} className="text-primary underline underline-offset-4">
               {t("faq.contactLink")}
             </button>
+          </div>
+        </div>
+      </section>
+      {/* CTA Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-primary text-primary-foreground">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold mb-8">
+            {t("cta.heading")}
+          </h2>
+          <p className="text-xl text-primary-foreground/80 mb-12 leading-relaxed">
+            {t("cta.body")}
+          </p>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-6 justify-center">
+            <Button
+              size="lg"
+              className="bg-background text-primary hover:bg-background/90 px-10 py-7 text-xl font-bold rounded-2xl max-w-full whitespace-normal h-auto"
+              onClick={scrollToDemo}
+            >
+              {t("cta.demoCta")}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-2 border-white text-primary-foreground bg-transparent hover:bg-white/10 px-10 py-7 text-xl font-bold rounded-2xl max-w-full whitespace-normal h-auto"
+              onClick={scrollToWorkflow}
+            >
+              {t("cta.workflowCta")}
+            </Button>
           </div>
         </div>
       </section>
@@ -975,7 +994,7 @@ const Landing = () => {
       {/* Contact Section */}
       <section
         ref={contactRef}
-        id="pilot-contact"
+        id="demo-contact"
         tabIndex={-1}
         className="scroll-mt-24 py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/30 border-t border-border/50"
       >
@@ -1021,7 +1040,7 @@ const Landing = () => {
                 <li>
                   <button
                     className="text-slate-400 hover:text-white transition-colors"
-                    onClick={() => scrollToSection(howItWorksRef)}
+                    onClick={scrollToWorkflow}
                   >
                     {t("footer.howItWorks")}
                   </button>
@@ -1064,7 +1083,7 @@ const Landing = () => {
                 <li>
                   <button
                     className="text-slate-400 hover:text-white transition-colors"
-                    onClick={scrollToPilot}
+                    onClick={scrollToDemo}
                   >
                     {t("footer.contactUs")}
                   </button>

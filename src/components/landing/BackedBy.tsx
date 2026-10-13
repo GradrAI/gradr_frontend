@@ -80,9 +80,6 @@ const BackedBy = () => {
             </a>
           ))}
         </div>
-        <p className="mt-6 text-sm text-muted-foreground">
-          {t("backedBy.caption")}
-        </p>
       </div>
     </section>
   );

@@ -15,6 +15,7 @@ import {
   Form,
   FormControl,
   FormField,
+  FormDescription,
   FormItem,
   FormLabel,
   FormMessage,
@@ -181,6 +182,7 @@ const ContactForm = () => {
                       {...field}
                     />
                   </FormControl>
+                  <FormDescription className="text-sm">{t("contact.messageHint")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

@@ -54,7 +54,7 @@ describe("ContactForm", () => {
 
   it("shows validation errors for required fields on empty submit", async () => {
     renderForm();
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
+    fireEvent.click(screen.getByRole("button"));
 
     await waitFor(() => {
       expect(screen.getByRole("textbox", { name: /^name/i })).toHaveAttribute("aria-invalid", "true");
@@ -77,7 +77,7 @@ describe("ContactForm", () => {
       screen.getByRole("textbox", { name: /^message/i }),
       "I would like a demo."
     );
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
+    fireEvent.click(screen.getByRole("button"));
 
     await waitFor(() => {
       expect(mockedPost).toHaveBeenCalledWith("/contact", {
@@ -106,7 +106,7 @@ describe("ContactForm", () => {
       screen.getByRole("textbox", { name: /^message/i }),
       "Call me."
     );
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
+    fireEvent.click(screen.getByRole("button"));
 
     await waitFor(() => {
       expect(mockedPost).toHaveBeenCalledWith("/contact", {

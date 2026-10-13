@@ -10,158 +10,165 @@
     "closeMenu": "Fermer le menu"
   },
   "hero": {
-    "badge": "Évaluation assistée par l’IA pour les enseignants",
-    "heading": "Des évaluations vérifiables.",
-    "headingHighlight": "Des décisions pédagogiques humaines.",
-    "body": "Réunissez les évaluations papier et numériques dans un même parcours, avec des propositions de notation fondées sur vos critères, des retours et des exercices. L’IA peut aider ; les enseignants restent responsables des décisions d’évaluation.",
-    "pilotCta": "Discuter d’un pilote encadré",
-    "researchCta": "Consulter les résultats de recherche",
-    "principles": {
-      "rubric": {
-        "title": "Partir de votre barème",
-        "description": "Précisez les critères, les points attribués et les démarches acceptables pour l’évaluation."
+    "badge": "Correction et évaluation par l’IA pour les enseignants",
+    "heading": "Simplifiez l’évaluation.",
+    "headingHighlight": "Donnez du sens aux retours.",
+    "body": "Créez des examens et corrigez les copies papier ou numériques avec votre barème. Donnez aux apprenants des retours clairs et des exercices ciblés.",
+    "demoCta": "Demander une démo",
+    "workflowCta": "Voir comment ça marche",
+    "benefits": {
+      "paperDigital": {
+        "title": "Le papier et le numérique réunis",
+        "description": "Travaillez avec des copies numérisées et des tests en ligne dans GradrAI."
       },
-      "review": {
-        "title": "Garder le jugement humain au centre",
-        "description": "Examinez les notes et explications produites par l’IA avant de les utiliser pour des décisions importantes."
+      "markingGuide": {
+        "title": "Votre barème",
+        "description": "Placez vos critères et votre répartition des points au centre de la correction."
       },
-      "practice": {
-        "title": "Relier les retours à l’apprentissage",
-        "description": "Utilisez les retours et les exercices pour guider la prochaine étape d’apprentissage, pas seulement pour consigner une note."
+      "feedbackPractice": {
+        "title": "Des retours pour avancer",
+        "description": "Associez les retours par question à des exercices dans les matières choisies."
       }
     }
   },
   "backedBy": {
-    "heading": "Soutien de programmes pour startups",
-    "caption": "Le soutien de ces programmes ne constitue pas une validation de la précision de la notation ou des résultats d’apprentissage.",
+    "heading": "Avec le soutien de programmes pour startups",
     "forStartups": "for Startups"
   },
   "problem": {
-    "heading": "L’évaluation doit ouvrir la voie à",
-    "headingHighlight": "la prochaine étape d’apprentissage.",
-    "body": "La correction, les rapports et le suivi prennent du temps. L’enjeu est de mieux organiser ce travail sans perdre le jugement et les échanges qui aident les élèves et étudiants à apprendre.",
+    "heading": "La correction n’est qu’une",
+    "headingHighlight": "partie du travail.",
+    "body": "Préparer les tests, corriger les copies et tenir les dossiers prennent du temps sur l’enseignement. GradrAI réunit ce travail dans un même parcours d’évaluation.",
     "points": {
-      "criteria": "Des critères peu clairs rendent les notes difficiles à expliquer",
-      "delayed": "Un retour tardif peut arriver après le moment où l’apprenant en avait besoin",
-      "burden": "La correction et l’administration prennent du temps sur l’enseignement",
-      "connectivity": "La connexion et les équipements influencent les parcours d’évaluation",
-      "disconnected": "Des outils séparés pour le papier, le numérique et les exercices peuvent fragmenter l’apprentissage"
+      "marking": "Une pile de copies à corriger",
+      "feedback": "Des retours qui arrivent alors que les apprenants sont déjà passés à autre chose",
+      "admin": "Des résultats dispersés entre fichiers et outils"
     },
     "card": {
-      "title": "Ce qu’un pilote encadré doit mesurer",
-      "subtitle": "Évaluer tout le parcours, pas seulement la vitesse du modèle.",
+      "title": "Des copies à des retours utiles",
+      "subtitle": "Partez des documents que vous utilisez déjà.",
+      "workflowCta": "Voir comment ça marche",
       "items": [
-        "Le temps total du personnel, y compris la vérification et les corrections",
-        "Le délai des retours et les problèmes de notation non résolus",
-        "Ce que les apprenants peuvent expliquer ou résoudre sans aide de l’IA"
+        "Votre sujet, votre barème et les copies numérisées",
+        "Des notes par question et des explications de notation",
+        "Des résultats à vérifier, ajuster et intégrer à vos rapports"
       ]
     }
   },
   "solutions": {
-    "heading": "Des évaluations papier et numériques,",
-    "headingHighlight": "sous la responsabilité des enseignants.",
-    "body": "Utilisez l’IA pour vous aider à noter et à formuler des retours, tout en confiant les décisions pédagogiques aux équipes enseignantes.",
+    "heading": "Des outils pour",
+    "headingHighlight": "votre prochaine évaluation.",
+    "body": "Réunissez la création d’examens, la correction papier, les tests numériques et les exercices dans un même parcours d’évaluation.",
     "aiPaperGrading": {
-      "title": "Correction des copies papier assistée par l’IA",
-      "description": "Importez les copies numérisées, le sujet et votre barème pour obtenir des propositions de notation et des retours à vérifier."
+      "title": "Corrigez les copies papier",
+      "description": "Importez votre sujet, votre barème et les copies numérisées. Obtenez des notes et des retours par question à vérifier."
     },
     "cbtGeneration": {
-      "title": "Évaluation sur ordinateur",
-      "description": "Préparez les questions, partagez les liens d’évaluation et examinez les réponses numériques."
+      "title": "Créez et organisez des tests en ligne",
+      "description": "Créez des questions à partir de vos supports de cours, modifiez-les et partagez les liens d’évaluation avec vos apprenants."
     },
     "review": {
-      "title": "Vérification et correction",
-      "description": "Examinez les notes et explications proposées, puis exercez votre jugement avant d’utiliser les résultats."
+      "title": "Vérifiez et ajustez les résultats",
+      "description": "Comprenez les notes proposées et ajustez-les avant d’utiliser les résultats."
     },
     "smartPrep": {
-      "title": "Exercices SmartPrep",
-      "description": "Travaillez les matières choisies et consultez les explications. Les progrès d’apprentissage doivent être évalués, et non présumés."
+      "title": "Proposez des exercices ciblés",
+      "description": "Proposez aux apprenants des questions d’entraînement et des explications dans les matières qu’ils travaillent."
     },
     "analytics": {
-      "title": "Retours et rapports",
-      "description": "Utilisez les retours par question et les rapports pour préparer un échange ou la prochaine séance d’exercices."
+      "title": "Réunissez résultats et rapports",
+      "description": "Réunissez les notes et les retours par question dans les rapports de vos évaluations."
     }
   },
   "audience": {
-    "heading": "Pour celles et ceux qui",
-    "headingHighlight": "enseignent, évaluent et apprennent.",
-    "body": "Partez d’un parcours pédagogique défini et précisez comment les personnes, les éléments d’évaluation et la technologie travailleront ensemble.",
-    "schools": {
-      "title": "Écoles et universités",
-      "description": "Explorez les évaluations papier et numériques selon les besoins pédagogiques de votre établissement.",
-      "point1": "Parcours papier et sur ordinateur",
-      "point2": "Retours et rapports de classe",
-      "point3": "Échange sur un pilote encadré"
-    },
-    "departments": {
-      "title": "Départements et équipes pédagogiques",
-      "description": "Placez les critères du cours et le jugement des enseignants au centre de l’évaluation.",
-      "point1": "Barèmes propres au cours",
-      "point2": "Vérification des notes proposées",
-      "point3": "Retours pour le suivi pédagogique"
-    },
-    "examTeams": {
-      "title": "Équipes chargées des examens",
-      "description": "Discutez du volume d’évaluations, des responsabilités de vérification et des conditions de déploiement avant un pilote.",
-      "point1": "Préparation des évaluations",
-      "point2": "Copies papier et numériques",
-      "point3": "Vérification humaine et préparation d’une solution de secours"
+    "heading": "Pour les enseignants,",
+    "headingHighlight": "les établissements et les apprenants.",
+    "body": "Utilisez GradrAI pour vos évaluations ou explorez un parcours commun pour votre équipe pédagogique.",
+    "institutions": {
+      "title": "Établissements et équipes pédagogiques",
+      "description": "Intégrez les évaluations papier et numériques à votre école, université ou département.",
+      "point1": "Évaluations papier et numériques",
+      "point2": "Barèmes et rapports",
+      "point3": "Une démo pour votre établissement"
     },
     "solo": {
-      "title": "Enseignants, tuteurs et assistants pédagogiques",
-      "description": "Utilisez l’aide à la notation et les explications pour enrichir vos propres retours.",
-      "point1": "Propositions de notation fondées sur vos critères",
-      "point2": "Explications par question",
-      "point3": "Exercices dans les matières choisies"
+      "title": "Enseignants et tuteurs",
+      "description": "Obtenez une première correction et utilisez les retours pour préparer votre prochain cours.",
+      "point1": "Votre propre barème",
+      "point2": "Notes et explications à vérifier",
+      "point3": "Retours pour le suivi pédagogique"
     },
     "students": {
       "title": "Élèves, étudiants et apprenants",
-      "description": "Travaillez les matières d’examen disponibles et utilisez les explications pour réfléchir à votre raisonnement.",
+      "description": "Travaillez les matières choisies, consultez les explications et repérez les points à revoir.",
       "point1": "Questions d’entraînement",
       "point2": "Explications après les exercices",
-      "point3": "Retours à discuter avec votre enseignant"
+      "point3": "Préparation aux examens disponibles"
     }
   },
   "howItWorks": {
-    "heading": "Des documents d’évaluation",
-    "headingHighlight": "à des retours que vous pouvez vérifier.",
-    "body": "Choisissez un parcours papier ou numérique. Prévoyez une vérification humaine avant d’utiliser les productions de l’IA.",
-    "paperTab": "Évaluation sur papier",
-    "digitalTab": "Évaluation sur ordinateur",
+    "heading": "De vos supports de cours",
+    "headingHighlight": "aux notes et aux retours.",
+    "body": "Choisissez une évaluation papier ou numérique et suivez le parcours adapté à votre classe.",
+    "paperTab": "Correction papier",
+    "digitalTab": "Tests en ligne (CBT)",
     "paper": {
-      "scan": { "title": "Préparer et numériser", "desc": "Rendez chaque page remise lisible et conservez ensemble les pages de chaque apprenant." },
-      "upload": { "title": "Importer les documents", "desc": "Fournissez le sujet, le barème et les copies numérisées au format PDF." },
-      "aiGrade": { "title": "Générer des propositions", "desc": "L’IA propose des notes et des explications à partir du barème fourni." },
-      "review": { "title": "Vérifier puis utiliser", "desc": "Examinez le travail, corrigez les notes si nécessaire et décidez de l’usage des résultats." }
+      "scan": {
+        "title": "Préparez les copies",
+        "desc": "Numérisez lisiblement chaque page remise et regroupez les pages de chaque apprenant."
+      },
+      "upload": {
+        "title": "Ajoutez vos documents",
+        "desc": "Importez votre sujet, votre barème et les copies numérisées au format PDF."
+      },
+      "aiGrade": {
+        "title": "Obtenez des notes et des retours",
+        "desc": "GradrAI utilise votre barème pour proposer des notes et des explications par question."
+      },
+      "review": {
+        "title": "Vérifiez et ajustez",
+        "desc": "Vérifiez les notes et les explications, apportez vos ajustements et préparez les résultats à utiliser."
+      }
     },
     "digital": {
-      "create": { "title": "Préparer les questions", "desc": "Créez ou générez des questions, puis vérifiez leur adéquation avec vos objectifs pédagogiques." },
-      "distribute": { "title": "Partager l’évaluation", "desc": "Transmettez les liens aux apprenants et expliquez les règles de l’examen." },
-      "complete": { "title": "Recueillir les réponses", "desc": "Les apprenants passent l’évaluation selon les modalités définies par l’établissement." },
-      "review": { "title": "Vérifier les retours", "desc": "Examinez les notes et explications avant de les utiliser pour prendre des décisions ou organiser le suivi." }
-    },
-    "reviewNote": "Les productions de l’IA peuvent être erronées. Les enseignants doivent les vérifier ; cette page ne signifie pas que chaque résultat est automatiquement bloqué dans l’attente de leur validation."
+      "create": {
+        "title": "Créez votre test",
+        "desc": "Générez ou rédigez des questions, puis adaptez-les à votre cours."
+      },
+      "distribute": {
+        "title": "Partagez avec les apprenants",
+        "desc": "Envoyez les liens d’évaluation et expliquez les règles du test."
+      },
+      "complete": {
+        "title": "Recueillez les réponses",
+        "desc": "Les apprenants passent le test selon les modalités choisies pour l’évaluation."
+      },
+      "review": {
+        "title": "Vérifiez les résultats",
+        "desc": "Vérifiez les notes et les explications avant de décider des retours à transmettre ou des exercices à proposer."
+      }
+    }
   },
   "differentiation": {
     "heading": "Conçu autour de",
-    "headingHighlight": "l’apprentissage et de la vérification",
+    "headingHighlight": "votre façon d’évaluer",
     "rubrics": {
-      "title": "Vos critères d’évaluation",
-      "desc": "Définissez ce que les apprenants doivent démontrer, puis fournissez un barème qui reconnaît les démarches acceptables."
+      "title": "Votre barème",
+      "desc": "Définissez les critères, les points et les démarches acceptables pour votre cours."
     },
     "people": {
-      "title": "Responsabilité humaine",
-      "desc": "L’IA peut proposer. Les enseignants doivent juger si les notes et retours conviennent à leur contexte."
+      "title": "Vous gardez le dernier mot",
+      "desc": "Vérifiez les notes et les explications, apportez vos ajustements et décidez de l’usage des résultats."
     },
     "deployment": {
-      "title": "Un déploiement adapté",
-      "desc": "Discutez de la connexion, des équipements et des options sur ordinateur ou réseau local. Le fonctionnement hors ligne dépend du parcours et de la configuration."
+      "title": "Des options pour votre classe",
+      "desc": "Explorez les parcours papier, sur navigateur et sur ordinateur. Renseignez-vous sur la configuration adaptée aux classes peu connectées."
     }
   },
   "research": {
-    "heading": "Ce que notre étude de prototype a observé",
-    "badge": "Prototype de recherche, pas mesure de précision en production",
-    "scope": "Un cours d’introduction à la programmation. Les mêmes 60 copies manuscrites ont été évaluées avec et sans contexte de cours.",
+    "heading": "La recherche qui guide GradrAI",
+    "badge": "Étude d’un prototype sur 60 copies",
+    "scope": "L’étude de correction écrite a évalué 60 copies issues d’un cours d’introduction à la programmation.",
     "noContext": {
       "title": "Sans contexte de cours",
       "result": "Erreur absolue moyenne : 4,39 points sur 60. Signalées pour vérification humaine : 42 copies sur 60."
@@ -173,18 +180,21 @@
     "reference": "La référence est la moyenne des notes de deux enseignants après application d’une règle de notation commune. Il s’agit d’une référence construite, et non d’une évaluation de référence arbitrée de façon indépendante.",
     "limits": "Ces résultats ne démontrent ni la précision en production, ni l’équité, ni des gains d’apprentissage ou de temps. La plupart des copies ont été signalées pour vérification ; l’efficacité de cette vérification n’a pas été mesurée.",
     "citation": "Étude : Teacher-in-the-Loop AI Assessment for African Classrooms (John Oghenereuse Fiewor). Consultez l’article pour la méthode, les incertitudes et les limites.",
-    "requestStudy": "Demander l’étude"
+    "requestStudy": "Demander l’article de recherche",
+    "intro": "Nous étudions la correction manuscrite, les examens hors ligne et l’évaluation orale multilingue pour guider le développement de GradrAI.",
+    "detailsLabel": "Voir les résultats et les limites de l’étude",
+    "method": "Les mêmes 60 copies ont été notées avec et sans contexte de cours. Les chiffres ci-dessous comparent ces deux conditions."
   },
   "pricing": {
-    "heading": "Des offres pour",
+    "heading": "Choisissez une offre pour",
     "headingHighlight": "votre activité d’évaluation.",
-    "body": "Les offres en NGN reposent sur des achats de crédits prépayés. Les offres en USD comprennent des abonnements récurrents et des packs ponctuels. Vérifiez le prix, les modalités de facturation et la validité des crédits avant de payer.",
+    "body": "Choisissez une offre pour vos évaluations régulières ou un pack de crédits lorsque vous avez besoin d’une capacité de correction supplémentaire.",
     "plans": "Offres",
     "creditPacks": "Packs de crédits",
     "mostPopular": "Offre mise en avant",
     "bestValue": "Pack mis en avant",
     "custom": "Sur mesure",
-    "contactSales": "Discuter des besoins de l’établissement",
+    "contactSales": "Demander une démo",
     "getStartedFree": "Créer un compte",
     "getStarted": "Se connecter pour consulter l’offre",
     "credits": "{{count}} crédits",
@@ -204,77 +214,74 @@
     "flexibilityPrompt": "Besoin de plus de flexibilité ?",
     "browseCreditPacks": "Parcourir les packs de crédits",
     "payAsYouGo": "pour des achats ponctuels de crédits.",
-    "creditPacksIntro": "Les packs de crédits ponctuels sont soumis à leurs conditions de validité. Vérifiez l’offre choisie avant l’achat.",
+    "creditPacksIntro": "Ajoutez des crédits avec un pack ponctuel. Vérifiez leur durée de validité avant l’achat.",
     "bundledPrompt": "Vous souhaitez comparer les offres ?",
     "viewSubscriptionPlans": "Voir les offres",
-    "notice": "Les crédits ne sont pas garantis sans limite de durée. Une nouvelle attribution peut modifier la date d’expiration du solde de votre compte. Vérifiez le prix et les conditions au paiement."
+    "notice": "Vérifiez le prix, le type de facturation et la validité des crédits de l’offre choisie. Une nouvelle attribution peut modifier la date d’expiration de l’ensemble du solde de votre compte.",
+    "faq": {
+      "heading": "Questions sur les paiements et les crédits",
+      "items": [
+        {
+          "question": "Comment fonctionnent les paiements ?",
+          "answer": "Les offres en NGN reposent sur des achats de crédits prépayés. Les offres en USD comprennent des abonnements récurrents et des packs de crédits ponctuels. Vérifiez le prix et les modalités de facturation de l’offre choisie avant de payer."
+        },
+        {
+          "question": "Les crédits expirent-ils ou sont-ils reportés ?",
+          "answer": "La validité dépend de l’offre. Les crédits inutilisés peuvent s’accumuler, mais restent soumis à ses conditions de validité. Une nouvelle attribution peut modifier la date d’expiration de l’ensemble du solde de votre compte."
+        }
+      ]
+    }
   },
   "cta": {
-    "heading": "Préparez un pilote d’évaluation aux responsabilités claires.",
-    "body": "Présentez votre cours, le format de l’évaluation et vos contraintes. L’échange doit couvrir la vérification humaine, l’information des apprenants, les exigences liées aux données et la mesure des résultats.",
-    "pilotCta": "Discuter d’un pilote encadré",
-    "researchCta": "Consulter les résultats de recherche"
+    "heading": "Découvrez ce que GradrAI peut apporter à votre prochaine évaluation.",
+    "body": "Présentez ce que vous enseignez et votre façon d’évaluer. Nous vous montrerons les parcours de correction, de test et de retour adaptés à vos besoins.",
+    "demoCta": "Demander une démo",
+    "workflowCta": "Voir comment ça marche"
   },
   "faq": {
-    "heading": "Questions avant de commencer",
-    "body": "Comprendre le parcours, les éléments de preuve et les limites.",
+    "heading": "Questions avant votre prochaine évaluation",
+    "body": "Retrouvez les informations utiles pour choisir votre parcours.",
     "items": [
       {
-        "question": "Les notes produites par l’IA peuvent-elles remplacer le jugement enseignant ?",
-        "answer": "Non. Les notes et retours produits par l’IA peuvent être erronés. Les enseignants doivent examiner le travail et vérifier les propositions avant de prendre des décisions d’évaluation importantes."
+        "question": "Puis-je utiliser GradrAI pour des évaluations papier et en ligne ?",
+        "answer": "Oui. GradrAI propose des parcours d’évaluation sur papier et sur ordinateur. Nous pouvons discuter de leur adéquation à votre matière, à vos types de questions et à votre barème."
       },
       {
-        "question": "Quels éléments étayent l’approche de notation de GradrAI ?",
-        "answer": "Notre étude d’un prototype de recherche sur 60 copies a mesuré les erreurs de notation et les signalements pour vérification dans un cours de programmation. Elle ne démontre pas la précision en production, l’équité, les gains de temps ou d’apprentissage. Consultez la section Recherche pour les résultats et demandez l’article pour la méthode et les limites."
+        "question": "Puis-je utiliser mon propre barème ?",
+        "answer": "Oui. Fournissez vos critères, la répartition des points et les démarches acceptables. Précisez les règles de crédit partiel ou de prise en compte d’une erreur reportée pour pouvoir vérifier leur application."
       },
       {
-        "question": "Quels formats d’évaluation pouvons-nous envisager ?",
-        "answer": "GradrAI propose des parcours d’évaluation sur papier et sur ordinateur. L’adéquation à une matière, une écriture, un schéma ou un format de réponse doit être vérifiée avec des travaux représentatifs et le barème réel avant un pilote."
+        "question": "Puis-je vérifier ou modifier les notes ?",
+        "answer": "Oui. Vous pouvez examiner les notes et les explications et ajuster les résultats si nécessaire. Vérifiez les notes produites par l’IA à partir du travail de l’apprenant avant de les utiliser comme notes finales. Les apprenants doivent discuter de leurs questions de notation avec leur enseignant."
       },
       {
-        "question": "Pouvons-nous utiliser notre propre barème ?",
-        "answer": "Oui. Fournissez vos critères, la répartition des points et les démarches acceptables. Précisez les règles de crédit partiel et de prise en compte d’une erreur reportée, puis vérifiez que les propositions de notation les appliquent comme prévu."
+        "question": "Que peuvent faire les apprenants avec SmartPrep ?",
+        "answer": "Les apprenants peuvent travailler les matières choisies, vérifier leurs réponses et lire les explications après une séance. Ces résultats les aident à choisir les points à revoir."
       },
       {
         "question": "Combien de temps prend la correction ?",
-        "answer": "Le délai dépend du volume de copies, de leur lisibilité, de la complexité de l’évaluation, du mode de traitement et de la vérification humaine. Un pilote doit établir un délai réaliste pour votre évaluation ; nous ne promettons pas un délai unique pour toutes les situations."
+        "answer": "Le délai dépend du nombre et de la lisibilité des copies, de la complexité de l’évaluation, du mode de traitement et de la vérification humaine. Nous pouvons discuter d’un délai réaliste pour votre parcours lors d’une démo."
       },
       {
-        "question": "Un apprenant peut-il demander une vérification humaine ?",
-        "answer": "Les apprenants doivent contacter l’enseignant du cours au sujet d’une note ou d’une explication qu’ils jugent incorrecte. Les établissements doivent définir leurs modalités de vérification humaine et de recours avant d’utiliser des notes assistées par l’IA."
+        "question": "GradrAI peut-il fonctionner avec un accès limité à Internet ?",
+        "answer": "Renseignez-vous sur les options d’évaluation sur ordinateur et réseau local pour les environnements peu connectés. Leur disponibilité et leurs besoins de connexion dépendent du parcours, des équipements et des fonctions d’IA utilisés."
       },
       {
-        "question": "Que faut-il savoir sur les données des apprenants ?",
-        "answer": "Les parcours d’évaluation peuvent faire intervenir des prestataires externes. Lisez notre politique de confidentialité et discutez avec nous des exigences de votre établissement en matière de traitement, d’accès, de conservation et de suppression avant d’importer des documents d’apprenants. N’envoyez pas de dossiers d’apprenants via le formulaire de contact."
+        "question": "Comment les données des apprenants sont-elles traitées ?",
+        "answer": "Les parcours d’évaluation peuvent faire intervenir des prestataires cloud externes. Lisez notre politique de confidentialité et discutez avec nous des exigences de votre établissement en matière de traitement, d’accès, de conservation et de suppression avant d’importer des travaux d’apprenants."
       },
       {
-        "question": "GradrAI fonctionne-t-il hors ligne ?",
-        "answer": "Le fonctionnement hors ligne dépend du parcours et de la configuration. Demandez-nous les options sur ordinateur et réseau local pour les environnements peu connectés. Ne supposez pas que toutes les fonctions d’IA fonctionnent sans connexion Internet."
-      },
-      {
-        "question": "Que faut-il savoir sur les contrôles pendant les examens ?",
-        "answer": "Certains examens en mode strict dans le navigateur vérifient le plein écran et la fenêtre active ; la perte de l’un ou de l’autre peut entraîner la soumission de la tentative. Ces signaux ne prouvent pas une fraude. Convenez des réglages et des aménagements avec l’équipe avant l’examen."
-      },
-      {
-        "question": "Comment fonctionne la facturation ?",
-        "answer": "Les offres en NGN reposent sur des achats de crédits prépayés. Les offres en USD comprennent des abonnements récurrents et des packs de crédits ponctuels. Vérifiez le prix et la périodicité de facturation de l’offre choisie au paiement."
-      },
-      {
-        "question": "Les crédits expirent-ils ou sont-ils reportés ?",
-        "answer": "Les crédits sont soumis aux conditions de validité de l’offre choisie. Les crédits inutilisés peuvent s’accumuler, mais leur durée n’est pas garantie sans limite. Une nouvelle attribution peut modifier la date d’expiration du solde de crédits de votre compte."
-      },
-      {
-        "question": "Que doit couvrir un pilote en établissement ?",
-        "answer": "Partez d’un cours et d’une évaluation définis. Convenez des documents, des responsabilités de vérification, de l’information des apprenants, des exigences liées aux données, des solutions de secours et des critères de réussite avant d’utiliser le parcours pour des décisions importantes."
+        "question": "À quoi servent les contrôles d’examen dans le navigateur ?",
+        "answer": "Les examens en mode strict vérifient le plein écran et la fenêtre active. Quitter la fenêtre d’examen ou le plein écran peut entraîner la soumission de la tentative. Ces signaux ne prouvent pas une fraude ; convenez des réglages et des aménagements avec l’équipe avant l’examen."
       }
     ],
     "privacyLink": "Lire la politique de confidentialité",
     "termsLink": "Lire les conditions d’utilisation",
-    "contactLink": "Discuter des exigences de votre établissement"
+    "contactLink": "Demander une démo"
   },
   "contact": {
-    "heading": "Discuter d’un pilote encadré",
-    "body": "Présentez votre établissement, votre cours, le volume d’évaluations et votre connexion, ou posez des questions sur la recherche et les pratiques liées aux données. N’incluez aucun nom d’apprenant, copie, note ou autre donnée personnelle dans ce formulaire.",
+    "heading": "Demander une démo",
+    "body": "Présentez ce que vous enseignez et ce que vous souhaitez découvrir. Nous vous aiderons à explorer le parcours GradrAI adapté à vos besoins.",
     "labels": {
       "name": "Nom",
       "email": "E-mail",
@@ -286,7 +293,7 @@
       "name": "Jean Dupont",
       "email": "vous@domaine.com",
       "phone": "+33 6 00 00 00 00",
-      "message": "Décrivez vos besoins d’évaluation ou demandez l’étude. N’incluez pas de données d’apprenants."
+      "message": "Que souhaitez-vous découvrir dans la démo ?"
     },
     "validation": {
       "name": "Veuillez entrer votre nom",
@@ -295,18 +302,19 @@
       "message": "Veuillez entrer un message"
     },
     "sending": "Envoi en cours...",
-    "send": "Envoyer le message",
+    "send": "Demander une démo",
     "toast": {
-      "success": "Votre message a été envoyé. Merci d’avoir contacté GradrAI.",
+      "success": "Merci. Votre demande de démo a été envoyée. Nous vous contacterons avec les coordonnées fournies.",
       "error": "Impossible d'envoyer votre message pour le moment. Veuillez réessayer plus tard."
-    }
+    },
+    "messageHint": "N’incluez pas de dossiers d’apprenants."
   },
   "footer": {
-    "tagline": "Des évaluations papier et numériques assistées par l’IA pour les enseignants, avec des retours et des exercices au service de l’apprentissage.",
+    "tagline": "Examens, correction, retours et exercices pour les enseignants et les apprenants.",
     "platform": "Plateforme",
     "solutions": "Solutions",
     "howItWorks": "Comment ça marche",
-    "research": "Recherche et limites",
+    "research": "Recherche",
     "pricing": "Tarifs",
     "support": "Support",
     "helpCenter": "Assistance par e-mail",
@@ -316,9 +324,9 @@
     "terms": "Conditions"
   },
   "seo": {
-    "title": "GradrAI — Évaluations vérifiables, décisions pédagogiques humaines",
-    "description": "Évaluations papier et numériques assistées par l’IA pour les enseignants. Découvrez les retours, les exercices et les limites de la recherche, ou discutez d’un pilote encadré.",
-    "keywords": "évaluation assistée par l’IA, correction de copies, tests sur ordinateur, retours pédagogiques, vérification humaine, exercices, GradrAI",
-    "imageAlt": "GradrAI — Évaluations vérifiables et décisions pédagogiques humaines (visuel en anglais)."
+    "title": "GradrAI | Correction par IA, examens et entraînement",
+    "description": "Créez des examens, corrigez les évaluations papier et numériques et accompagnez les apprenants avec GradrAI. Découvrez le parcours ou demandez une démo.",
+    "keywords": "correction par IA, copies papier, examens numériques, tests sur ordinateur, retours pédagogiques, exercices, GradrAI",
+    "imageAlt": "GradrAI. Simplifiez l’évaluation. Donnez du sens aux retours. Visuel en anglais."
   }
 }
