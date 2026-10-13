@@ -11,6 +11,22 @@ The aim of the Gradr AI tool is to:
 - "have everyone in the loop",
 - provide analytics.
 
+## Runtime and toolchain
+
+Use Node.js 24.x and Bun 1.2.21. `.nvmrc` selects Node 24 locally, and `package.json` declares the same major for Vercel. The linked Vercel project's Node.js setting must also stay on 24.x.
+
+```sh
+nvm use
+bun install --frozen-lockfile
+bun run dev
+bun run test
+bun run build
+```
+
+The build logs the Node version before type-checking and bundling. Vite 8 and its React plugin 6 share the build pipeline with Vitest 4; TypeScript uses bundler module resolution. React 18, Tailwind 3 and the application-library major versions remain unchanged. `vite.config.ts` explicitly preserves the previous JavaScript/CSS compilation targets; it does not add browser API polyfills.
+
+Commit `bun.lock` with dependency changes. Production deploys from GitHub `main`; do not deploy a local smoke-test build containing overridden API URLs.
+
 ## Landing-page messaging
 
 English and French landing copy lives in `src/i18n/locales/en.json` and `fr.json`. Keep both languages aligned with the evidence boundaries in the founder briefing; prototype results are not production accuracy, fairness, learning-gain or time-saving guarantees.
