@@ -4,12 +4,21 @@ Gradr is an AI tool for grading paper-based tests built using Google Gemini mode
 
 ## Aim
 The aim of the Gradr AI tool is to:
-- eliminate biases in the grading process,
+- support rubric-based teacher review without claiming bias-free grading,
 - improve transparency of assessment,
 - provide feedback for students,
 - improve record keeping,
 - "have everyone in the loop",
 - provide analytics.
+
+## Landing-page messaging
+
+English and French landing copy lives in `src/i18n/locales/en.json` and `fr.json`. Keep both languages aligned with the evidence boundaries in the founder briefing; prototype results are not production accuracy, fairness, learning-gain or time-saving guarantees.
+
+- Primary pilot CTAs use the existing contact form (`#pilot-contact`); research CTAs focus `#research-evidence`. Sign-in and signup remain available. Study requests do not publish the manuscript or private briefing.
+- Pricing amounts, credits and declared seats remain API-driven. The landing displays numeric validity and rail/product-specific billing labels instead of promotional API descriptions or academic-period expiry claims. Billing behavior is unchanged.
+- Update `index.html`, the landing metadata effect and `public/og-image.png` alongside relevant copy changes. The landing resets metadata on language changes and navigation back from the blog.
+- Verify with `bun run test src/__tests__/components/ContactForm.test.tsx` and `bun run build`, then exercise EN/FR, desktop/mobile, pilot/research focus, both pricing rails and contact success/failure in a browser. Intercept contact requests during smoke checks; do not send test mail.
 
 ## Useful links
 - [Backend repo](https://github.com/Fiewor/gradr_backend)

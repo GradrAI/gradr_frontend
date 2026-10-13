@@ -10,229 +10,271 @@
     "closeMenu": "Close menu"
   },
   "hero": {
-    "badge": "End-to-End Assessment Platform",
-    "heading": "Generate, Deliver, Grade,",
-    "headingHighlight": "Analyse.",
-    "body": "Empowering educators, schools, and organisations with a unified infrastructure for paper-based and digital assessments. Trusted by institutions across Africa.",
-    "startTrial": "Start Free Trial",
-    "bookDemo": "Book a Demo",
-    "stats": {
-      "saveHours": {
-        "title": "Save 20+ Hours / Period",
-        "description": "Reclaim over 20 hours worth of your teaching time every exam season."
+    "badge": "AI-assisted assessment for educators",
+    "heading": "Reviewable assessment.",
+    "headingHighlight": "Teacher-led decisions.",
+    "body": "Bring paper and digital assessment into one workflow, with rubric-based scoring suggestions, feedback and practice. AI can assist; educators remain responsible for assessment decisions.",
+    "pilotCta": "Discuss a supervised pilot",
+    "researchCta": "See the research",
+    "principles": {
+      "rubric": {
+        "title": "Start with your marking guide",
+        "description": "Provide the criteria, mark allocations and acceptable approaches for the assessment."
       },
-      "gradeImprovement": {
-        "title": "8% Grade Improvement",
-        "description": "Instant feedback prevents learning loss, directly improving exam performance."
+      "review": {
+        "title": "Keep human judgment central",
+        "description": "Review AI-generated scores and explanations before using them for consequential decisions."
       },
-      "fairness": {
-        "title": "100% Fairness & Integrity",
-        "description": "Eliminate the 60% variance found in manual, multi-teacher human grading."
+      "practice": {
+        "title": "Make feedback useful for learning",
+        "description": "Use feedback and practice to guide the next learning step—not just record a score."
       }
     }
   },
   "backedBy": {
-    "heading": "Backed by",
+    "heading": "Startup programme support",
+    "caption": "Programme support is not an endorsement of grading accuracy or learning outcomes.",
     "forStartups": "for Startups"
   },
   "problem": {
-    "heading": "Traditional Assessments are",
-    "headingHighlight": "Broken and Disconnected.",
-    "body": "From manual grading bottlenecks to high-cost digital infrastructure, maintaining assessment integrity and speed has never been harder for modern institutions.",
+    "heading": "Assessment should lead to",
+    "headingHighlight": "the next step in learning.",
+    "body": "Marking, reporting and follow-up take time. The challenge is to make that work more manageable without losing the judgment and conversations that help students learn.",
     "points": {
-      "disagree": "6 in 10 grades disagree across different human teachers",
-      "delayed": "Delayed feedback reduces student performance by 8%",
-      "burden": "High administrative burden (15+ mins per script)",
-      "expensive": "Expensive and rigid CBT infrastructure",
-      "disconnected": "Disconnected tools for paper and digital exams"
+      "criteria": "Unclear criteria make marks harder to explain",
+      "delayed": "Delayed feedback can miss the moment when a learner needs it",
+      "burden": "Marking and administration compete with teaching time",
+      "connectivity": "Connectivity and device constraints affect assessment workflows",
+      "disconnected": "Separate paper, digital and practice tools can fragment the learning process"
     },
     "card": {
-      "title": "Manual Bottleneck",
-      "subtitle": "Average 15 mins per script",
-      "adminOverload": "Admin Overload",
-      "highPercent": "85% High"
+      "title": "What a supervised pilot should measure",
+      "subtitle": "Test the whole workflow, not just model speed.",
+      "items": [
+        "Total staff time, including review and corrections",
+        "Feedback turnaround and unresolved scoring issues",
+        "What learners can explain or solve without AI assistance"
+      ]
     }
   },
   "solutions": {
-    "heading": "One Platform,",
-    "headingHighlight": "Every Assessment.",
-    "body": "GradrAI provides the infrastructure you need to generate, deliver, and grade assessments across the entire lifecycle.",
+    "heading": "Paper and digital assessment,",
+    "headingHighlight": "with educators in charge.",
+    "body": "Use AI to assist with scoring and feedback while keeping educational decisions with teaching staff.",
     "aiPaperGrading": {
-      "title": "AI Paper Grading",
-      "description": "Upload scanned handwritten scripts and get instant AI-powered grades and feedback."
+      "title": "AI-assisted paper scoring",
+      "description": "Upload scanned scripts, the question paper and your marking guide to generate scoring suggestions and feedback for review."
     },
     "cbtGeneration": {
-      "title": "CBT Generation",
-      "description": "Create, distribute, and manage digital assessments with ease."
+      "title": "Computer-based assessment",
+      "description": "Prepare questions, share assessment links and review digital submissions."
     },
-    "onlineProctoring": {
-      "title": "Online Proctoring",
-      "description": "AI-monitored sessions to ensure examiner integrity and prevent malpractice."
+    "review": {
+      "title": "Review and correction",
+      "description": "Inspect suggested scores and explanations, and add your judgment before using the results."
     },
     "smartPrep": {
-      "title": "SmartPrep Mode",
-      "description": "AI-powered mock exams providing personalized pedagogical feedback for learners."
+      "title": "SmartPrep practice",
+      "description": "Practise selected subjects and review explanations. Improved learning is something to evaluate, not assume."
     },
     "analytics": {
-      "title": "Advanced Analytics",
-      "description": "Real-time performance reports for students, educators, and administrators."
+      "title": "Feedback and reports",
+      "description": "Use question-level feedback and reports to plan a discussion or the next practice step."
     }
   },
   "audience": {
-    "heading": "Designed for Scale and",
-    "headingHighlight": "Impact.",
-    "body": "Whether you're a solo tutor or a national institution, GradrAI adapts to your workflow.",
+    "heading": "For the people who",
+    "headingHighlight": "teach, assess and learn.",
+    "body": "Start with a defined educational workflow and agree how people, evidence and technology will work together.",
     "schools": {
-      "title": "Schools & Universities",
-      "description": "Complete digital transformation for institutional assessments.",
-      "point1": "Bulk grading of paper scripts",
-      "point2": "Class performance tracking",
-      "point3": "LMS integration"
+      "title": "Schools and universities",
+      "description": "Explore paper and digital assessment around your institution’s teaching needs.",
+      "point1": "Paper and CBT workflows",
+      "point2": "Feedback and class reports",
+      "point3": "Discuss a supervised pilot"
     },
-    "corporate": {
-      "title": "Corporate Organisations",
-      "description": "Streamline recruitment and internal certification testing.",
-      "point1": "Proctored online assessments",
-      "point2": "Instant candidate screening",
-      "point3": "Knowledge, Skills, and Aptitude Testing"
+    "departments": {
+      "title": "Departments and course teams",
+      "description": "Keep course-specific criteria and staff judgment at the centre of assessment.",
+      "point1": "Course-specific marking guides",
+      "point2": "Review of suggested scores",
+      "point3": "Feedback for teaching follow-up"
     },
-    "professional": {
-      "title": "Professional Bodies",
-      "description": "Secure, large-scale certification exam delivery and grading.",
-      "point1": "Standardised exam delivery",
-      "point2": "Hybrid paper/digital workflows",
-      "point3": "High-integrity proctoring"
+    "examTeams": {
+      "title": "Examination teams",
+      "description": "Discuss assessment volume, review responsibilities and deployment requirements before a pilot.",
+      "point1": "Assessment preparation",
+      "point2": "Paper and digital submissions",
+      "point3": "Staff review and contingency planning"
     },
     "solo": {
-      "title": "Solo Tutors & TAs",
-      "description": "Save time and provide better feedback to your students.",
-      "point1": "Quick affordable grading",
-      "point2": "Detailed student feedback",
-      "point3": "Personalised analytics"
+      "title": "Teachers, tutors and teaching assistants",
+      "description": "Use scoring assistance and explanations to support your own feedback.",
+      "point1": "Rubric-based scoring suggestions",
+      "point2": "Question-level explanations",
+      "point3": "Practice for selected subjects"
     },
     "students": {
-      "title": "Students & Learners",
-      "description": "Practice for JAMB UTME, WASSCE and more with AI-guided mock tests.",
-      "point1": "Smart Mock Exams",
-      "point2": "AI Explanations & Concept Tags",
-      "point3": "Performance Tracking"
+      "title": "Students and learners",
+      "description": "Practise supported exam subjects and use explanations to reflect on your reasoning.",
+      "point1": "Practice questions",
+      "point2": "Explanations after practice",
+      "point3": "Feedback to discuss with your teacher"
     }
   },
   "howItWorks": {
-    "heading": "Streamlined",
-    "headingHighlight": "Workflows.",
-    "body": "Choose the workflow that fits your assessment needs.",
-    "paperTab": "Paper-based Grading",
-    "digitalTab": "Computer-based (CBT)",
+    "heading": "From assessment material",
+    "headingHighlight": "to feedback you can review.",
+    "body": "Choose a paper or digital workflow. Plan staff review before using AI-generated output.",
+    "paperTab": "Paper-based assessment",
+    "digitalTab": "Computer-based assessment",
     "paper": {
-      "scan": { "title": "Scan", "desc": "Scan handwritten scripts using any scanner or mobile app." },
-      "upload": { "title": "Upload", "desc": "Upload PDFs or images to our secure portal." },
-      "aiGrade": { "title": "AI Grade", "desc": "AI reads handwriting and applies your marking scheme." },
-      "export": { "title": "Export", "desc": "Review results and export to Sheets or LMS." }
+      "scan": { "title": "Prepare and scan", "desc": "Make every submitted page legible and keep each student’s work together." },
+      "upload": { "title": "Upload materials", "desc": "Provide the question paper, marking guide and scanned scripts as PDFs." },
+      "aiGrade": { "title": "Generate suggestions", "desc": "AI proposes scores and explanations against the supplied marking guide." },
+      "review": { "title": "Review and use", "desc": "Check the work, correct scores where needed and decide how results should be used." }
     },
     "digital": {
-      "create": { "title": "Create", "desc": "Generate quiz questions using AI or manual entry." },
-      "distribute": { "title": "Distribute", "desc": "Share assessment links with students securely." },
-      "proctor": { "title": "Proctor", "desc": "Monitor attempts with AI-powered integrity tools." },
-      "analyse": { "title": "Analyse", "desc": "Instant auto-grading and performance analytics." }
-    }
+      "create": { "title": "Prepare questions", "desc": "Create or generate questions, then check their fit with your learning goals." },
+      "distribute": { "title": "Share the assessment", "desc": "Give learners their assessment links and explain the exam rules." },
+      "complete": { "title": "Collect responses", "desc": "Learners complete the assessment under the settings agreed by the institution." },
+      "review": { "title": "Review the feedback", "desc": "Inspect scores and explanations before using them to guide decisions or follow-up." }
+    },
+    "reviewNote": "AI output can be wrong. Educators should review it; this page does not imply that every result is automatically held for teacher approval."
   },
   "differentiation": {
-    "heading": "Built for the",
-    "headingHighlight": "Future of Global Education",
-    "affordable": {
-      "title": "Affordable & Accessible",
-      "desc": "Localized regional pricing tailored for equity, powered by global-scale technology."
+    "heading": "Built around",
+    "headingHighlight": "learning and review",
+    "rubrics": {
+      "title": "Your assessment criteria",
+      "desc": "Start with what students should demonstrate, then provide a marking guide that recognises acceptable approaches."
     },
-    "hybrid": {
-      "title": "Hybrid Workflow",
-      "desc": "The only platform that handles both paper scripts and digital tests seamlessly."
+    "people": {
+      "title": "Human responsibility",
+      "desc": "AI can suggest. Educators must judge whether scores and feedback are appropriate for their context."
     },
-    "mobile": {
-      "title": "Mobile-First",
-      "desc": "Optimised for scenarios with limited high-end hardware infrastructure."
+    "deployment": {
+      "title": "A deployment that fits",
+      "desc": "Discuss connectivity, devices and desktop or local-network options. Offline support depends on the workflow and setup."
+    }
+  },
+  "research": {
+    "heading": "What our prototype study found",
+    "badge": "Research prototype—not production accuracy",
+    "scope": "One introductory programming course. The same 60 handwritten scripts were evaluated with and without lecture context.",
+    "noContext": {
+      "title": "Without lecture context",
+      "result": "Mean absolute error: 4.39 marks out of 60. Flagged for teacher review: 42 of 60 scripts."
     },
-    "whyGradrAI": "Why GradrAI?",
-    "hybridSaaS": "Hybrid SaaS Model",
-    "unique": "Unique",
-    "fractionCost": "Fraction of Global Competitor Cost",
-    "localContext": "Local Context Support"
+    "withContext": {
+      "title": "With lecture context",
+      "result": "Mean absolute error: 5.20 marks out of 60. Flagged for teacher review: 43 of 60 scripts."
+    },
+    "reference": "The reference averages two lecturers’ scores after applying a common scoring policy. It is a constructed reference, not independently adjudicated ground truth.",
+    "limits": "These findings do not establish production-wide accuracy, fairness, learning gains or time savings. Most scripts were flagged for review; review effectiveness was not measured.",
+    "citation": "Study: Teacher-in-the-Loop AI Assessment for African Classrooms (John Oghenereuse Fiewor). See the paper for methods, uncertainty and limitations.",
+    "requestStudy": "Request the study"
   },
   "pricing": {
-    "heading": "Flexible Pricing for",
-    "headingHighlight": "Everyone.",
-    "body": "Globally standard features with localized regional pricing options. Prepaid plans with rollover for local teams, and international USD checkout. NGN credits roll over through the relevant term or academic year — no forced monthly card billing.",
-    "prepaidPlans": "Prepaid Plans",
+    "heading": "Plan options for",
+    "headingHighlight": "your assessment workload.",
+    "body": "NGN options use prepaid credit purchases. USD options include recurring plans and one-time packs. Confirm the selected price, billing terms and credit validity before paying.",
+    "plans": "Plans",
     "creditPacks": "Credit Packs",
-    "mostPopular": "Most Popular",
-    "bestValue": "Best Value",
+    "mostPopular": "Featured plan",
+    "bestValue": "Featured pack",
     "custom": "Custom",
-    "contactSales": "Contact Sales",
-    "getStartedFree": "Get Started Free",
-    "getStarted": "Get Started",
+    "contactSales": "Discuss institutional needs",
+    "getStartedFree": "Create an account",
+    "getStarted": "Sign in to view this plan",
     "credits": "{{count}} credits",
-    "creditsLifetime": "{{count}} credits (lifetime)",
     "userSeats": "Up to {{count}} user seats",
-    "validFor": "Valid for {{expiry}}",
-    "buyPack": "Buy {{name}}",
+    "buyPack": "Sign in to view {{name}}",
+    "trialGrant": "One-time trial credit grant",
+    "prepaidLabel": "One-time prepaid credit purchase",
+    "oneTimeLabel": "One-time credit purchase",
+    "monthlyLabel": "Recurring monthly plan",
+    "yearlyLabel": "Recurring annual plan",
+    "recurringLabel": "Recurring plan; confirm the billing interval at checkout",
+    "checkoutTerms": "Confirm billing terms at checkout",
+    "institutionalTerms": "Scope and terms agreed for your institution",
+    "validityMonths_one": "Credit validity: {{count}} month",
+    "validityMonths_other": "Credit validity: {{count}} months",
+    "checkValidity": "Confirm credit validity before purchase",
     "flexibilityPrompt": "Need more flexibility?",
     "browseCreditPacks": "Browse credit packs",
-    "payAsYouGo": "for pay-as-you-go grading.",
-    "creditPacksIntro": "One-time credit packs — no subscription required. Buy credits and use them at your own pace.",
-    "bundledPrompt": "Prefer a bundled plan with more credits?",
-    "viewSubscriptionPlans": "View subscription plans"
+    "payAsYouGo": "for one-time credit purchases.",
+    "creditPacksIntro": "One-time credit packs are subject to their validity terms. Check the selected offer before purchase.",
+    "bundledPrompt": "Want to compare plans?",
+    "viewSubscriptionPlans": "View plans",
+    "notice": "Credits are not guaranteed to last indefinitely. A new credit grant can change the expiry date of your account’s balance. Confirm the price and terms at checkout."
   },
   "cta": {
-    "heading": "Ready to modernise your assessment lifecycle?",
-    "body": "Join the leading institutions worldwide using GradrAI to deliver faster, fairer, and more consistent grades.",
-    "startTrial": "Start Free Trial",
-    "requestDemo": "Request Demo"
+    "heading": "Plan an assessment pilot with clear responsibilities.",
+    "body": "Tell us about your course, assessment format and constraints. A pilot discussion should cover staff review, student communication, data requirements and how success will be measured.",
+    "pilotCta": "Discuss a supervised pilot",
+    "researchCta": "See the research"
   },
   "faq": {
-    "heading": "Common Questions",
-    "body": "Everything you need to know about the platform.",
+    "heading": "Questions before you begin",
+    "body": "Understand the workflow, the evidence and the limits.",
     "items": [
       {
-        "question": "How accurate is AI grading compared to manual grading?",
-        "answer": "Our AI achieves 95%+ accuracy rates. Since 6 in 10 human-awarded grades often disagree across different teachers, GradrAI provides a more consistent, bias-free standard for student work."
+        "question": "Can AI-generated scores replace teacher judgment?",
+        "answer": "No. AI-generated scores and feedback can be wrong. Educators should inspect the work and review suggestions before making consequential assessment decisions."
       },
       {
-        "question": "What types of tests can GradrAI handle?",
-        "answer": "GradrAI can grade various formats including multiple choice, short answers, essays, mathematical problems, and structured responses across different subjects."
+        "question": "What evidence supports GradrAI’s grading approach?",
+        "answer": "Our 60-script research-prototype study measured scoring error and review flags in one programming course. It did not establish production-wide accuracy, fairness, time savings or learning gains. See the Research section for results and request the paper for the methods and limitations."
       },
       {
-        "question": "Is my student data secure?",
-        "answer": "Yes, we use enterprise-grade encryption and comply with educational data privacy standards. Your data is never shared with third parties."
+        "question": "Which assessment formats can we discuss?",
+        "answer": "GradrAI supports paper-based and computer-based assessment workflows. Suitability for a subject, handwriting style, diagram or answer format should be checked with representative work and the actual marking guide before a pilot."
       },
       {
-        "question": "How long does it take to grade papers?",
-        "answer": "Most assessments are graded within 2-5 minutes, regardless of the number of students or complexity of questions."
+        "question": "Can we use our own marking guide?",
+        "answer": "Yes. Provide your criteria, point allocations and acceptable approaches. Make partial-credit and follow-through rules explicit, then review whether the scoring suggestions apply them as intended."
       },
       {
-        "question": "Can I customize grading criteria?",
-        "answer": "Absolutely! You can set custom marking schemes, rubrics, and weighting for different question types to match your teaching style."
+        "question": "How long does grading take?",
+        "answer": "Turnaround depends on script volume, legibility, assessment complexity, processing mode and staff review. A pilot should establish a realistic timeframe for your assessment; we do not promise one turnaround for every workload."
       },
       {
-        "question": "Do you offer training and support?",
-        "answer": "Yes, we provide comprehensive onboarding, training sessions, and ongoing support to ensure you get the most out of GradrAI."
+        "question": "Can a learner ask for human review?",
+        "answer": "Learners should contact their course instructor about a score or explanation they believe is incorrect. Institutions should define their human-review and appeal arrangements before using AI-assisted marks."
       },
       {
-        "question": "Do my NGN credits expire?",
-        "answer": "No. NGN plans are prepaid credit grants. Unlike traditional monthly recurring subscriptions, unused NGN credits roll over to the next academic period or semester, so you never lose what you pay for."
+        "question": "What should we know about student data?",
+        "answer": "Assessment workflows can involve external service providers. Read our Privacy Policy and discuss your institution’s processing, access, retention and deletion requirements with us before uploading student material. Do not send student records through the inquiry form."
       },
       {
-        "question": "How do USD plans work?",
-        "answer": "USD plans run on international card processing via Creem. They are standard recurring subscription models suitable for international institutions, providing seamless automatic renewals."
+        "question": "Does GradrAI work offline?",
+        "answer": "Offline support depends on the workflow and setup. Ask us about desktop and local-network assessment options for low-connectivity settings. Do not assume every AI feature works without an internet connection."
       },
       {
-        "question": "Do I get billed every month?",
-        "answer": "For Nigerian customers, GradrAI uses prepaid credit grants through Paystack. You buy a plan or pack upfront, credits roll over through the relevant semester or academic year, and you top up when you need more. International customers can use Creem for USD subscriptions and credit packs, with credits applied only after verified payment webhooks."
+        "question": "What should we know about exam-monitoring controls?",
+        "answer": "Some strict browser-based exam workflows use fullscreen and focus checks and may submit an attempt when focus or fullscreen is lost. These signals are not proof of cheating. Agree settings and accommodations with staff before an exam."
+      },
+      {
+        "question": "How does billing work?",
+        "answer": "NGN options use prepaid credit purchases. USD options include recurring plans and one-time credit packs. Confirm the price and billing interval for your selected offer at checkout."
+      },
+      {
+        "question": "Do credits expire or roll over?",
+        "answer": "Credits are subject to the selected plan’s validity terms. Unused credits can accumulate, but they are not guaranteed to last indefinitely. A new credit grant can change the expiry date of your account’s credit balance."
+      },
+      {
+        "question": "What should an institutional pilot cover?",
+        "answer": "Start with a defined course and assessment. Agree the materials, review responsibilities, student communication, data requirements, contingency arrangements and measures of success before using the workflow for consequential decisions."
       }
-    ]
+    ],
+    "privacyLink": "Read the Privacy Policy",
+    "termsLink": "Read the Terms of Service",
+    "contactLink": "Discuss your institution’s requirements"
   },
   "contact": {
-    "heading": "Get in touch",
-    "body": "Have a question, want a demo, or exploring GradrAI for your institution? Send us a message and our team will respond as soon as possible.",
+    "heading": "Discuss a supervised pilot",
+    "body": "Tell us about your institution, course, assessment volume and connectivity—or ask about the research and data practices. Do not include student names, scripts, grades or other personal information in this form.",
     "labels": {
       "name": "Name",
       "email": "Email",
@@ -244,7 +286,7 @@
       "name": "Jane Doe",
       "email": "you@domain.com",
       "phone": "+234 800 000 0000",
-      "message": "Tell us how we can help..."
+      "message": "Describe your assessment needs or request the study. Please do not include student data."
     },
     "validation": {
       "name": "Please enter your name",
@@ -255,21 +297,28 @@
     "sending": "Sending...",
     "send": "Send Message",
     "toast": {
-      "success": "Thanks for reaching out! We'll get back to you shortly.",
+      "success": "Your message has been sent. Thank you for contacting GradrAI.",
       "error": "Unable to send your message right now. Please try again later."
     }
   },
   "footer": {
-    "tagline": "The next-generation assessment infrastructure for schools, professional bodies, and corporate organisations. Built for efficiency, integrity, and scale.",
+    "tagline": "AI-assisted paper and digital assessment for educators, with feedback and practice that support learning.",
     "platform": "Platform",
     "solutions": "Solutions",
     "howItWorks": "How it Works",
+    "research": "Research and limitations",
     "pricing": "Pricing",
     "support": "Support",
-    "helpCenter": "Help Center",
+    "helpCenter": "Email support",
     "contactUs": "Contact Us",
-    "copyright": "© {{year}} GradrAI. All rights reserved. Registered for the Nigerian & Global markets.",
+    "copyright": "© {{year}} GradrAI. All rights reserved.",
     "privacy": "Privacy",
     "terms": "Terms"
+  },
+  "seo": {
+    "title": "GradrAI — Reviewable Assessment, Teacher-Led Decisions",
+    "description": "AI-assisted paper and digital assessment for educators. Explore rubric-based feedback, practice and research limits, or discuss a supervised institutional pilot.",
+    "keywords": "AI-assisted assessment, paper grading, computer-based tests, rubric-based feedback, teacher review, educational practice, GradrAI",
+    "imageAlt": "GradrAI — Reviewable assessment. Teacher-led decisions."
   }
 }

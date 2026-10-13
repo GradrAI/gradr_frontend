@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -10,14 +10,11 @@ import {
   Clock,
   Users,
   Brain,
-  Shield,
-  Zap,
   Loader2,
   CreditCard,
   Package,
   Upload,
   Scan,
-  BarChart3,
   Mail,
   ChevronDown,
   ChevronUp,
@@ -27,14 +24,12 @@ import {
   FileText,
   Globe,
   Building2,
-  MonitorCheck,
   PieChart,
   Lock,
   CheckCircle2,
   ArrowRight,
   Search,
   School,
-  Briefcase,
   GraduationCap,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -50,7 +45,7 @@ import BackedBy from "@/components/landing/BackedBy";
 import ContactForm from "@/components/landing/ContactForm";
 
 const Landing = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -60,10 +55,58 @@ const Landing = () => {
   const pricingRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+  const evidenceRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const setMetaTag = (attribute: "name" | "property", key: string, content: string) => {
+      let element = document.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
+      if (!element) {
+        element = document.createElement("meta");
+        element.setAttribute(attribute, key);
+        document.head.appendChild(element);
+      }
+      element.content = content;
+    };
+
+    document.title = t("seo.title");
+    document.documentElement.lang = i18n.language?.startsWith("fr") ? "fr" : "en";
+    document.querySelectorAll('meta[property^="twitter:"]').forEach((element) => element.remove());
+    setMetaTag("name", "description", t("seo.description"));
+    setMetaTag("name", "keywords", t("seo.keywords"));
+    setMetaTag("property", "og:title", t("seo.title"));
+    setMetaTag("property", "og:description", t("seo.description"));
+    setMetaTag("property", "og:image:alt", t("seo.imageAlt"));
+    setMetaTag("property", "og:type", "website");
+    setMetaTag("property", "og:url", "https://gradrai.com/");
+    setMetaTag("property", "og:image", "https://gradrai.com/og-image.png");
+    setMetaTag("name", "twitter:title", t("seo.title"));
+    setMetaTag("name", "twitter:description", t("seo.description"));
+    setMetaTag("name", "twitter:image:alt", t("seo.imageAlt"));
+    setMetaTag("name", "twitter:url", "https://gradrai.com/");
+    setMetaTag("name", "twitter:image", "https://gradrai.com/og-image.png");
+    setMetaTag("name", "twitter:card", "summary_large_image");
+
+    const schema = document.getElementById("landing-software-schema");
+    if (schema?.textContent) {
+      const data = JSON.parse(schema.textContent);
+      data.description = t("seo.description");
+      schema.textContent = JSON.stringify(data);
+    }
+  }, [i18n.language, t]);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
     setMobileMenuOpen(false);
+  };
+
+  const scrollToPilot = (): void => {
+    scrollToSection(contactRef);
+    contactRef.current?.querySelector<HTMLInputElement>('input[name="name"]')?.focus({ preventScroll: true });
+  };
+
+  const scrollToEvidence = (): void => {
+    scrollToSection(evidenceRef);
+    evidenceRef.current?.focus({ preventScroll: true });
   };
 
   const audiences = [
@@ -75,18 +118,18 @@ const Landing = () => {
       points: [t("audience.schools.point1"), t("audience.schools.point2"), t("audience.schools.point3")],
     },
     {
-      id: "corporate",
-      icon: Briefcase,
-      title: t("audience.corporate.title"),
-      description: t("audience.corporate.description"),
-      points: [t("audience.corporate.point1"), t("audience.corporate.point2"), t("audience.corporate.point3")],
+      id: "departments",
+      icon: Building2,
+      title: t("audience.departments.title"),
+      description: t("audience.departments.description"),
+      points: [t("audience.departments.point1"), t("audience.departments.point2"), t("audience.departments.point3")],
     },
     {
-      id: "professional",
+      id: "examTeams",
       icon: GraduationCap,
-      title: t("audience.professional.title"),
-      description: t("audience.professional.description"),
-      points: [t("audience.professional.point1"), t("audience.professional.point2"), t("audience.professional.point3")],
+      title: t("audience.examTeams.title"),
+      description: t("audience.examTeams.description"),
+      points: [t("audience.examTeams.point1"), t("audience.examTeams.point2"), t("audience.examTeams.point3")],
     },
     {
       id: "solo",
@@ -118,9 +161,9 @@ const Landing = () => {
       color: "from-brand-success-500 to-brand-success-600",
     },
     {
-      icon: MonitorCheck,
-      title: t("solutions.onlineProctoring.title"),
-      description: t("solutions.onlineProctoring.description"),
+      icon: Users,
+      title: t("solutions.review.title"),
+      description: t("solutions.review.description"),
       color: "from-secondary to-secondary",
     },
     {
@@ -158,92 +201,38 @@ const Landing = () => {
     [paymentPlanData, selectedRail]
   );
 
-  const features = [
-    {
-      icon: Clock,
-      title: "Save 80% of Grading Time",
-      description:
-        "Automate hours of manual marking and focus on teaching what matters most.",
-      color: "from-brand-success-500 to-brand-success-600",
-    },
-    {
-      icon: Brain,
-      title: "AI-Powered Accuracy",
-      description:
-        "Advanced AI technology ensures consistent, bias-free grading across all assessments.",
-      color: "from-secondary to-secondary",
-    },
-    {
-      icon: BarChart3,
-      title: "Detailed Analytics",
-      description:
-        "Get insights into student performance with comprehensive reports and analytics.",
-      color: "from-primary to-primary",
-    },
-    {
-      icon: Users,
-      title: "Multi-Format Support",
-      description:
-        "Grade various test formats including essays, short answers, and structured responses.",
-      color: "from-orange-500 to-amber-600",
-    },
-    {
-      icon: Shield,
-      title: "Secure & Private",
-      description:
-        "Enterprise-grade security ensures your student data remains protected.",
-      color: "from-brand-danger-500 to-brand-danger-600",
-    },
-    {
-      icon: Zap,
-      title: "Instant Results",
-      description:
-        "Get graded results in minutes, not hours, for faster student feedback.",
-      color: "from-yellow-500 to-orange-600",
-    },
-  ];
-
-  const steps = [
-    {
-      icon: Upload,
-      title: "Upload Test Papers",
-      description:
-        "Simply scan and upload student test papers to our secure platform.",
-      color: "from-primary to-primary",
-    },
-    {
-      icon: Scan,
-      title: "AI Analysis",
-      description:
-        "Our advanced AI reads and analyzes each response against your marking criteria.",
-      color: "from-secondary to-secondary",
-    },
-    {
-      icon: BarChart3,
-      title: "Get Results",
-      description:
-        "Receive detailed grades and feedback reports for each student instantly.",
-      color: "from-brand-success-500 to-brand-success-600",
-    },
-  ];
+  const getBillingCopy = (plan: PaymentPlan): string => {
+    if (plan.name.toLowerCase() === "enterprise") return t("pricing.institutionalTerms");
+    if (plan.amount === 0 && plan.amountUsd === 0) return t("pricing.trialGrant");
+    if (plan.rail === "paystack_ngn") return t("pricing.prepaidLabel");
+    if (plan.planType === "credit_pack" || plan.creemProductType === "one_time") {
+      return t("pricing.oneTimeLabel");
+    }
+    if (plan.creemProductType === "recurring") {
+      if (plan.duration === "monthly") return t("pricing.monthlyLabel");
+      if (plan.duration === "yearly") return t("pricing.yearlyLabel");
+      return t("pricing.recurringLabel");
+    }
+    return t("pricing.checkoutTerms");
+  };
 
   const faqs = (t("faq.items", { returnObjects: true }) as Array<{ question: string; answer: string }>);
 
-  const gradingStats = [
+  const assessmentPrinciples = [
     {
-      icon: <Clock className="w-7 h-7 text-primary" />,
-      title: t("hero.stats.saveHours.title"),
-      description: t("hero.stats.saveHours.description"),
+      icon: <FileText className="w-7 h-7 text-primary" />,
+      title: t("hero.principles.rubric.title"),
+      description: t("hero.principles.rubric.description"),
     },
     {
-      icon: <Brain className="w-7 h-7 text-secondary" />,
-      title: t("hero.stats.gradeImprovement.title"),
-      description: t("hero.stats.gradeImprovement.description"),
+      icon: <Users className="w-7 h-7 text-secondary" />,
+      title: t("hero.principles.review.title"),
+      description: t("hero.principles.review.description"),
     },
     {
-      icon: <Shield className="w-7 h-7 text-yellow-500" />,
-      title: t("hero.stats.fairness.title"),
-      description: t("hero.stats.fairness.description"),
+      icon: <Brain className="w-7 h-7 text-yellow-500" />,
+      title: t("hero.principles.practice.title"),
+      description: t("hero.principles.practice.description"),
     },
   ];
 
@@ -285,7 +274,7 @@ const Landing = () => {
                   {t("nav.pricing")}
                 </button>
                 <button
-                  onClick={() => scrollToSection(contactRef)}
+                  onClick={scrollToPilot}
                   className="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
                 >
                   {t("nav.contact")}
@@ -352,7 +341,7 @@ const Landing = () => {
                 {t("nav.pricing")}
               </button>
               <button
-                onClick={() => scrollToSection(contactRef)}
+                onClick={scrollToPilot}
                 className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary w-full text-left"
               >
                 {t("nav.contact")}
@@ -396,32 +385,27 @@ const Landing = () => {
             <p className="text-xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
               {t("hero.body")}
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-6 justify-center items-center">
               <Button
                 size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6 text-xl rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105"
-                onClick={() => nav(`auth/account-type`)}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6 text-xl rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 max-w-full whitespace-normal h-auto"
+                onClick={scrollToPilot}
               >
-                {t("hero.startTrial")}
+                {t("hero.pilotCta")}
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="border-2 border-primary text-primary hover:bg-primary/5 px-10 py-6 text-xl rounded-full transition-all hover:scale-105"
-                onClick={() =>
-                  window.open(
-                    "mailto:contact@gradrai.com?subject=Demo Request",
-                    "_blank"
-                  )
-                }
+                className="border-2 border-primary text-primary hover:bg-primary/5 px-10 py-6 text-xl rounded-full transition-all hover:scale-105 max-w-full whitespace-normal h-auto"
+                onClick={scrollToEvidence}
               >
-                {t("hero.bookDemo")}
+                {t("hero.researchCta")}
               </Button>
             </div>
           </div>
 
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto px-4">
-            {gradingStats.map((stat, i) => (
+            {assessmentPrinciples.map((stat, i) => (
               <div
                 key={i}
                 className="flex items-start gap-4 p-5 rounded-xl bg-white/70 dark:bg-white/5 border border-border shadow-sm backdrop-blur-sm transition duration-300 hover:shadow-md"
@@ -457,10 +441,10 @@ const Landing = () => {
               </p>
               <div className="space-y-4">
                 {[
-                  t("problem.points.disagree"),
+                  t("problem.points.criteria"),
                   t("problem.points.delayed"),
                   t("problem.points.burden"),
-                  t("problem.points.expensive"),
+                  t("problem.points.connectivity"),
                   t("problem.points.disconnected"),
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
@@ -483,15 +467,11 @@ const Landing = () => {
                       <p className="text-sm text-muted-foreground">{t("problem.card.subtitle")}</p>
                     </div>
                   </div>
-                  <div className="space-y-4">
-                    <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                      <div className="h-full w-[85%] bg-brand-danger-500 rounded-full" />
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">{t("problem.card.adminOverload")}</span>
-                      <span className="font-bold text-brand-danger-500">{t("problem.card.highPercent")}</span>
-                    </div>
-                  </div>
+                  <ul className="space-y-4 list-disc pl-5 text-foreground">
+                    {(t("problem.card.items", { returnObjects: true }) as string[]).map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
                 </CardContent>
               </Card>
             </div>
@@ -605,7 +585,7 @@ const Landing = () => {
                   { icon: Scan, title: t("howItWorks.paper.scan.title"), desc: t("howItWorks.paper.scan.desc") },
                   { icon: Upload, title: t("howItWorks.paper.upload.title"), desc: t("howItWorks.paper.upload.desc") },
                   { icon: Brain, title: t("howItWorks.paper.aiGrade.title"), desc: t("howItWorks.paper.aiGrade.desc") },
-                  { icon: FileText, title: t("howItWorks.paper.export.title"), desc: t("howItWorks.paper.export.desc") },
+                  { icon: FileText, title: t("howItWorks.paper.review.title"), desc: t("howItWorks.paper.review.desc") },
                 ].map((step, i) => (
                   <div key={i} className="text-center px-4">
                     <div className="h-16 w-16 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
@@ -622,8 +602,8 @@ const Landing = () => {
                 {[
                   { icon: FileText, title: t("howItWorks.digital.create.title"), desc: t("howItWorks.digital.create.desc") },
                   { icon: Globe, title: t("howItWorks.digital.distribute.title"), desc: t("howItWorks.digital.distribute.desc") },
-                  { icon: MonitorCheck, title: t("howItWorks.digital.proctor.title"), desc: t("howItWorks.digital.proctor.desc") },
-                  { icon: PieChart, title: t("howItWorks.digital.analyse.title"), desc: t("howItWorks.digital.analyse.desc") },
+                  { icon: Users, title: t("howItWorks.digital.complete.title"), desc: t("howItWorks.digital.complete.desc") },
+                  { icon: PieChart, title: t("howItWorks.digital.review.title"), desc: t("howItWorks.digital.review.desc") },
                 ].map((step, i) => (
                   <div key={i} className="text-center px-4">
                     <div className="h-16 w-16 rounded-full bg-brand-success-100 dark:bg-brand-success-900/30 flex items-center justify-center mx-auto mb-6 shadow-inner">
@@ -636,11 +616,14 @@ const Landing = () => {
               </div>
             </TabsContent>
           </Tabs>
+          <p className="mt-8 max-w-5xl mx-auto text-sm text-muted-foreground leading-relaxed">
+            {t("howItWorks.reviewNote")}
+          </p>
         </div>
       </section>
 
-      {/* Competitive Differentiation Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white overflow-hidden relative">
+      {/* Assessment Context and Research */}
+      <section ref={evidenceRef} id="research-evidence" tabIndex={-1} className="scroll-mt-24 py-24 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white overflow-hidden relative">
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -650,9 +633,9 @@ const Landing = () => {
               </h2>
               <div className="space-y-8">
                 {[
-                  { title: t("differentiation.affordable.title"), desc: t("differentiation.affordable.desc") },
-                  { title: t("differentiation.hybrid.title"), desc: t("differentiation.hybrid.desc") },
-                  { title: t("differentiation.mobile.title"), desc: t("differentiation.mobile.desc") },
+                  { title: t("differentiation.rubrics.title"), desc: t("differentiation.rubrics.desc") },
+                  { title: t("differentiation.people.title"), desc: t("differentiation.people.desc") },
+                  { title: t("differentiation.deployment.title"), desc: t("differentiation.deployment.desc") },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4">
                     <div className="shrink-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center mt-1">
@@ -667,21 +650,27 @@ const Landing = () => {
               </div>
             </div>
             <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-2xl">
-              <h3 className="text-2xl font-bold mb-6">{t("differentiation.whyGradrAI")}</h3>
-              <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center group cursor-default">
-                  <span>{t("differentiation.hybridSaaS")}</span>
-                  <Badge variant="outline" className="text-primary border-primary">{t("differentiation.unique")}</Badge>
+              <h3 className="text-2xl font-bold mb-4">{t("research.heading")}</h3>
+              <Badge variant="outline" className="mb-4 max-w-full whitespace-normal text-sm text-blue-200 border-blue-300/50">
+                {t("research.badge")}
+              </Badge>
+              <p className="text-slate-200 mb-6 leading-relaxed">{t("research.scope")}</p>
+              <dl className="space-y-4 mb-6">
+                <div className="p-4 rounded-xl bg-slate-700/50">
+                  <dt className="font-semibold mb-2">{t("research.noContext.title")}</dt>
+                  <dd className="text-sm text-slate-200 leading-relaxed">{t("research.noContext.result")}</dd>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center">
-                  <span>{t("differentiation.fractionCost")}</span>
-                  <CheckCircle2 className="h-5 w-5 text-brand-success-400" />
+                <div className="p-4 rounded-xl bg-slate-700/50">
+                  <dt className="font-semibold mb-2">{t("research.withContext.title")}</dt>
+                  <dd className="text-sm text-slate-200 leading-relaxed">{t("research.withContext.result")}</dd>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-700/50 flex justify-between items-center">
-                  <span>{t("differentiation.localContext")}</span>
-                  <CheckCircle2 className="h-5 w-5 text-brand-success-400" />
-                </div>
-              </div>
+              </dl>
+              <p className="text-sm text-slate-200 mb-4 leading-relaxed">{t("research.reference")}</p>
+              <p className="text-sm text-slate-200 mb-4 leading-relaxed">{t("research.limits")}</p>
+              <p className="text-sm text-slate-300 mb-6 leading-relaxed">{t("research.citation")}</p>
+              <Button onClick={scrollToPilot} className="max-w-full whitespace-normal h-auto">
+                {t("research.requestStudy")}
+              </Button>
             </div>
           </div>
         </div>
@@ -711,7 +700,7 @@ const Landing = () => {
                 }`}
               >
                 <CreditCard className="h-4 w-4" />
-                {t("pricing.prepaidPlans")}
+                {t("pricing.plans")}
               </button>
               <button
                 onClick={() => setPricingTab("credit_packs")}
@@ -751,9 +740,6 @@ const Landing = () => {
                     )}
                     <CardContent className="p-8 flex flex-col h-full">
                       <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                      <p className="text-sm text-muted-foreground mb-6 h-10">
-                        {plan.description}
-                      </p>
                       <div className="mb-6">
                         {plan.name.toLowerCase() === "enterprise" ? (
                           <span className="text-3xl font-bold">{t("pricing.custom")}</span>
@@ -765,30 +751,26 @@ const Landing = () => {
                                   ? `₦${formatNumber(plan.amount)}`
                                   : `$${plan.amountUsd}`}
                               </span>
-                              <span className="text-muted-foreground text-sm">
-                                {plan.displayInterval || plan.billingLabel || (selectedRail === "paystack_ngn" ? "" : "/mo")}
-                              </span>
                             </div>
                           </>
                         )}
                       </div>
+                      <p className="text-sm text-muted-foreground mb-6">{getBillingCopy(plan)}</p>
                       {plan.credits > 0 && (
                         <div className="mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
                           <span className="text-sm font-semibold text-primary">
-                            {plan.duration === "lifetime"
-                              ? t("pricing.creditsLifetime", { count: plan.credits })
-                              : t("pricing.credits", { count: plan.credits })}
-                            {plan.displayInterval ? ` · ${plan.displayInterval}` : ""}
+                            {t("pricing.credits", { count: plan.credits })}
                           </span>
                         </div>
                       )}
                       <ul className="space-y-3 mb-8 flex-grow">
-                        {plan.features.map((feature, fIdx) => (
-                          <li key={fIdx} className="flex items-start gap-3 text-sm">
-                            <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                            <span>{feature}</span>
+                        {plan.name.toLowerCase() !== "enterprise" && (
+                          <li className="text-sm text-muted-foreground">
+                            {Number.isFinite(plan.validityMonths) && plan.validityMonths > 0
+                              ? t("pricing.validityMonths", { count: plan.validityMonths })
+                              : t("pricing.checkValidity")}
                           </li>
-                        ))}
+                        )}
                         {plan.maxUsers > 1 && (
                           <li className="flex items-start gap-3 text-sm">
                             <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
@@ -797,14 +779,14 @@ const Landing = () => {
                         )}
                       </ul>
                       <Button
-                        className={`w-full py-6 text-lg font-bold rounded-xl ${
+                        className={`w-full py-6 text-lg font-bold rounded-xl h-auto whitespace-normal ${
                           plan.highlight
                             ? "bg-primary text-white hover:bg-primary/90"
                             : "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white"
                         }`}
                         onClick={() =>
                           plan.name.toLowerCase() === "enterprise"
-                            ? window.open("mailto:contact@gradrai.com?subject=Enterprise Plan Enquiry", "_blank")
+                            ? scrollToPilot()
                             : nav(`auth/sign-in`)
                         }
                       >
@@ -855,9 +837,6 @@ const Landing = () => {
                       )}
                       <CardContent className="p-8 flex flex-col h-full">
                         <h3 className="text-xl font-bold mb-2">{pack.name}</h3>
-                        <p className="text-sm text-muted-foreground mb-6">
-                          {pack.description}
-                        </p>
                         <div className="mb-4">
                           <div className="flex items-baseline gap-1">
                             <span className="text-3xl font-bold">
@@ -867,24 +846,19 @@ const Landing = () => {
                             </span>
                           </div>
                         </div>
+                        <p className="text-sm text-muted-foreground mb-6">{getBillingCopy(pack)}</p>
                         <div className="mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
                           <span className="text-sm font-semibold text-primary">
                             {t("pricing.credits", { count: pack.credits })}
                           </span>
-                          <span className="text-xs text-muted-foreground ml-2">
-                            {t("pricing.validFor", { expiry: pack.creditExpiry })}
-                          </span>
                         </div>
-                        <ul className="space-y-3 mb-8 flex-grow">
-                          {pack.features.map((feature, fIdx) => (
-                            <li key={fIdx} className="flex items-start gap-3 text-sm">
-                              <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
+                        <p className="text-sm text-muted-foreground mb-8 flex-grow">
+                          {Number.isFinite(pack.validityMonths) && pack.validityMonths > 0
+                            ? t("pricing.validityMonths", { count: pack.validityMonths })
+                            : t("pricing.checkValidity")}
+                        </p>
                         <Button
-                          className={`w-full py-6 text-lg font-bold rounded-xl ${
+                          className={`w-full py-6 text-lg font-bold rounded-xl h-auto whitespace-normal ${
                             pack.highlight
                               ? "bg-primary text-white hover:bg-primary/90"
                               : "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white"
@@ -909,6 +883,9 @@ const Landing = () => {
               </p>
             </>
           )}
+          <p className="mt-8 mx-auto max-w-4xl text-center text-sm text-muted-foreground leading-relaxed">
+            {t("pricing.notice")}
+          </p>
         </div>
       </section>
 
@@ -921,26 +898,21 @@ const Landing = () => {
           <p className="text-xl text-primary-foreground/80 mb-12 leading-relaxed">
             {t("cta.body")}
           </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-6 justify-center">
             <Button
               size="lg"
-              className="bg-background text-primary hover:bg-background/90 px-10 py-7 text-xl font-bold rounded-2xl"
-              onClick={() => nav(`auth/account-type`)}
+              className="bg-background text-primary hover:bg-background/90 px-10 py-7 text-xl font-bold rounded-2xl max-w-full whitespace-normal h-auto"
+              onClick={scrollToPilot}
             >
-              {t("cta.startTrial")}
+              {t("cta.pilotCta")}
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-white text-primary-foreground bg-transparent hover:bg-white/10 px-10 py-7 text-xl font-bold rounded-2xl"
-              onClick={() =>
-                window.open(
-                  "mailto:contact@gradrai.com?subject=Demo Request",
-                  "_blank"
-                )
-              }
+              className="border-2 border-white text-primary-foreground bg-transparent hover:bg-white/10 px-10 py-7 text-xl font-bold rounded-2xl max-w-full whitespace-normal h-auto"
+              onClick={scrollToEvidence}
             >
-              {t("cta.requestDemo")}
+              {t("cta.researchCta")}
             </Button>
           </div>
         </div>
@@ -991,13 +963,26 @@ const Landing = () => {
               </Card>
             ))}
           </div>
+          <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm">
+            <a href="/privacy-policy" className="text-primary underline underline-offset-4">
+              {t("faq.privacyLink")}
+            </a>
+            <a href="/terms-of-service" className="text-primary underline underline-offset-4">
+              {t("faq.termsLink")}
+            </a>
+            <button onClick={scrollToPilot} className="text-primary underline underline-offset-4">
+              {t("faq.contactLink")}
+            </button>
+          </div>
         </div>
       </section>
 
       {/* Contact Section */}
       <section
         ref={contactRef}
-        className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/30 border-t border-border/50"
+        id="pilot-contact"
+        tabIndex={-1}
+        className="scroll-mt-24 py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-900/30 border-t border-border/50"
       >
         <div className="max-w-7xl mx-auto">
           <ContactForm />
@@ -1049,6 +1034,14 @@ const Landing = () => {
                 <li>
                   <button
                     className="text-slate-400 hover:text-white transition-colors"
+                    onClick={scrollToEvidence}
+                  >
+                    {t("footer.research")}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="text-slate-400 hover:text-white transition-colors"
                     onClick={() => scrollToSection(pricingRef)}
                   >
                     {t("footer.pricing")}
@@ -1076,7 +1069,7 @@ const Landing = () => {
                 <li>
                   <button
                     className="text-slate-400 hover:text-white transition-colors"
-                    onClick={() => scrollToSection(contactRef)}
+                    onClick={scrollToPilot}
                   >
                     {t("footer.contactUs")}
                   </button>

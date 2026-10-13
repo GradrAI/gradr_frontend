@@ -3,6 +3,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import type { AxiosResponse } from "axios";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createInstance, type i18n } from "i18next";
+import { I18nextProvider } from "react-i18next";
+import en from "@/i18n/locales/en.json";
+import fr from "@/i18n/locales/fr.json";
 import ContactForm from "@/components/landing/ContactForm";
 import api from "@/lib/axios";
 
@@ -14,14 +18,15 @@ vi.mock("react-hot-toast", () => ({
   default: { success: vi.fn(), error: vi.fn() },
 }));
 
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-});
+let queryClient: QueryClient;
+let i18nInstance: i18n;
 
 const renderForm = () =>
   render(
     <QueryClientProvider client={queryClient}>
-      <ContactForm />
+      <I18nextProvider i18n={i18nInstance}>
+        <ContactForm />
+      </I18nextProvider>
     </QueryClientProvider>
   );
 
@@ -31,18 +36,20 @@ const okResponse = { data: { success: true } } as unknown as AxiosResponse;
 const mockedPost = vi.mocked(api.post);
 
 describe("ContactForm", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-  });
-
-  it("renders name, email, phone, and message fields", () => {
-    renderForm();
-    expect(screen.getByPlaceholderText("Jane Doe")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("you@domain.com")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/\+234/)).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText(/Tell us how we can help/i)
-    ).toBeInTheDocument();
+    queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+    i18nInstance = createInstance();
+    await i18nInstance.init({
+      lng: "en",
+      resources: {
+        en: { translation: en },
+        fr: { translation: fr },
+      },
+      interpolation: { escapeValue: false },
+    });
   });
 
   it("shows validation errors for required fields on empty submit", async () => {
@@ -50,9 +57,9 @@ describe("ContactForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /send message/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/Please enter your name/i)).toBeInTheDocument();
-      expect(screen.getByText(/Enter a valid email/i)).toBeInTheDocument();
-      expect(screen.getByText(/Please enter a message/i)).toBeInTheDocument();
+      expect(screen.getByRole("textbox", { name: /^name/i })).toHaveAttribute("aria-invalid", "true");
+      expect(screen.getByRole("textbox", { name: /^email/i })).toHaveAttribute("aria-invalid", "true");
+      expect(screen.getByRole("textbox", { name: /^message/i })).toHaveAttribute("aria-invalid", "true");
     });
     expect(mockedPost).not.toHaveBeenCalled();
   });
@@ -61,13 +68,13 @@ describe("ContactForm", () => {
     mockedPost.mockResolvedValueOnce(okResponse);
     renderForm();
 
-    await userEvent.type(screen.getByPlaceholderText("Jane Doe"), "Jane Doe");
+    await userEvent.type(screen.getByRole("textbox", { name: /^name/i }), "Jane Doe");
     await userEvent.type(
-      screen.getByPlaceholderText("you@domain.com"),
+      screen.getByRole("textbox", { name: /^email/i }),
       "jane@example.com"
     );
     await userEvent.type(
-      screen.getByPlaceholderText(/Tell us how we can help/i),
+      screen.getByRole("textbox", { name: /^message/i }),
       "I would like a demo."
     );
     fireEvent.click(screen.getByRole("button", { name: /send message/i }));
@@ -86,17 +93,17 @@ describe("ContactForm", () => {
     mockedPost.mockResolvedValueOnce(okResponse);
     renderForm();
 
-    await userEvent.type(screen.getByPlaceholderText("Jane Doe"), "Jane Doe");
+    await userEvent.type(screen.getByRole("textbox", { name: /^name/i }), "Jane Doe");
     await userEvent.type(
-      screen.getByPlaceholderText("you@domain.com"),
+      screen.getByRole("textbox", { name: /^email/i }),
       "jane@example.com"
     );
     await userEvent.type(
-      screen.getByPlaceholderText(/\+234/),
+      screen.getByRole("textbox", { name: /^phone/i }),
       "+2348000000000"
     );
     await userEvent.type(
-      screen.getByPlaceholderText(/Tell us how we can help/i),
+      screen.getByRole("textbox", { name: /^message/i }),
       "Call me."
     );
     fireEvent.click(screen.getByRole("button", { name: /send message/i }));
