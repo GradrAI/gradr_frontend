@@ -20,15 +20,11 @@ import {
   ChevronUp,
   Menu,
   X,
-  DollarSign,
   FileText,
   Globe,
   Building2,
   PieChart,
-  Lock,
   CheckCircle2,
-  ArrowRight,
-  Search,
   School,
   GraduationCap,
 } from "lucide-react";
@@ -37,7 +33,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import "./customMask.css";
-import useStore from "@/state";
+
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
 
@@ -237,7 +233,6 @@ const Landing = () => {
   ];
 
   const nav = useNavigate();
-  const { setAccountType } = useStore();
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
