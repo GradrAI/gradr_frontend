@@ -163,27 +163,18 @@
     "deployment": {
       "title": "Des options pour votre classe",
       "desc": "Explorez les parcours papier, sur navigateur et sur ordinateur. Renseignez-vous sur la configuration adaptée aux classes peu connectées."
+    },
+    "panel": {
+      "heading": "Parcourez votre workflow d’évaluation",
+      "badge": "Parcours produit",
+      "body": "Utilisez la démo pour adapter GradrAI à une situation d’évaluation réelle : vos documents de départ, la vérification nécessaire et les résultats à partager.",
+      "items": [
+        "Correction papier avec votre sujet, votre barème et les copies numérisées",
+        "Configuration des tests en ligne, accès des apprenants et vérification des réponses remises",
+        "Retours, rapports, exercices et exigences de traitement des données pour votre contexte"
+      ],
+      "cta": "Demander une démo"
     }
-  },
-  "research": {
-    "heading": "La recherche qui guide GradrAI",
-    "badge": "Étude d’un prototype sur 60 copies",
-    "scope": "L’étude de correction écrite a évalué 60 copies issues d’un cours d’introduction à la programmation.",
-    "noContext": {
-      "title": "Sans contexte de cours",
-      "result": "Erreur absolue moyenne : 4,39 points sur 60. Signalées pour vérification humaine : 42 copies sur 60."
-    },
-    "withContext": {
-      "title": "Avec contexte de cours",
-      "result": "Erreur absolue moyenne : 5,20 points sur 60. Signalées pour vérification humaine : 43 copies sur 60."
-    },
-    "reference": "La référence est la moyenne des notes de deux enseignants après application d’une règle de notation commune. Il s’agit d’une référence construite, et non d’une évaluation de référence arbitrée de façon indépendante.",
-    "limits": "Ces résultats ne démontrent ni la précision en production, ni l’équité, ni des gains d’apprentissage ou de temps. La plupart des copies ont été signalées pour vérification ; l’efficacité de cette vérification n’a pas été mesurée.",
-    "citation": "Étude : Teacher-in-the-Loop AI Assessment for African Classrooms (John Oghenereuse Fiewor). Consultez l’article pour la méthode, les incertitudes et les limites.",
-    "requestStudy": "Demander l’article de recherche",
-    "intro": "Nous étudions la correction manuscrite, les examens hors ligne et l’évaluation orale multilingue pour guider le développement de GradrAI.",
-    "detailsLabel": "Voir les résultats et les limites de l’étude",
-    "method": "Les mêmes 60 copies ont été notées avec et sans contexte de cours. Les chiffres ci-dessous comparent ces deux conditions."
   },
   "pricing": {
     "heading": "Choisissez une offre pour",
@@ -218,6 +209,43 @@
     "bundledPrompt": "Vous souhaitez comparer les offres ?",
     "viewSubscriptionPlans": "Voir les offres",
     "notice": "Vérifiez le prix, le type de facturation et la validité des crédits de l’offre choisie. Une nouvelle attribution peut modifier la date d’expiration de l’ensemble du solde de votre compte.",
+    "planDetails": {
+      "educator": [
+        "Parcours de correction papier et de tests en ligne pour les enseignants",
+        "Propositions de notation fondées sur le barème, à vérifier",
+        "Retours, rapports et exercices ciblés"
+      ],
+      "educatorYearly": [
+        "Parcours enseignant avec une allocation annuelle plus importante",
+        "Correction papier, tests en ligne et retours vérifiables",
+        "Rapports et exercices pour des évaluations régulières"
+      ],
+      "institution": [
+        "Parcours d’évaluation partagés pour les établissements ou équipes pédagogiques",
+        "Correction papier, tests en ligne et rapports au même endroit",
+        "Responsabilités de vérification et exigences liées aux données à discuter lors de la configuration"
+      ],
+      "institutionYearly": [
+        "Capacité annuelle pour les cycles d’évaluation répétés en établissement",
+        "Correction papier, tests en ligne et rapports pour les équipes",
+        "Préparation de la vérification humaine et des conditions de déploiement"
+      ],
+      "trial": [
+        "Crédits d’essai pour explorer le parcours",
+        "Testez la correction papier, l’évaluation en ligne et les retours",
+        "Vérifiez l’adéquation avant de choisir une offre payante"
+      ],
+      "creditPack": [
+        "Recharge ponctuelle pour une capacité de correction supplémentaire",
+        "Ajoute des crédits au solde de votre compte",
+        "À utiliser avec votre parcours d’évaluation existant"
+      ],
+      "default": [
+        "Parcours de correction papier et d’évaluation en ligne",
+        "Notes, explications et retours vérifiables",
+        "Rapports et exercices pour les matières disponibles"
+      ]
+    },
     "faq": {
       "heading": "Questions sur les paiements et les crédits",
       "items": [
@@ -314,7 +342,6 @@
     "platform": "Plateforme",
     "solutions": "Solutions",
     "howItWorks": "Comment ça marche",
-    "research": "Recherche",
     "pricing": "Tarifs",
     "support": "Support",
     "helpCenter": "Assistance par e-mail",

@@ -29,12 +29,12 @@ Commit `bun.lock` with dependency changes. Production deploys from GitHub `main`
 
 ## Landing-page messaging
 
-English and French landing copy lives in `src/i18n/locales/en.json` and `fr.json`. Keep both languages aligned with the sales-led demo/workflow narrative while preserving the bounded research and purchase disclosures.
+English and French landing copy lives in `src/i18n/locales/en.json` and `fr.json`. Keep both languages aligned with the sales-led demo/workflow narrative while preserving purchase and data-handling disclosures.
 
-- Primary demo CTAs use the existing contact form (`#demo-contact`); workflow CTAs focus `#how-it-works`; the footer Research link focuses `#research-evidence`. Sign-in and signup remain available. Study-paper requests use the visible mailto link and do not publish private research assets.
+- Primary demo CTAs use the existing contact form (`#demo-contact`); workflow CTAs focus `#how-it-works`. Sign-in and signup remain available. The landing page should not expose the prototype-study/research-detail block unless a future plan explicitly restores it.
 - Pricing amounts, credits and declared seats remain API-driven. The landing displays numeric validity, rail/product-specific billing labels, the purchase notice and the pricing FAQ instead of promotional API descriptions or academic-period expiry claims. Billing behavior is unchanged.
 - Update `index.html`, the landing metadata effect and `public/og-image.png` alongside relevant copy changes. The landing resets metadata on language changes and navigation back from the blog.
-- Verify with `bun run test src/__tests__/components/ContactForm.test.tsx` and `bun run build`, then exercise EN/FR, desktop/mobile, demo/workflow/research focus, both pricing rails, pricing disclosures and contact success/failure in a browser. Intercept contact requests during smoke checks; do not send test mail.
+- Verify with `bun run test src/__tests__/components/ContactForm.test.tsx` and `bun run build`, then exercise EN/FR, desktop/mobile, demo/workflow focus, both pricing rails, pricing disclosures and contact success/failure in a browser. Intercept contact requests during smoke checks; do not send test mail.
 
 ## Useful links
 - [Backend repo](https://github.com/Fiewor/gradr_backend)

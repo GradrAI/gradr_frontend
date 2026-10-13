@@ -163,27 +163,18 @@
     "deployment": {
       "title": "Options for your classroom",
       "desc": "Explore paper, browser-based and desktop workflows. Ask about the setup for low-connectivity classrooms."
+    },
+    "panel": {
+      "heading": "Walk through your assessment workflow",
+      "badge": "Workflow walkthrough",
+      "body": "Use the demo to map GradrAI around a real assessment scenario: the material you start with, the review you need and the results you want to share.",
+      "items": [
+        "Paper marking with your question paper, marking guide and scanned scripts",
+        "Online test setup, student access and review of submitted responses",
+        "Feedback, reports, practice and data-handling requirements for your setting"
+      ],
+      "cta": "Request a demo"
     }
-  },
-  "research": {
-    "heading": "Research that shapes GradrAI",
-    "badge": "60-script prototype study",
-    "scope": "The written-grading study evaluated 60 scripts from one introductory programming course.",
-    "noContext": {
-      "title": "Without lecture context",
-      "result": "Mean absolute error: 4.39 marks out of 60. Flagged for teacher review: 42 of 60 scripts."
-    },
-    "withContext": {
-      "title": "With lecture context",
-      "result": "Mean absolute error: 5.20 marks out of 60. Flagged for teacher review: 43 of 60 scripts."
-    },
-    "reference": "The reference averages two lecturers’ scores after applying a common scoring policy. It is a constructed reference, not independently adjudicated ground truth.",
-    "limits": "These findings do not establish production-wide accuracy, fairness, learning gains or time savings. Most scripts were flagged for review; review effectiveness was not measured.",
-    "citation": "Study: Teacher-in-the-Loop AI Assessment for African Classrooms (John Oghenereuse Fiewor). See the paper for methods, uncertainty and limitations.",
-    "requestStudy": "Request the research paper",
-    "intro": "We study handwritten grading, offline exam workflows and multilingual oral assessment to inform how we build GradrAI.",
-    "detailsLabel": "View study findings and limitations",
-    "method": "The same 60 scripts were scored with and without lecture context. The figures below compare those two conditions."
   },
   "pricing": {
     "heading": "Choose a plan for",
@@ -218,6 +209,43 @@
     "bundledPrompt": "Want to compare plans?",
     "viewSubscriptionPlans": "View plans",
     "notice": "Check the price, billing type and credit validity for your selected offer. New grants can change the expiry date of your whole account balance.",
+    "planDetails": {
+      "educator": [
+        "Paper marking and online test workflows for individual educators",
+        "Marking-guide based scoring suggestions to review",
+        "Feedback, reports and focused practice support"
+      ],
+      "educatorYearly": [
+        "Educator workflows with a larger annual credit allowance",
+        "Paper marking, online tests and reviewable feedback",
+        "Reports and practice support for recurring assessments"
+      ],
+      "institution": [
+        "Shared assessment workflows for schools or teaching teams",
+        "Paper, online-test and reporting workflows in one place",
+        "Review responsibilities and data requirements to discuss during setup"
+      ],
+      "institutionYearly": [
+        "Annual institutional capacity for repeated assessment cycles",
+        "Shared paper marking, online-test and reporting workflows",
+        "Planning support for team review and deployment requirements"
+      ],
+      "trial": [
+        "Trial credits for exploring the workflow",
+        "Test paper marking, online assessment and feedback outputs",
+        "Confirm fit before choosing a paid offer"
+      ],
+      "creditPack": [
+        "One-time top-up for extra marking capacity",
+        "Adds credits to your account balance",
+        "Use alongside your existing assessment workflow"
+      ],
+      "default": [
+        "Paper marking and online assessment workflows",
+        "Reviewable marks, explanations and feedback",
+        "Reports and practice support for selected subjects"
+      ]
+    },
     "faq": {
       "heading": "Payment and credit questions",
       "items": [
@@ -314,7 +342,6 @@
     "platform": "Platform",
     "solutions": "Solutions",
     "howItWorks": "How it Works",
-    "research": "Research",
     "pricing": "Pricing",
     "support": "Support",
     "helpCenter": "Email support",

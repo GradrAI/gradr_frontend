@@ -48,7 +48,6 @@ const Landing = () => {
   const pricingRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
-  const evidenceRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const setMetaTag = (attribute: "name" | "property", key: string, content: string) => {
@@ -102,10 +101,6 @@ const Landing = () => {
     howItWorksRef.current?.focus({ preventScroll: true });
   };
 
-  const scrollToEvidence = (): void => {
-    scrollToSection(evidenceRef);
-    evidenceRef.current?.focus({ preventScroll: true });
-  };
 
   const audiences = [
     {
@@ -199,6 +194,22 @@ const Landing = () => {
     }
     return t("pricing.checkoutTerms");
   };
+
+  const getPlanDetailKey = (plan: PaymentPlan): string => {
+    const normalizedName = plan.name.toLowerCase().replace(/[^a-z0-9]+/g, "");
+    if (plan.planType === "credit_pack") return "creditPack";
+    if (plan.amount === 0 && plan.amountUsd === 0) return "trial";
+    if (normalizedName.includes("institution") || normalizedName.includes("enterprise")) {
+      return normalizedName.includes("year") ? "institutionYearly" : "institution";
+    }
+    if (normalizedName.includes("educator") || normalizedName.includes("teacher")) {
+      return normalizedName.includes("year") ? "educatorYearly" : "educator";
+    }
+    return "default";
+  };
+
+  const getPlanDetails = (plan: PaymentPlan): string[] =>
+    t(`pricing.planDetails.${getPlanDetailKey(plan)}`, { returnObjects: true }) as string[];
 
   const faqs = (t("faq.items", { returnObjects: true }) as Array<{ question: string; answer: string }>);
   const pricingFaqs = (t("pricing.faq.items", { returnObjects: true }) as Array<{ question: string; answer: string }>);
@@ -609,8 +620,8 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Assessment Context and Research */}
-      <section ref={evidenceRef} id="research-evidence" tabIndex={-1} className="scroll-mt-24 py-24 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white overflow-hidden relative">
+      {/* Assessment Workflow Fit Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white overflow-hidden relative">
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -637,39 +648,22 @@ const Landing = () => {
               </div>
             </div>
             <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-2xl">
-              <h3 className="text-2xl font-bold mb-4">{t("research.heading")}</h3>
+              <h3 className="text-2xl font-bold mb-4">{t("differentiation.panel.heading")}</h3>
               <Badge variant="outline" className="mb-4 max-w-full whitespace-normal text-sm text-blue-200 border-blue-300/50">
-                {t("research.badge")}
+                {t("differentiation.panel.badge")}
               </Badge>
-              <p className="text-slate-200 mb-4 leading-relaxed">{t("research.intro")}</p>
-              <p className="text-sm text-slate-200 mb-6 leading-relaxed">{t("research.scope")}</p>
-              <details className="rounded-2xl border border-slate-700 bg-slate-900/40 p-4">
-                <summary className="cursor-pointer text-sm font-semibold text-blue-100">
-                  {t("research.detailsLabel")}
-                </summary>
-                <div className="mt-4 space-y-4">
-                  <p className="text-sm text-slate-200 leading-relaxed">{t("research.method")}</p>
-                  <dl className="space-y-4">
-                    <div className="p-4 rounded-xl bg-slate-700/50">
-                      <dt className="font-semibold mb-2">{t("research.noContext.title")}</dt>
-                      <dd className="text-sm text-slate-200 leading-relaxed">{t("research.noContext.result")}</dd>
-                    </div>
-                    <div className="p-4 rounded-xl bg-slate-700/50">
-                      <dt className="font-semibold mb-2">{t("research.withContext.title")}</dt>
-                      <dd className="text-sm text-slate-200 leading-relaxed">{t("research.withContext.result")}</dd>
-                    </div>
-                  </dl>
-                  <p className="text-sm text-slate-200 leading-relaxed">{t("research.reference")}</p>
-                  <p className="text-sm text-slate-200 leading-relaxed">{t("research.limits")}</p>
-                  <p className="text-sm text-slate-300 leading-relaxed">{t("research.citation")}</p>
-                  <a
-                    href="mailto:contact@gradrai.com?subject=GradrAI%20research%20paper%20request"
-                    className="inline-flex text-sm font-semibold text-blue-200 underline underline-offset-4 hover:text-white"
-                  >
-                    {t("research.requestStudy")}
-                  </a>
-                </div>
-              </details>
+              <p className="text-slate-200 mb-6 leading-relaxed">{t("differentiation.panel.body")}</p>
+              <ul className="space-y-4 mb-8">
+                {(t("differentiation.panel.items", { returnObjects: true }) as string[]).map((item) => (
+                  <li key={item} className="flex gap-3 text-sm text-slate-200 leading-relaxed">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button onClick={scrollToDemo} className="max-w-full whitespace-normal h-auto">
+                {t("differentiation.panel.cta")}
+              </Button>
             </div>
           </div>
         </div>
@@ -776,6 +770,12 @@ const Landing = () => {
                             <span>{t("pricing.userSeats", { count: plan.maxUsers })}</span>
                           </li>
                         )}
+                        {getPlanDetails(plan).map((detail) => (
+                          <li key={detail} className="flex items-start gap-3 text-sm text-foreground/80">
+                            <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                            <span>{detail}</span>
+                          </li>
+                        ))}
                       </ul>
                       <Button
                         className={`w-full py-6 text-lg font-bold rounded-xl h-auto whitespace-normal ${
@@ -851,11 +851,19 @@ const Landing = () => {
                             {t("pricing.credits", { count: pack.credits })}
                           </span>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-8 flex-grow">
-                          {Number.isFinite(pack.validityMonths) && pack.validityMonths > 0
-                            ? t("pricing.validityMonths", { count: pack.validityMonths })
-                            : t("pricing.checkValidity")}
-                        </p>
+                        <div className="space-y-3 mb-8 flex-grow">
+                          <p className="text-sm text-muted-foreground">
+                            {Number.isFinite(pack.validityMonths) && pack.validityMonths > 0
+                              ? t("pricing.validityMonths", { count: pack.validityMonths })
+                              : t("pricing.checkValidity")}
+                          </p>
+                          {getPlanDetails(pack).map((detail) => (
+                            <div key={detail} className="flex items-start gap-3 text-sm text-foreground/80">
+                              <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                              <span>{detail}</span>
+                            </div>
+                          ))}
+                        </div>
                         <Button
                           className={`w-full py-6 text-lg font-bold rounded-xl h-auto whitespace-normal ${
                             pack.highlight
@@ -1043,14 +1051,6 @@ const Landing = () => {
                     onClick={scrollToWorkflow}
                   >
                     {t("footer.howItWorks")}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="text-slate-400 hover:text-white transition-colors"
-                    onClick={scrollToEvidence}
-                  >
-                    {t("footer.research")}
                   </button>
                 </li>
                 <li>
