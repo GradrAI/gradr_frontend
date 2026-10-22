@@ -18,8 +18,8 @@ const AccountType = () => {
   const accountTypes = [
     {
       id: "individual",
-      title: "Tutor or trainer",
-      description: "Run your own assessments with AI-assisted marking and feedback you review.",
+      title: "Solo Educator",
+      description: "AI-assisted marking and feedback for teachers, lecturers, tutors and trainers.",
       icon: Users,
       color: "from-brand-success-500 to-brand-success-600",
       bgLight: "bg-brand-success-50",
@@ -28,8 +28,8 @@ const AccountType = () => {
     },
     {
       id: "institution",
-      title: "Teaching team or institution",
-      description: "Manage assessments for a tutorial centre, training team, school or department.",
+      title: "Institution Admin",
+      description: "Manage assessments for your school, department, tutorial centre or training team.",
       icon: School,
       color: "from-primary to-secondary",
       bgLight: "bg-brand-100",

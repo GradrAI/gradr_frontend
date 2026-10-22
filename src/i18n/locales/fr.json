@@ -10,12 +10,12 @@
     "closeMenu": "Fermer le menu"
   },
   "hero": {
-    "badge": "Pour les cours payants et les groupes de formation",
-    "heading": "L’évaluation pour",
-    "headingHighlight": "les cours que vous animez.",
-    "body": "Créez des tests, corrigez les travaux papier ou numériques avec votre barème et vérifiez les retours avant de les partager. Pour les tuteurs, centres de soutien scolaire et organismes de formation indépendants.",
+    "badge": "Correction et évaluation par l’IA pour les enseignants",
+    "heading": "Simplifiez l’évaluation.",
+    "headingHighlight": "Donnez du sens aux retours.",
+    "body": "Créez des examens et corrigez les copies papier ou numériques avec votre barème. Donnez aux apprenants des retours clairs et des exercices ciblés.",
     "signupCta": "Créer un compte",
-    "demoCta": "Voir une démo pour votre groupe",
+    "demoCta": "Demander une démo",
     "workflowCta": "Voir comment ça marche",
     "benefits": {
       "paperDigital": {
@@ -37,9 +37,9 @@
     "forStartups": "for Startups"
   },
   "problem": {
-    "heading": "Entre les cours payants,",
-    "headingHighlight": "l’évaluation demande aussi votre attention.",
-    "body": "Examens blancs, devoirs écrits et retours peuvent s’accumuler entre les séances. Réunissez vos supports, les notes proposées et votre vérification dans un même parcours d’évaluation.",
+    "heading": "La correction n’est qu’une",
+    "headingHighlight": "partie du travail.",
+    "body": "Préparer les tests, corriger les copies et tenir les dossiers prennent du temps sur l’enseignement. GradrAI réunit ce travail dans un même parcours d’évaluation.",
     "points": {
       "marking": "Une pile de copies à corriger",
       "feedback": "Des retours qui arrivent alors que les apprenants sont déjà passés à autre chose",
@@ -82,36 +82,35 @@
     }
   },
   "audience": {
-    "heading": "Pour les professionnels qui animent",
-    "headingHighlight": "des cours payants et des formations.",
-    "body": "Commencez par le parcours d’évaluation que vous gérez, seul ou avec une petite équipe.",
-    "secondary": "Vous enseignez dans une école ou une université ? GradrAI prend aussi en charge les évaluations des enseignants et des établissements.",
+    "heading": "Pour les enseignants,",
+    "headingHighlight": "les établissements et les apprenants.",
+    "body": "Utilisez GradrAI pour vos évaluations ou explorez un parcours commun pour votre équipe pédagogique.",
     "institutions": {
-      "title": "Centres de soutien et équipes pédagogiques",
-      "description": "Organisez examens blancs et devoirs écrits pour vos groupes, en définissant qui vérifie les résultats.",
-      "point1": "Parcours d’évaluation partagés",
-      "point2": "Barèmes et rapports de résultats",
-      "point3": "Une présentation pour votre équipe"
+      "title": "Établissements et équipes pédagogiques",
+      "description": "Intégrez les évaluations papier et numériques à votre école, université ou département.",
+      "point1": "Évaluations papier et numériques",
+      "point2": "Barèmes et rapports",
+      "point3": "Une démo pour votre établissement"
     },
     "solo": {
-      "title": "Tuteurs indépendants",
-      "description": "Animez des cours payants ou des préparations aux examens avec vos supports, votre barème et votre vérification des retours.",
-      "point1": "Vos questions et votre barème",
-      "point2": "Copies papier et tests en ligne",
-      "point3": "Notes et explications à vérifier"
+      "title": "Enseignants et tuteurs",
+      "description": "Obtenez une première correction et utilisez les retours pour préparer votre prochain cours.",
+      "point1": "Votre propre barème",
+      "point2": "Notes et explications à vérifier",
+      "point3": "Retours pour le suivi pédagogique"
     },
-    "trainers": {
-      "title": "Organismes de formation indépendants",
-      "description": "Utilisez des exercices écrits et des tests de connaissances dans vos formations, puis vérifiez les résultats avant de donner vos retours.",
-      "point1": "Tests à partir de vos supports",
-      "point2": "Critères pour les réponses écrites",
-      "point3": "Retours pour la séance suivante"
+    "students": {
+      "title": "Élèves, étudiants et apprenants",
+      "description": "Travaillez les matières choisies, consultez les explications et repérez les points à revoir.",
+      "point1": "Questions d’entraînement",
+      "point2": "Explications après les exercices",
+      "point3": "Préparation aux examens disponibles"
     }
   },
   "howItWorks": {
     "heading": "De vos supports de cours",
     "headingHighlight": "aux notes et aux retours.",
-    "body": "Choisissez une évaluation papier ou numérique pour votre prochain cours ou groupe de formation.",
+    "body": "Choisissez une évaluation papier ou numérique et suivez le parcours adapté à votre classe.",
     "paperTab": "Correction papier",
     "digitalTab": "Tests en ligne (CBT)",
     "paper": {
@@ -163,8 +162,8 @@
       "desc": "Vérifiez les notes et les explications, apportez vos ajustements et décidez de l’usage des résultats."
     },
     "deployment": {
-      "title": "Des options pour votre contexte pédagogique",
-      "desc": "Découvrez les parcours papier, web et de bureau. Renseignez-vous sur les appareils et la connexion nécessaires dans votre contexte."
+      "title": "Des options pour votre classe",
+      "desc": "Explorez les parcours papier, sur navigateur et sur ordinateur. Renseignez-vous sur la configuration adaptée aux classes peu connectées."
     },
     "panel": {
       "heading": "Parcourez votre workflow d’évaluation",
@@ -215,17 +214,19 @@
     "notice": "Vérifiez le prix, le type de facturation et la validité des crédits de l’offre choisie. Une nouvelle attribution peut modifier la date d’expiration de l’ensemble du solde de votre compte.",
     "planDetails": {
       "educator": [
-        "Pour les tuteurs et formateurs indépendants",
+        "Pour les enseignants, chargés de cours et autres éducateurs individuels",
         "Correction papier et tests en ligne",
-        "Notes et retours proposés, à vérifier"
+        "Notes et retours proposés, à vérifier",
+        "Les cours payants et la formation indépendante font aussi partie des cas d’usage."
       ],
       "educatorYearly": [
         "Plus de capacité prépayée pour une personne",
         "Correction papier et tests en ligne",
-        "Notes, explications et rapports vérifiables"
+        "Notes, explications et rapports vérifiables",
+        "Les cours payants et la formation indépendante font aussi partie des cas d’usage."
       ],
       "institution": [
-        "Pour les centres de soutien et équipes de formation",
+        "Pour les établissements, départements et équipes pédagogiques",
         "Parcours d’évaluation partagés",
         "Définissez les responsabilités de vérification avant d’utiliser les résultats"
       ],
@@ -272,16 +273,16 @@
         },
         {
           "question": "Dois-je disposer d’un compte d’établissement ?",
-          "answer": "Non. Choisissez « Tutor or trainer » pour gérer vos propres évaluations ou « Teaching team or institution » pour une organisation partagée. Vous devez être autorisé à traiter les travaux importés."
+          "answer": "Non. Choisissez « Solo Educator » pour gérer vos propres évaluations ou « Institution Admin » pour une organisation partagée. Vous devez être autorisé à traiter les travaux importés."
         }
       ]
     }
   },
   "cta": {
-    "heading": "Préparez votre prochaine évaluation.",
-    "body": "Créez un compte pour découvrir le parcours ou demandez une démo pour votre centre de soutien ou votre équipe de formation. Vous vérifiez les notes et prenez les décisions finales.",
+    "heading": "Découvrez ce que GradrAI peut apporter à votre prochaine évaluation.",
+    "body": "Présentez ce que vous enseignez et votre façon d’évaluer. Nous vous montrerons les parcours de correction, de test et de retour adaptés à vos besoins.",
     "signupCta": "Créer un compte",
-    "demoCta": "Voir une démo pour votre groupe"
+    "demoCta": "Demander une démo"
   },
   "faq": {
     "heading": "Questions avant votre prochaine évaluation",
@@ -326,7 +327,7 @@
   },
   "contact": {
     "heading": "Demander une démo",
-    "body": "Indiquez ce que vous enseignez, le nombre approximatif d’apprenants à évaluer et la date de début du prochain groupe. Nous vous aiderons à découvrir le parcours adapté.",
+    "body": "Présentez ce que vous enseignez et ce que vous souhaitez découvrir. Nous vous aiderons à explorer le parcours GradrAI adapté à vos besoins.",
     "labels": {
       "name": "Nom",
       "email": "E-mail",
@@ -338,7 +339,7 @@
       "name": "Jean Dupont",
       "email": "vous@domaine.com",
       "phone": "+33 6 00 00 00 00",
-      "message": "Qu’enseignez-vous ? Combien d’apprenants évaluez-vous et quand commence votre prochain groupe ?"
+      "message": "Que souhaitez-vous découvrir dans la démo ?"
     },
     "validation": {
       "name": "Veuillez entrer votre nom",
@@ -355,7 +356,7 @@
     "messageHint": "N’incluez pas de dossiers d’apprenants."
   },
   "footer": {
-    "tagline": "Évaluation et retours vérifiables pour les tuteurs, équipes de formation et enseignants.",
+    "tagline": "Examens, correction, retours et exercices pour les enseignants et les apprenants.",
     "platform": "Plateforme",
     "solutions": "Solutions",
     "howItWorks": "Comment ça marche",
@@ -368,9 +369,9 @@
     "terms": "Conditions"
   },
   "seo": {
-    "title": "GradrAI |Évaluation pour tuteurs et formateurs",
-    "description": "Créez des tests et vérifiez la correction assistée par IA avec votre barème. GradrAI accompagne les tuteurs et organismes de formation indépendants.",
-    "keywords": "évaluation pour tuteurs, examens de soutien scolaire, correction assistée par IA, barème, évaluation de formation, GradrAI",
-    "imageAlt": "GradrAI. L’évaluation pour les cours que vous animez. Votre barème, votre décision finale. Visuel en anglais."
+    "title": "GradrAI | Correction par IA, examens et entraînement",
+    "description": "Créez des examens, corrigez les évaluations papier et numériques et accompagnez les apprenants avec GradrAI. Découvrez le parcours ou demandez une démo.",
+    "keywords": "correction par IA, copies papier, examens numériques, tests sur ordinateur, retours pédagogiques, exercices, GradrAI",
+    "imageAlt": "GradrAI. Simplifiez l’évaluation. Donnez du sens aux retours. Visuel en anglais."
   }
 }

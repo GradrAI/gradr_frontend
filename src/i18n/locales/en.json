@@ -10,12 +10,12 @@
     "closeMenu": "Close menu"
   },
   "hero": {
-    "badge": "For paid tutorials and training cohorts",
-    "heading": "Assessment for",
-    "headingHighlight": "the classes you run.",
-    "body": "Create tests, mark paper or digital submissions using your marking guide, and review feedback before sharing it. Built for tutors, tutorial centres and independent training providers.",
+    "badge": "AI grading and assessment for educators",
+    "heading": "Make assessment lighter.",
+    "headingHighlight": "Make feedback matter.",
+    "body": "Create exams and mark paper or digital submissions using your marking guide. Give students clear feedback and focused practice.",
     "signupCta": "Create an account",
-    "demoCta": "See a cohort demo",
+    "demoCta": "Request a demo",
     "workflowCta": "See how it works",
     "benefits": {
       "paperDigital": {
@@ -37,9 +37,9 @@
     "forStartups": "for Startups"
   },
   "problem": {
-    "heading": "Between paid classes,",
-    "headingHighlight": "assessment still needs your attention.",
-    "body": "Mock exams, written assignments and feedback can pile up between sessions. Bring your materials, suggested marks and review work into one assessment workflow.",
+    "heading": "Marking is only",
+    "headingHighlight": "part of the workload.",
+    "body": "Preparing tests, working through scripts and keeping records all compete for teaching time. GradrAI brings the assessment work into one connected workflow.",
     "points": {
       "marking": "A pile of scripts to work through",
       "feedback": "Feedback that arrives after students have moved on",
@@ -82,36 +82,35 @@
     }
   },
   "audience": {
-    "heading": "For people who run",
-    "headingHighlight": "paid classes and training.",
-    "body": "Start with the assessment workflow you own, whether you teach independently or work with a small team.",
-    "secondary": "Teaching in a school or university? GradrAI also supports educator and institutional assessment workflows.",
+    "heading": "For educators,",
+    "headingHighlight": "institutions and learners.",
+    "body": "Use GradrAI for your own assessments or explore a shared workflow for your teaching team.",
     "institutions": {
-      "title": "Tutorial centres and teaching teams",
-      "description": "Coordinate mock exams and written assignments for your classes, with clear responsibility for reviewing results.",
-      "point1": "Shared assessment workflows",
-      "point2": "Marking guides and result reports",
-      "point3": "A walkthrough for your team"
+      "title": "Schools and teaching teams",
+      "description": "Bring paper and digital assessment into your school, university or department.",
+      "point1": "Paper and digital assessments",
+      "point2": "Marking guides and reports",
+      "point3": "A demo for your institution"
     },
     "solo": {
-      "title": "Independent tutors",
-      "description": "Run paid tutorials or exam-prep classes with your own materials, marking guide and feedback review.",
-      "point1": "Your questions and marking guide",
-      "point2": "Paper scripts and online tests",
-      "point3": "Marks and explanations you review"
+      "title": "Teachers and tutors",
+      "description": "Get a first pass on marking and use feedback to plan your next lesson.",
+      "point1": "Your own marking guide",
+      "point2": "Scores and explanations to review",
+      "point3": "Feedback for teaching follow-up"
     },
-    "trainers": {
-      "title": "Independent training providers",
-      "description": "Use written exercises and knowledge checks in your training cohorts, then review the results before giving feedback.",
-      "point1": "Tests from your training materials",
-      "point2": "Criteria for written responses",
-      "point3": "Feedback for the next session"
+    "students": {
+      "title": "Students and learners",
+      "description": "Practise selected subjects, review explanations and see what to work on next.",
+      "point1": "Practice questions",
+      "point2": "Explanations after practice",
+      "point3": "Preparation for supported exams"
     }
   },
   "howItWorks": {
     "heading": "From your teaching materials",
     "headingHighlight": "to marks and feedback.",
-    "body": "Choose paper or digital assessment for your next class or training cohort.",
+    "body": "Choose paper or digital assessment and follow the workflow that fits your class.",
     "paperTab": "Paper marking",
     "digitalTab": "Online tests (CBT)",
     "paper": {
@@ -163,8 +162,8 @@
       "desc": "Review marks and explanations, make adjustments and decide how to use the results."
     },
     "deployment": {
-      "title": "Options for your teaching setup",
-      "desc": "Explore paper, browser-based and desktop workflows. Ask about device and connectivity requirements for your setting."
+      "title": "Options for your classroom",
+      "desc": "Explore paper, browser-based and desktop workflows. Ask about the setup for low-connectivity classrooms."
     },
     "panel": {
       "heading": "Walk through your assessment workflow",
@@ -215,17 +214,19 @@
     "notice": "Check the price, billing type and credit validity for your selected offer. New grants can change the expiry date of your whole account balance.",
     "planDetails": {
       "educator": [
-        "For solo tutors and independent trainers",
+        "For teachers, lecturers and individual educators",
         "Paper marking and online tests",
-        "Suggested marks and feedback you review"
+        "Suggested marks and feedback you review",
+        "Use cases include paid tutorials and independent training."
       ],
       "educatorYearly": [
         "More prepaid capacity for an individual",
         "Paper marking and online tests",
-        "Reviewable marks, explanations and reports"
+        "Reviewable marks, explanations and reports",
+        "Use cases include paid tutorials and independent training."
       ],
       "institution": [
-        "For tutorial centres and training teams",
+        "For schools, departments and teaching teams",
         "Shared assessment workflows",
         "Agree review responsibilities before using results"
       ],
@@ -272,16 +273,16 @@
         },
         {
           "question": "Do I need a school account?",
-          "answer": "No. Choose Tutor or trainer when you run your own assessments, or Teaching team or institution for a shared setup. You must have permission to process the work you upload."
+          "answer": "No. Choose Solo Educator when you run your own assessments, or Institution Admin for a shared setup. You must have permission to process the work you upload."
         }
       ]
     }
   },
   "cta": {
-    "heading": "Put your next assessment into practice.",
-    "body": "Create an account to explore your workflow, or request a demo for your tutorial centre or training team. You review the marks and make the final decisions.",
+    "heading": "See what GradrAI can do for your next assessment.",
+    "body": "Tell us what you teach and how you assess. We’ll show you the relevant grading, testing and feedback workflows.",
     "signupCta": "Create an account",
-    "demoCta": "See a cohort demo"
+    "demoCta": "Request a demo"
   },
   "faq": {
     "heading": "Questions before your next assessment",
@@ -326,7 +327,7 @@
   },
   "contact": {
     "heading": "Request a demo",
-    "body": "Tell us what you teach, approximately how many learners you assess, and when your next cohort starts. We’ll help you explore the relevant workflow.",
+    "body": "Tell us what you teach and what you would like to see. We’ll help you explore the relevant GradrAI workflow.",
     "labels": {
       "name": "Name",
       "email": "Email",
@@ -338,7 +339,7 @@
       "name": "Jane Doe",
       "email": "you@domain.com",
       "phone": "+234 800 000 0000",
-      "message": "What do you teach? How many learners do you assess, and when does your next cohort start?"
+      "message": "What would you like to see in the demo?"
     },
     "validation": {
       "name": "Please enter your name",
@@ -355,7 +356,7 @@
     "messageHint": "Please don’t include student records."
   },
   "footer": {
-    "tagline": "Assessment and reviewable feedback for tutors, training teams and educators.",
+    "tagline": "Exams, marking, feedback and practice for educators and learners.",
     "platform": "Platform",
     "solutions": "Solutions",
     "howItWorks": "How it Works",
@@ -368,9 +369,9 @@
     "terms": "Terms"
   },
   "seo": {
-    "title": "GradrAI |Assessment for Tutors and Training Providers",
-    "description": "Create tests and review AI-assisted marking with your own guide. GradrAI supports tutors, tutorial centres and independent training providers.",
-    "keywords": "tutor assessment software, tutorial centre exams, AI-assisted marking, marking guides, training assessments, GradrAI",
-    "imageAlt": "GradrAI. Assessment for the classes you run. Your marking guide. Your final say."
+    "title": "GradrAI | AI Grading, Exams and Student Practice",
+    "description": "Create exams, mark paper and digital assessments, and support student practice with GradrAI. Explore the workflow or request a demo.",
+    "keywords": "AI grading, paper marking, digital exams, computer-based tests, student feedback, practice, GradrAI",
+    "imageAlt": "GradrAI. Make assessment lighter. Make feedback matter."
   }
 }

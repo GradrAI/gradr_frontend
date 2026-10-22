@@ -105,13 +105,6 @@ const Landing = () => {
 
   const audiences = [
     {
-      id: "solo",
-      icon: Users,
-      title: t("audience.solo.title"),
-      description: t("audience.solo.description"),
-      points: [t("audience.solo.point1"), t("audience.solo.point2"), t("audience.solo.point3")],
-    },
-    {
       id: "institutions",
       icon: School,
       title: t("audience.institutions.title"),
@@ -119,11 +112,18 @@ const Landing = () => {
       points: [t("audience.institutions.point1"), t("audience.institutions.point2"), t("audience.institutions.point3")],
     },
     {
-      id: "trainers",
-      icon: FileText,
-      title: t("audience.trainers.title"),
-      description: t("audience.trainers.description"),
-      points: [t("audience.trainers.point1"), t("audience.trainers.point2"), t("audience.trainers.point3")],
+      id: "solo",
+      icon: Users,
+      title: t("audience.solo.title"),
+      description: t("audience.solo.description"),
+      points: [t("audience.solo.point1"), t("audience.solo.point2"), t("audience.solo.point3")],
+    },
+    {
+      id: "students",
+      icon: Brain,
+      title: t("audience.students.title"),
+      description: t("audience.students.description"),
+      points: [t("audience.students.point1"), t("audience.students.point2"), t("audience.students.point3")],
     },
   ];
 
@@ -668,12 +668,6 @@ const Landing = () => {
                 </CardContent>
               </Card>
             ))}
-          </div>
-          <div className="mt-8 text-center text-muted-foreground">
-            <p>{t("audience.secondary")}</p>
-            <Button variant="link" className="mt-2 whitespace-normal h-auto" onClick={scrollToDemo}>
-              {t("contact.heading")}
-            </Button>
           </div>
         </div>
       </section>
