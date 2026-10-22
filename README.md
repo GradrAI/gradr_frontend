@@ -29,12 +29,12 @@ Commit `bun.lock` with dependency changes. Production deploys from GitHub `main`
 
 ## Landing-page messaging
 
-English and French landing copy lives in `src/i18n/locales/en.json` and `fr.json`. Keep both languages aligned with the sales-led demo/workflow narrative while preserving purchase and data-handling disclosures.
+English and French landing copy lives in `src/i18n/locales/en.json` and `fr.json`. The primary acquisition audience is paid-cohort tutors and tutorial centres, followed by independent training providers; schools and student workflows remain supported.
 
-- Primary demo CTAs use the existing contact form (`#demo-contact`); workflow CTAs focus `#how-it-works`. Sign-in and signup remain available. The landing page should not expose the prototype-study/research-detail block unless a future plan explicitly restores it.
-- Pricing amounts, credits and declared seats remain API-driven. The landing displays numeric validity, rail/product-specific billing labels, the purchase notice and the pricing FAQ instead of promotional API descriptions or academic-period expiry claims. Billing behavior is unchanged.
+- Hero and closing primary CTAs open `/auth/account-type`; cohort-demo CTAs use the existing contact form (`#demo-contact`), and the hero workflow action focuses `#how-it-works`. Mobile signup is visible without opening the menu. Account labels prioritize tutors/trainers while preserving the existing `individual`, `institution`, `joining` and `student` role values.
+- Pricing amounts, credits, validity and seats remain API-driven. `src/lib/paymentPlanPresentation.ts` shares safe billing/detail classifications between landing and checkout, with custom Enterprise preceding free-trial handling. NGN offers are prepaid; additional capacity is under a disclosure on the landing. Keep the account-wide expiry warning, numeric validity and top-up comparison; do not change billing behavior through copy.
 - Update `index.html`, the landing metadata effect and `public/og-image.png` alongside relevant copy changes. The landing resets metadata on language changes and navigation back from the blog.
-- Verify with `bun run test src/__tests__/components/ContactForm.test.tsx` and `bun run build`, then exercise EN/FR, desktop/mobile, demo/workflow focus, both pricing rails, pricing disclosures and contact success/failure in a browser. Intercept contact requests during smoke checks; do not send test mail.
+- Verify with `bun run test src/__tests__/components/ContactForm.test.tsx src/__tests__/components/Pricing.test.tsx` and `bun run build`, then exercise EN/FR, desktop/mobile, signup roles, demo/workflow focus, both payment rails, Enterprise/unknown-plan disclosures, empty/failed offers and contact success/failure in a browser. Intercept contact requests during smoke checks; do not send test mail or payments.
 
 ## Useful links
 - [Backend repo](https://github.com/Fiewor/gradr_backend)

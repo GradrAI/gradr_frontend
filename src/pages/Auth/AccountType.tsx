@@ -17,19 +17,9 @@ const AccountType = () => {
 
   const accountTypes = [
     {
-      id: "student",
-      title: "Student Mode",
-      description: "Practice actual past JAMB/WASSCE exams and get AI feedback",
-      icon: Brain,
-      color: "from-purple-500 to-indigo-600",
-      bgLight: "bg-indigo-50",
-      iconColor: "text-indigo-600",
-      borderColor: "hover:border-indigo-500",
-    },
-    {
       id: "individual",
-      title: "Solo Educator",
-      description: "Grade student papers instantly & generate digital assessments",
+      title: "Tutor or trainer",
+      description: "Run your own assessments with AI-assisted marking and feedback you review.",
       icon: Users,
       color: "from-brand-success-500 to-brand-success-600",
       bgLight: "bg-brand-success-50",
@@ -38,8 +28,8 @@ const AccountType = () => {
     },
     {
       id: "institution",
-      title: "Institution Admin",
-      description: "Manage your school's multi-teacher grading infrastructure",
+      title: "Teaching team or institution",
+      description: "Manage assessments for a tutorial centre, training team, school or department.",
       icon: School,
       color: "from-primary to-secondary",
       bgLight: "bg-brand-100",
@@ -55,6 +45,16 @@ const AccountType = () => {
       bgLight: "bg-amber-50",
       iconColor: "text-amber-600",
       borderColor: "hover:border-amber-500",
+    },
+    {
+      id: "student",
+      title: "Student Mode",
+      description: "Practice actual past JAMB/WASSCE exams and get AI feedback",
+      icon: Brain,
+      color: "from-purple-500 to-indigo-600",
+      bgLight: "bg-indigo-50",
+      iconColor: "text-indigo-600",
+      borderColor: "hover:border-indigo-500",
     },
   ];
 

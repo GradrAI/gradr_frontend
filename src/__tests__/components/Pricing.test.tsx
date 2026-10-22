@@ -5,6 +5,9 @@ import Pricing from "@/pages/Auth/Pricing";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import api from "@/lib/axios";
+import { createInstance, type i18n } from "i18next";
+import { I18nextProvider } from "react-i18next";
+import en from "@/i18n/locales/en.json";
 
 // Mock dependencies
 vi.mock("@/lib/axios", () => ({
@@ -63,21 +66,31 @@ const queryClient = new QueryClient({
   },
 });
 
+let i18nInstance: i18n;
+
 const renderWithProviders = (component: React.ReactNode) => {
   return render(
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{component}</BrowserRouter>
+      <I18nextProvider i18n={i18nInstance}>
+        <BrowserRouter>{component}</BrowserRouter>
+      </I18nextProvider>
     </QueryClientProvider>
   );
 };
 
 describe("Pricing Component", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     mockStore.selectedPaymentPlan = null;
     mockStore.selectedRail = "paystack_ngn";
     mockStore.setSelectedPaymentPlan.mockClear();
     queryClient.clear();
+    i18nInstance = createInstance();
+    await i18nInstance.init({
+      lng: "en",
+      resources: { en: { translation: en } },
+      interpolation: { escapeValue: false },
+    });
     // usePaymentRail calls fetch("/api/geo"); stub it so the hook resolves cleanly.
     vi.stubGlobal(
       "fetch",
@@ -115,7 +128,6 @@ describe("Pricing Component", () => {
       expect(screen.queryByText(/Loading payment plans/i)).not.toBeInTheDocument();
       expect(screen.getByText("Basic")).toBeInTheDocument();
       expect(screen.getByText(/5,000/)).toBeInTheDocument(); // NGN amount (₦5,000)
-      expect(screen.getByText("Feature 1")).toBeInTheDocument();
     });
   });
 

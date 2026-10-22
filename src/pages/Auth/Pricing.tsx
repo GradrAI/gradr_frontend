@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,12 +11,14 @@ import PaystackPop from "@paystack/inline-js";
 import type { PaymentPlan as PaymentPlanType } from "@/types/PaymentPlan";
 import api from "@/lib/axios";
 import { formatNumber } from "@/lib/formatNumber";
+import { getBillingCopyKey, getPlanDetailKey } from "@/lib/paymentPlanPresentation";
 import { PayStackResponse } from "@/types/PayStackResponse";
 import { useState, useMemo } from "react";
 import { usePostHog } from "@posthog/react";
 import { usePaymentRail } from "@/hooks/usePaymentRail";
 
 const Pricing = () => {
+  const { t } = useTranslation();
   const nav = useNavigate();
   const posthog = usePostHog();
   const { user, saveUser, selectedPaymentPlan, setSelectedPaymentPlan } = useStore();
@@ -47,7 +50,7 @@ const Pricing = () => {
 
   const formatPlanPrice = (plan: PaymentPlanType) => {
     if (plan.name.toLowerCase() === "enterprise" || plan.planKey === "enterprise_custom") {
-      return "Custom";
+      return t("pricing.custom");
     }
     if (plan.rail === "paystack_ngn") {
       return `₦${formatNumber(plan.amount)}`;
@@ -56,12 +59,6 @@ const Pricing = () => {
     }
   };
 
-  const getDisplayInterval = (plan: PaymentPlanType) => {
-    if (plan.name.toLowerCase() === "enterprise" || plan.planKey === "enterprise_custom") {
-      return "";
-    }
-    return plan.displayInterval || plan.billingLabel || "";
-  };
 
   const handleSubmit = async () => {
     if (selectedPaymentPlan?.name?.toLowerCase() === "enterprise" || selectedPaymentPlan?.planKey === "enterprise_custom") {
@@ -188,7 +185,7 @@ const Pricing = () => {
           Choose Your Plan
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Choose prepaid NGN credits or international USD checkout. Local credits roll over through the relevant academic period.
+          {t("pricing.body")}
         </p>
       </div>
 
@@ -275,7 +272,7 @@ const Pricing = () => {
             {plan.highlight && (
               <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary hover:bg-primary/90">
                 <Star className="w-3 h-3 mr-1" />
-                {activeTab === "credit_pack" ? "Best Value" : "Popular"}
+                {t(activeTab === "credit_pack" ? "pricing.bestValue" : "pricing.mostPopular")}
               </Badge>
             )}
 
@@ -283,53 +280,48 @@ const Pricing = () => {
               <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 {plan.name}
               </CardTitle>
-              {plan.description && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  {plan.description}
-                </p>
-              )}
               <div className="flex flex-col items-center justify-center mt-3">
                 <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {formatPlanPrice(plan)}
                 </span>
-                {getDisplayInterval(plan) && (
-                  <span className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">
-                    {getDisplayInterval(plan)}
-                  </span>
-                )}
+                <span className="text-xs text-gray-500 mt-1 font-semibold">
+                  {t(getBillingCopyKey(plan))}
+                </span>
               </div>
             </CardHeader>
 
             <CardContent>
               {/* Credit info */}
-              {plan.credits > 0 && (
+              {getPlanDetailKey(plan) !== "enterprise" && plan.credits > 0 && (
                 <div className="mb-4 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10 text-center">
                   <span className="text-sm font-semibold text-primary">
-                    {plan.credits} credits
+                    {t("pricing.credits", { count: plan.credits })}
                   </span>
-                  {plan.creditExpiry && (
-                    <span className="text-xs text-muted-foreground ml-1">
-                      · {plan.creditExpiry}
-                    </span>
-                  )}
                 </div>
               )}
 
-              {/* Feature list */}
+              {/* Reviewed plan details */}
               <ul className="mb-4 space-y-2">
-                {plan.features.map((feat, idx) => (
+                {getPlanDetailKey(plan) !== "enterprise" && (
+                  <li className="text-sm text-muted-foreground">
+                    {Number.isFinite(plan.validityMonths) && plan.validityMonths > 0
+                      ? t("pricing.validityMonths", { count: plan.validityMonths })
+                      : t("pricing.checkValidity")}
+                  </li>
+                )}
+                {(t(`pricing.planDetails.${getPlanDetailKey(plan)}`, { returnObjects: true }) as string[]).map((detail) => (
                   <li
-                    key={idx}
+                    key={detail}
                     className="flex items-start gap-2 text-sm text-muted-foreground"
                   >
                     <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>{feat}</span>
+                    <span>{detail}</span>
                   </li>
                 ))}
-                {plan.maxUsers > 1 && (
+                {getPlanDetailKey(plan) !== "enterprise" && plan.maxUsers > 0 && (
                   <li className="flex items-start gap-2 text-sm text-muted-foreground">
                     <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>Up to {plan.maxUsers} user seats</span>
+                    <span>{t("pricing.userSeats", { count: plan.maxUsers })}</span>
                   </li>
                 )}
               </ul>
@@ -351,6 +343,9 @@ const Pricing = () => {
           </Card>
         ))}
       </div>
+      <p className="mb-8 text-center text-sm text-muted-foreground">
+        {t("pricing.notice")}
+      </p>
 
       <div className="flex flex-col items-center gap-4">
         {!selectedPaymentPlan && (

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import api from "@/lib/axios";
 import { formatNumber } from "@/lib/formatNumber";
 import type { PaymentPlan } from "@/types/PaymentPlan";
+import { getBillingCopyKey, getPlanDetailKey } from "@/lib/paymentPlanPresentation";
 import { usePaymentRail } from "@/hooks/usePaymentRail";
 import {
   Users,
@@ -104,13 +105,6 @@ const Landing = () => {
 
   const audiences = [
     {
-      id: "institutions",
-      icon: School,
-      title: t("audience.institutions.title"),
-      description: t("audience.institutions.description"),
-      points: [t("audience.institutions.point1"), t("audience.institutions.point2"), t("audience.institutions.point3")],
-    },
-    {
       id: "solo",
       icon: Users,
       title: t("audience.solo.title"),
@@ -118,11 +112,18 @@ const Landing = () => {
       points: [t("audience.solo.point1"), t("audience.solo.point2"), t("audience.solo.point3")],
     },
     {
-      id: "students",
-      icon: Brain,
-      title: t("audience.students.title"),
-      description: t("audience.students.description"),
-      points: [t("audience.students.point1"), t("audience.students.point2"), t("audience.students.point3")],
+      id: "institutions",
+      icon: School,
+      title: t("audience.institutions.title"),
+      description: t("audience.institutions.description"),
+      points: [t("audience.institutions.point1"), t("audience.institutions.point2"), t("audience.institutions.point3")],
+    },
+    {
+      id: "trainers",
+      icon: FileText,
+      title: t("audience.trainers.title"),
+      description: t("audience.trainers.description"),
+      points: [t("audience.trainers.point1"), t("audience.trainers.point2"), t("audience.trainers.point3")],
     },
   ];
 
@@ -180,33 +181,13 @@ const Landing = () => {
     [paymentPlanData, selectedRail]
   );
 
-  const getBillingCopy = (plan: PaymentPlan): string => {
-    if (plan.name.toLowerCase() === "enterprise") return t("pricing.institutionalTerms");
-    if (plan.amount === 0 && plan.amountUsd === 0) return t("pricing.trialGrant");
-    if (plan.rail === "paystack_ngn") return t("pricing.prepaidLabel");
-    if (plan.planType === "credit_pack" || plan.creemProductType === "one_time") {
-      return t("pricing.oneTimeLabel");
-    }
-    if (plan.creemProductType === "recurring") {
-      if (plan.duration === "monthly") return t("pricing.monthlyLabel");
-      if (plan.duration === "yearly") return t("pricing.yearlyLabel");
-      return t("pricing.recurringLabel");
-    }
-    return t("pricing.checkoutTerms");
-  };
-
-  const getPlanDetailKey = (plan: PaymentPlan): string => {
-    const normalizedName = plan.name.toLowerCase().replace(/[^a-z0-9]+/g, "");
-    if (plan.planType === "credit_pack") return "creditPack";
-    if (plan.amount === 0 && plan.amountUsd === 0) return "trial";
-    if (normalizedName.includes("institution") || normalizedName.includes("enterprise")) {
-      return normalizedName.includes("year") ? "institutionYearly" : "institution";
-    }
-    if (normalizedName.includes("educator") || normalizedName.includes("teacher")) {
-      return normalizedName.includes("year") ? "educatorYearly" : "educator";
-    }
-    return "default";
-  };
+  const featuredPlanKeys = ["ngn_educator_monthly", "ngn_institution_monthly", "enterprise_custom"];
+  const featuredPlans = selectedRail === "paystack_ngn"
+    ? featuredPlanKeys.flatMap((key) => subscriptionPlans.filter((plan) => plan.planKey === key))
+    : subscriptionPlans;
+  const additionalPlans = selectedRail === "paystack_ngn"
+    ? subscriptionPlans.filter((plan) => !featuredPlanKeys.includes(plan.planKey))
+    : [];
 
   const getPlanDetails = (plan: PaymentPlan): string[] =>
     t(`pricing.planDetails.${getPlanDetailKey(plan)}`, { returnObjects: true }) as string[];
@@ -234,6 +215,74 @@ const Landing = () => {
   ];
 
   const nav = useNavigate();
+
+  const renderSubscriptionPlan = (plan: PaymentPlan) => (
+    <Card
+      key={plan._id}
+      className={`relative flex flex-col h-full border-2 transition-all duration-300 ${
+        plan.highlight
+          ? "border-primary shadow-xl scale-105 z-10"
+          : "border-border shadow-md hover:shadow-lg hover:border-primary/30"
+      }`}
+    >
+      {plan.highlight && (
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
+          {t("pricing.mostPopular")}
+        </div>
+      )}
+      <CardContent className="p-8 flex flex-col h-full">
+        <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+        <div className="mb-6">
+          <span className="text-3xl font-bold">
+            {getPlanDetailKey(plan) === "enterprise"
+              ? t("pricing.custom")
+              : selectedRail === "paystack_ngn"
+                ? `₦${formatNumber(plan.amount)}`
+                : `$${plan.amountUsd}`}
+          </span>
+        </div>
+        <p className="text-sm text-muted-foreground mb-6">{t(getBillingCopyKey(plan))}</p>
+        {getPlanDetailKey(plan) !== "enterprise" && plan.credits > 0 && (
+          <div className="mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
+            <span className="text-sm font-semibold text-primary">
+              {t("pricing.credits", { count: plan.credits })}
+            </span>
+          </div>
+        )}
+        <ul className="space-y-3 mb-8 flex-grow">
+          {getPlanDetailKey(plan) !== "enterprise" && (
+            <li className="text-sm text-muted-foreground">
+              {Number.isFinite(plan.validityMonths) && plan.validityMonths > 0
+                ? t("pricing.validityMonths", { count: plan.validityMonths })
+                : t("pricing.checkValidity")}
+            </li>
+          )}
+          {getPlanDetailKey(plan) !== "enterprise" && plan.maxUsers > 0 && (
+            <li className="flex items-start gap-3 text-sm">
+              <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+              <span>{t("pricing.userSeats", { count: plan.maxUsers })}</span>
+            </li>
+          )}
+          {getPlanDetails(plan).map((detail) => (
+            <li key={detail} className="flex items-start gap-3 text-sm text-foreground/80">
+              <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+              <span>{detail}</span>
+            </li>
+          ))}
+        </ul>
+        <Button
+          className={`w-full py-6 text-lg font-bold rounded-xl h-auto whitespace-normal ${
+            plan.highlight
+              ? "bg-primary text-white hover:bg-primary/90"
+              : "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white"
+          }`}
+          onClick={() => getPlanDetailKey(plan) === "enterprise" ? scrollToDemo() : nav("/auth/account-type")}
+        >
+          {getPlanDetailKey(plan) === "enterprise" ? t("pricing.contactSales") : t("pricing.getStarted")}
+        </Button>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
@@ -385,19 +434,22 @@ const Landing = () => {
               <Button
                 size="lg"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6 text-xl rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 max-w-full whitespace-normal h-auto"
-                onClick={scrollToDemo}
+                onClick={() => nav("/auth/account-type")}
               >
-                {t("hero.demoCta")}
+                {t("hero.signupCta")}
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-2 border-primary text-primary hover:bg-primary/5 px-10 py-6 text-xl rounded-full transition-all hover:scale-105 max-w-full whitespace-normal h-auto"
-                onClick={scrollToWorkflow}
+                onClick={scrollToDemo}
               >
-                {t("hero.workflowCta")}
+                {t("hero.demoCta")}
               </Button>
             </div>
+            <Button variant="link" className="mt-4 whitespace-normal h-auto" onClick={scrollToWorkflow}>
+              {t("hero.workflowCta")}
+            </Button>
           </div>
 
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto px-4">
@@ -617,6 +669,12 @@ const Landing = () => {
               </Card>
             ))}
           </div>
+          <div className="mt-8 text-center text-muted-foreground">
+            <p>{t("audience.secondary")}</p>
+            <Button variant="link" className="mt-2 whitespace-normal h-auto" onClick={scrollToDemo}>
+              {t("contact.heading")}
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -713,92 +771,29 @@ const Landing = () => {
             <div className="flex justify-center items-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
+          ) : subscriptionPlans.length === 0 && creditPacks.length === 0 ? (
+            <div className="py-12 text-center">
+              <p className="text-muted-foreground">{t("pricing.unavailable")}</p>
+              <Button className="mt-4 whitespace-normal h-auto" onClick={scrollToDemo}>
+                {t("contact.heading")}
+              </Button>
+            </div>
           ) : pricingTab === "subscriptions" ? (
             /* Subscription Plans */
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {subscriptionPlans.map((plan) => (
-                  <Card
-                    key={plan._id}
-                    className={`relative flex flex-col h-full border-2 transition-all duration-300 ${
-                      plan.highlight
-                        ? "border-primary shadow-xl scale-105 z-10"
-                        : "border-border shadow-md hover:shadow-lg hover:border-primary/30"
-                    }`}
-                  >
-                    {plan.highlight && (
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-                        {t("pricing.mostPopular")}
-                      </div>
-                    )}
-                    <CardContent className="p-8 flex flex-col h-full">
-                      <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                      <div className="mb-6">
-                        {plan.name.toLowerCase() === "enterprise" ? (
-                          <span className="text-3xl font-bold">{t("pricing.custom")}</span>
-                        ) : (
-                          <>
-                            <div className="flex items-baseline gap-1">
-                              <span className="text-3xl font-bold">
-                                {selectedRail === "paystack_ngn"
-                                  ? `₦${formatNumber(plan.amount)}`
-                                  : `$${plan.amountUsd}`}
-                              </span>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-6">{getBillingCopy(plan)}</p>
-                      {plan.credits > 0 && (
-                        <div className="mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
-                          <span className="text-sm font-semibold text-primary">
-                            {t("pricing.credits", { count: plan.credits })}
-                          </span>
-                        </div>
-                      )}
-                      <ul className="space-y-3 mb-8 flex-grow">
-                        {plan.name.toLowerCase() !== "enterprise" && (
-                          <li className="text-sm text-muted-foreground">
-                            {Number.isFinite(plan.validityMonths) && plan.validityMonths > 0
-                              ? t("pricing.validityMonths", { count: plan.validityMonths })
-                              : t("pricing.checkValidity")}
-                          </li>
-                        )}
-                        {plan.maxUsers > 1 && (
-                          <li className="flex items-start gap-3 text-sm">
-                            <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                            <span>{t("pricing.userSeats", { count: plan.maxUsers })}</span>
-                          </li>
-                        )}
-                        {getPlanDetails(plan).map((detail) => (
-                          <li key={detail} className="flex items-start gap-3 text-sm text-foreground/80">
-                            <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                            <span>{detail}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <Button
-                        className={`w-full py-6 text-lg font-bold rounded-xl h-auto whitespace-normal ${
-                          plan.highlight
-                            ? "bg-primary text-white hover:bg-primary/90"
-                            : "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white"
-                        }`}
-                        onClick={() =>
-                          plan.name.toLowerCase() === "enterprise"
-                            ? scrollToDemo()
-                            : nav(`auth/sign-in`)
-                        }
-                      >
-                        {plan.name.toLowerCase() === "enterprise"
-                          ? t("pricing.contactSales")
-                          : (plan.amount === 0 && plan.amountUsd === 0)
-                          ? t("pricing.getStartedFree")
-                          : t("pricing.getStarted")}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
+              <div className={`grid grid-cols-1 md:grid-cols-2 ${selectedRail === "paystack_ngn" ? "lg:grid-cols-3" : "lg:grid-cols-4"} gap-8`}>
+                {featuredPlans.map(renderSubscriptionPlan)}
               </div>
+              {additionalPlans.length > 0 && (
+                <details className="mt-10 rounded-xl border border-border p-6">
+                  <summary className="cursor-pointer font-semibold text-foreground">
+                    {t("pricing.moreCapacity")}
+                  </summary>
+                  <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {additionalPlans.map(renderSubscriptionPlan)}
+                  </div>
+                </details>
+              )}
               <p className="text-center mt-12 text-muted-foreground">
                 {t("pricing.flexibilityPrompt")}{" "}
                 <button
@@ -845,7 +840,7 @@ const Landing = () => {
                             </span>
                           </div>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-6">{getBillingCopy(pack)}</p>
+                        <p className="text-sm text-muted-foreground mb-6">{t(getBillingCopyKey(pack))}</p>
                         <div className="mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
                           <span className="text-sm font-semibold text-primary">
                             {t("pricing.credits", { count: pack.credits })}
@@ -870,7 +865,7 @@ const Landing = () => {
                               ? "bg-primary text-white hover:bg-primary/90"
                               : "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white"
                           }`}
-                          onClick={() => nav(`auth/sign-in`)}
+                          onClick={() => nav("/auth/account-type")}
                         >
                           {t("pricing.buyPack", { name: pack.name })}
                         </Button>
@@ -983,17 +978,17 @@ const Landing = () => {
             <Button
               size="lg"
               className="bg-background text-primary hover:bg-background/90 px-10 py-7 text-xl font-bold rounded-2xl max-w-full whitespace-normal h-auto"
-              onClick={scrollToDemo}
+              onClick={() => nav("/auth/account-type")}
             >
-              {t("cta.demoCta")}
+              {t("cta.signupCta")}
             </Button>
             <Button
               size="lg"
               variant="outline"
               className="border-2 border-white text-primary-foreground bg-transparent hover:bg-white/10 px-10 py-7 text-xl font-bold rounded-2xl max-w-full whitespace-normal h-auto"
-              onClick={scrollToWorkflow}
+              onClick={scrollToDemo}
             >
-              {t("cta.workflowCta")}
+              {t("cta.demoCta")}
             </Button>
           </div>
         </div>
