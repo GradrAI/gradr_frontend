@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getPracticeSessions } from "@/requests/practice";
 import {
@@ -31,6 +31,9 @@ export default function PracticeDashboard() {
             SmartPrep Practice
           </h1>
           <p className="text-slate-500 font-medium text-sm sm:text-base">Master your exams with AI-guided mock tests.</p>
+          <Link to="/download" className="inline-block mt-2 text-sm font-semibold text-indigo-600 hover:underline">
+            Practise offline on Android: get the GradrAI app
+          </Link>
         </div>
         <Button 
           onClick={() => navigate("/student/practice/new")}
@@ -95,6 +98,11 @@ export default function PracticeDashboard() {
                     <CardDescription className="text-sm font-medium text-slate-500 capitalize">
                       {session.mode.replace('-', ' ')}
                     </CardDescription>
+                    {session.source === "mobile" && (
+                      <span className="inline-block px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 text-[11px] font-semibold uppercase tracking-wider">
+                        Phone
+                      </span>
+                    )}
                   </div>
                   {session.status === "completed" ? (
                     <div className="bg-gradient-to-r from-emerald-400 to-emerald-500 text-white px-3 py-1.5 rounded-xl text-sm font-black shadow-md">
@@ -120,7 +128,7 @@ export default function PracticeDashboard() {
 
               <CardFooter className="pt-4 flex items-center justify-between border-t border-slate-50">
                 <div className="flex items-center text-[11px] text-slate-400 font-medium uppercase tracking-widest">
-                  {new Date(session.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {new Date(session.completedAt || session.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                 </div>
                 <div className="text-indigo-500 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 font-medium text-sm flex items-center">
                   {session.status === 'completed' ? 'Review test' : 'Resume test'}

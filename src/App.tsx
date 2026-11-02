@@ -19,6 +19,8 @@ const Pricing = lazy(() => import("./pages/Auth/Pricing"));
 const KYC = lazy(() => import("./pages/Auth/KYC"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const DeleteAccount = lazy(() => import("./pages/DeleteAccount"));
+const DownloadApp = lazy(() => import("./pages/DownloadApp"));
 const PostPayment = lazy(() => import("./pages/Auth/PostPayment"));
 const ProtectedRoutes = lazy(() => import("./pages/ProtectedRoutes"));
 const AssessmentDetails = lazy(() => import("./pages/Assessments/AssessmentDetails"));
@@ -86,6 +88,8 @@ function App() {
 
           <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="terms-of-service" element={<TermsOfService />} />
+          <Route path="delete-account" element={<DeleteAccount />} />
+          <Route path="download" element={<DownloadApp />} />
 
           <Route path="auth" element={<AuthLayout />}>
             <Route path="account-type" element={<AccountType />} />
