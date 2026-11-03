@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.gradrai.app",
+      "sha256_cert_fingerprints": [
+        "CF:BA:43:FE:78:5F:E1:2E:AF:85:AE:55:7B:B5:4C:2B:5C:7F:02:19:E8:30:4A:63:90:5E:91:3B:4C:04:C8:92"
+      ]
+    }
+  }
+]
