@@ -6,7 +6,14 @@ import type {
   ExamSummary,
   LeaderboardResponse,
 } from "@/types/Exam";
-
+import type {
+  AttemptReview,
+  AttemptStatusResponse,
+  ExamSubmission,
+  MyAttempt,
+  VivaLanguage,
+  VivaUploadResult,
+} from "@/types/Attempt";
 
 export interface ExamListResponse {
   data: ExamSummary[];
@@ -85,4 +92,47 @@ export const autoSaveAttempt = async (
   answers: Record<string, unknown>
 ) => {
   await api.post(`/exam/${attemptId}/auto-save`, { answers });
+};
+
+export const getAttemptStatus = async (attemptId: string) => {
+  const res = await api.get(`/exam/attempts/${attemptId}/status`);
+  return res.data.data as AttemptStatusResponse;
+};
+
+/** The signed-in student's submitted attempts, newest first. */
+export const getMyAttempts = async () => {
+  const res = await api.get("/exam/attempts/mine");
+  return (res.data?.data ?? []) as MyAttempt[];
+};
+
+export const getExamSubmissions = async (examId: string) => {
+  const res = await api.get(`/exam/${examId}/submissions`);
+  return (res.data?.data ?? []) as ExamSubmission[];
+};
+
+export const getAttemptReview = async (attemptId: string) => {
+  const res = await api.get(`/exam/attempts/${attemptId}/review`);
+  return res.data.data as AttemptReview;
+};
+
+/** Re-queues grading for a failed or stuck attempt (202). */
+export const regradeAttempt = async (attemptId: string) => {
+  await api.post(`/exam/attempts/${attemptId}/regrade`);
+};
+
+/**
+ * Uploads one spoken explanation as the raw audio body. The response only
+ * says whether speech was processed — the score stays with the teacher.
+ */
+export const uploadVivaRecording = async (
+  attemptId: string,
+  questionId: string,
+  blob: Blob,
+  langs: VivaLanguage[]
+) => {
+  const res = await api.post(`/exam/${attemptId}/viva/${questionId}`, blob, {
+    headers: { "Content-Type": blob.type },
+    params: { langs: langs.join(","), consent: "true" },
+  });
+  return res.data as VivaUploadResult;
 };

@@ -5,6 +5,7 @@ import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ExamComponent from "@/pages/Student/pages/ExamComponent";
 import api from "@/lib/axios";
+import { getAttemptStatus } from "@/requests/exam";
 
 vi.mock("@/lib/axios", () => ({
   default: { get: vi.fn(), post: vi.fn() },
@@ -14,6 +15,7 @@ vi.mock("react-hot-toast", () => ({
 }));
 vi.mock("@/requests/exam", () => ({
   autoSaveAttempt: vi.fn().mockResolvedValue(undefined),
+  getAttemptStatus: vi.fn(),
 }));
 
 const mockApi = vi.mocked(api);
@@ -101,6 +103,14 @@ describe("ExamComponent", () => {
         };
       }
       return { data: { data: {} } };
+    });
+    vi.mocked(getAttemptStatus).mockResolvedValue({
+      attemptId: "attempt-1",
+      status: "grading",
+      resultId: null,
+      resultStatus: null,
+      score: null,
+      maxScore: 4,
     });
   });
 
@@ -217,5 +227,31 @@ describe("ExamComponent", () => {
       "href",
       "/student/quiz/exam-1/leaderboard"
     );
+  });
+
+  it("tells the student their teacher is reviewing when grading routes to review", async () => {
+    vi.mocked(getAttemptStatus).mockResolvedValue({
+      attemptId: "attempt-1",
+      status: "pending_review",
+      resultId: null,
+      resultStatus: "PENDING_REVIEW",
+      score: null,
+      maxScore: 4,
+    });
+    mockApi.get.mockResolvedValue(preview({}));
+    renderExam();
+    const user = await beginExam();
+    await screen.findByText("What is 2 + 2?");
+
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    await user.click(screen.getByRole("button", { name: "Submit Exam" }));
+
+    expect(
+      await screen.findByText(
+        "Your teacher is reviewing this submission. Your result will appear once they finish."
+      )
+    ).toBeInTheDocument();
+    expect(getAttemptStatus).toHaveBeenCalledWith("attempt-1");
+    expect(screen.queryByRole("link", { name: "View result" })).not.toBeInTheDocument();
   });
 });

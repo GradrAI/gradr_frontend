@@ -78,6 +78,7 @@ type CreateExamPayload = {
   durationMinutes: number | null;
   proctoringMode: "strict" | "relaxed";
   leaderboard: { enabled: boolean; visibility: "full" | "anonymized" };
+  vivaEnabled: boolean;
   customInstructions: string;
   resourceIds: string[];
   topicPriorities: { topic: string; weight: number; selected: boolean }[];
@@ -170,6 +171,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
       proctoringMode: "strict",
       leaderboardEnabled: false,
       leaderboardVisibility: "anonymized",
+      vivaEnabled: false,
       customInstructions: "",
     },
   });
@@ -394,6 +396,7 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
         enabled: data.leaderboardEnabled,
         visibility: data.leaderboardVisibility,
       },
+      vivaEnabled: data.vivaEnabled,
       customInstructions: data.customInstructions,
       resourceIds: data.resourceIds,
       topicPriorities: (data.topicPriorities ?? []).filter((tp) => tp.selected),
@@ -1132,6 +1135,29 @@ const ExamUploadForm = ({ setAddNew }: ExamUploadFormProps) => {
               )}
             />
           )}
+
+          <FormField
+            control={form.control}
+            name="vivaEnabled"
+            render={({ field }) => (
+              <FormItem className="flex items-center justify-between gap-4 min-w-0">
+                <div className="space-y-1 min-w-0">
+                  <FormLabel>Allow spoken explanations for essay questions</FormLabel>
+                  <FormDescription className="text-[11px]">
+                    Students can record a short explanation; you see the
+                    transcript when reviewing. Audio is not stored.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    className="shrink-0"
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
         </div>
 
         <FormField

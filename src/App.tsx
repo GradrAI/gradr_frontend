@@ -37,6 +37,8 @@ const StudentRouter = lazy(() => import("./pages/Student/pages/StudentRouter"));
 const ExamCreate = lazy(() => import("./pages/Exams/pages/ExamCreate"));
 const Exams = lazy(() => import("./pages/Exams/pages/Exams"));
 const Leaderboard = lazy(() => import("./pages/Exams/pages/Leaderboard"));
+const Submissions = lazy(() => import("./pages/Exams/pages/Submissions"));
+const SubmissionReview = lazy(() => import("./pages/Exams/pages/SubmissionReview"));
 const Reports = lazy(() => import("./pages/Reports/Reports"));
 const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard"));
 const StudentsList = lazy(() => import("./pages/Students/StudentsList"));
@@ -162,6 +164,11 @@ function App() {
                 <Route
                   path=":examId/leaderboard"
                   element={<Leaderboard />}
+                />
+                <Route path=":examId/submissions" element={<Submissions />} />
+                <Route
+                  path=":examId/submissions/:attemptId"
+                  element={<SubmissionReview />}
                 />
               </Route>
 

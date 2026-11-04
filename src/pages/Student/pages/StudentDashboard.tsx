@@ -12,6 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import AttemptStatusBadge from "@/components/AttemptStatusBadge";
+import { getMyAttempts } from "@/requests/exam";
 
 const StudentDashboard = () => {
     const navigate = useNavigate();
@@ -29,12 +31,42 @@ const StudentDashboard = () => {
 
     const results = resultsResponse?.data || [];
 
+    const { data: myAttempts = [] } = useQuery({
+        queryKey: ["myAttempts", user?._id],
+        queryFn: getMyAttempts,
+        enabled: !!user?._id,
+    });
+    const ungradedAttempts = myAttempts.filter((attempt) => attempt.status !== "graded");
+
     return (
         <div className="p-8 max-w-6xl">
             <header className="mb-10">
                 <h1 className="text-4xl font-bold text-foreground mb-2">Student Dashboard</h1>
                 <p className="text-muted-foreground">Track your courses and academic performance</p>
             </header>
+
+            {ungradedAttempts.length > 0 && (
+                <section className="mb-10" aria-labelledby="submitted-exams-heading">
+                    <h2 id="submitted-exams-heading" className="text-xl font-semibold text-foreground mb-4">
+                        Submitted exams
+                    </h2>
+                    <ul className="divide-y divide-border rounded-2xl border border-border bg-card">
+                        {ungradedAttempts.map((attempt) => (
+                            <li key={attempt.attemptId} className="flex items-center justify-between gap-4 p-4">
+                                <div className="min-w-0">
+                                    <p className="font-medium text-foreground truncate">{attempt.examTopic}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {attempt.courseName}
+                                        {attempt.submittedAt &&
+                                            ` • ${new Date(attempt.submittedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`}
+                                    </p>
+                                </div>
+                                <AttemptStatusBadge status={attempt.status} />
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )}
 
             {isLoading && (
                 <div className="flex flex-col items-center justify-center py-20">

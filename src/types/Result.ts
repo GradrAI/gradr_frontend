@@ -1,11 +1,22 @@
 import { MongoDBDefault } from "./MongoDBDefault";
 
+export type ResultStatus = "COMPLETED" | "PENDING_REVIEW";
+
 export type QuestionResult = {
   questionId: string;
   score: number;
   maxScore: number;
   explanation: string;
   feedback: string;
+  topic?: string;
+  /** False when an "answer any N" rule left this question out of the total. */
+  selected?: boolean;
+};
+
+export type GradingMeta = {
+  pipelineType?: "PBT" | "CBT";
+  refereeStatus?: string;
+  validationErrors?: string[];
 };
 
 export type Result = MongoDBDefault & {
@@ -21,6 +32,8 @@ export type Result = MongoDBDefault & {
   feedback: string;
   lecturerId: string;
   lecturerComment: string | null;
+  status?: ResultStatus;
+  gradingMeta?: GradingMeta;
   course?: { name: string };
   category?: { name: string; type: string };
   createdAt: string;

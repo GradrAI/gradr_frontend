@@ -134,8 +134,15 @@ const StudentResultDetails = () => {
                                     <CardTitle className="text-lg font-bold text-foreground">
                                         Question {index + 1}
                                     </CardTitle>
-                                    <div className="bg-muted text-muted-foreground font-bold px-3 py-1 rounded-lg text-sm">
-                                        Score: {item.score} / {item.maxScore}
+                                    <div className="flex items-center gap-2">
+                                        {item.selected === false && (
+                                            <span className="bg-muted text-muted-foreground px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">
+                                                Not counted
+                                            </span>
+                                        )}
+                                        <div className="bg-muted text-muted-foreground font-bold px-3 py-1 rounded-lg text-sm">
+                                            Score: {item.score} / {item.maxScore}
+                                        </div>
                                     </div>
                                 </CardHeader>
                                 <CardContent className="space-y-4">

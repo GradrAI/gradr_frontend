@@ -67,6 +67,7 @@ const formSchema = z
     proctoringMode: z.enum(["strict", "relaxed"]).default("strict"),
     leaderboardEnabled: z.boolean().default(false),
     leaderboardVisibility: z.enum(["full", "anonymized"]).default("anonymized"),
+    vivaEnabled: z.boolean().default(false),
     customInstructions: z
       .string()
       .max(2000, "Custom instructions must be 2000 characters or fewer")
