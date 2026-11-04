@@ -1,4 +1,4 @@
-import { User } from "./User";
+import type { PbtRubric } from "./Category";
 
 export type UploadData = {
   lecturerId: string;
@@ -12,4 +12,6 @@ export type UploadData = {
   uploader: string | null;
   uploaderType: "lecturer" | "student";
   matricNo: string | null;
+  /** Exam rules; only sent with a marking guide upload. */
+  pbtRubric?: PbtRubric;
 };

@@ -29,6 +29,9 @@ import api from "@/lib/axios";
 import { Category, CourseData } from "@/types/CourseData";
 import categories from "@/data/categories";
 import { usePostHog } from '@posthog/react'
+import PbtRubricEditor from "@/pages/Grader/components/PbtRubricEditor";
+import { defaultPbtRubric } from "@/pages/Grader/helpers/pbtRubricSchema";
+import { PbtRubric } from "@/types/Category";
 
 const NewUpload = () => {
   const queryClient = useQueryClient();
@@ -47,6 +50,7 @@ const NewUpload = () => {
     uploader: undefined,
   });
   const [addNew, setAddNew] = useState(false);
+  const [pbtRubric, setPbtRubric] = useState<PbtRubric>(defaultPbtRubric);
 
   useEffect(() => {
     if (user?._id) {
@@ -233,7 +237,28 @@ const NewUpload = () => {
         </SelectContent>
       </Select>
 
-      <UploadForm uploadData={uploadData} />
+      {uploadData.fileType === "guide" && (
+        <div className="w-full space-y-2 rounded-lg border p-4 bg-white">
+          <h2 className="font-semibold">Exam rules</h2>
+          <p className="text-sm text-muted-foreground">
+            Set the marks for each question and whether students answer all
+            of them or any N.
+          </p>
+          <PbtRubricEditor
+            value={pbtRubric}
+            onChange={setPbtRubric}
+            maxScoreAttainable={Number(uploadData.maxScoreAttainable ?? 0)}
+          />
+        </div>
+      )}
+
+      <UploadForm
+        uploadData={
+          uploadData.fileType === "guide"
+            ? { ...uploadData, pbtRubric }
+            : uploadData
+        }
+      />
 
       <Dialog open={addNew} onOpenChange={setAddNew}>
         <DialogContent className="sm:max-w-[425px]">

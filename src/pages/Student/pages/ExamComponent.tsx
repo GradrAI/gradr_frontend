@@ -13,11 +13,15 @@ import { Exam } from "@/types/Exam";
 import toast from "react-hot-toast";
 import { Loader2Icon } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { autoSaveAttempt } from "@/requests/exam";
+import { autoSaveAttempt, getAttemptStatus } from "@/requests/exam";
 import { usePostHog } from '@posthog/react'
+import VivaRecorder from "../components/VivaRecorder";
 
 /** Ascending, so the first match is the tightest threshold still in play. */
 const ANNOUNCE_THRESHOLDS = [60, 300, 600];
+
+/** Stop polling for a grading outcome after this long; the dashboard takes over. */
+const STATUS_POLL_LIMIT_MS = 10 * 60 * 1000;
 
 const ExamComponent = () => {
   const nav = useNavigate();
@@ -36,6 +40,12 @@ const ExamComponent = () => {
   const [timeAnnouncement, setTimeAnnouncement] = useState("");
   /** Largest countdown threshold already announced, in seconds. */
   const lastAnnouncedRef = useRef<number | null>(null);
+  /** Microphone permission for spoken explanations, settled before lockdown. */
+  const [micState, setMicState] = useState<
+    "unknown" | "requesting" | "granted" | "denied"
+  >("unknown");
+  const [statusPollingAllowed, setStatusPollingAllowed] = useState(true);
+  const [statusPollExpired, setStatusPollExpired] = useState(false);
 
   const answersRef = useRef(answers);
   useEffect(() => {
@@ -53,6 +63,31 @@ const ExamComponent = () => {
     select: (res) => res.data?.data,
     refetchOnWindowFocus: false,
   });
+
+  const { data: attemptStatus } = useQuery({
+    queryKey: ["attemptStatus", attemptId],
+    queryFn: () => getAttemptStatus(attemptId!),
+    enabled: state === "submitted" && !!attemptId,
+    refetchInterval: statusPollingAllowed ? 3000 : false,
+  });
+
+  // Keep polling only while the attempt is still queued or being graded.
+  useEffect(() => {
+    const status = attemptStatus?.status;
+    setStatusPollingAllowed(
+      !statusPollExpired &&
+        (!status || status === "submitted" || status === "grading")
+    );
+  }, [attemptStatus?.status, statusPollExpired]);
+
+  useEffect(() => {
+    if (state !== "submitted") return;
+    const timeout = setTimeout(
+      () => setStatusPollExpired(true),
+      STATUS_POLL_LIMIT_MS
+    );
+    return () => clearTimeout(timeout);
+  }, [state]);
 
   const submitExamMutation = useMutation({
     mutationFn: async (currentAnswers: Record<string, any>) =>
@@ -117,10 +152,23 @@ const ExamComponent = () => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
-  const handleBeginExam = () => {
-    if (previewData?.examId) {
-      startExamMutation.mutate(previewData.examId);
+  const handleBeginExam = async () => {
+    if (!previewData?.examId) return;
+    // Ask for the microphone now: a permission prompt during fullscreen
+    // lockdown would steal focus and auto-submit a strictly proctored exam.
+    if (previewData.vivaEnabled) {
+      setMicState("requesting");
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        stream.getTracks().forEach((track) => track.stop());
+        setMicState("granted");
+      } catch {
+        setMicState("denied");
+      }
     }
+    startExamMutation.mutate(previewData.examId);
   };
 
   // Initialize countdown timer when exam starts
@@ -332,7 +380,7 @@ const ExamComponent = () => {
 
               <Button
                 onClick={handleBeginExam}
-                disabled={startExamMutation.isPending}
+                disabled={startExamMutation.isPending || micState === "requesting"}
                 className="w-full"
                 size="lg"
               >
@@ -433,14 +481,29 @@ const ExamComponent = () => {
               )}
 
               {currentQuestion?.type === "essay" && (
-                <Textarea
-                  placeholder="Type your answer here..."
-                  className="min-h-[220px]"
-                  value={answers[currentQuestion.id] || ""}
-                  onChange={(e) =>
-                    handleAnswerChange(currentQuestion.id, e.target.value)
-                  }
-                />
+                <>
+                  <Textarea
+                    placeholder="Type your answer here..."
+                    className="min-h-[220px]"
+                    value={answers[currentQuestion.id] || ""}
+                    onChange={(e) =>
+                      handleAnswerChange(currentQuestion.id, e.target.value)
+                    }
+                  />
+                  {fullExam.vivaEnabled && attemptId && micState === "granted" && (
+                    <VivaRecorder
+                      key={currentQuestion.id}
+                      attemptId={attemptId}
+                      questionId={currentQuestion.id}
+                    />
+                  )}
+                  {fullExam.vivaEnabled && micState === "denied" && (
+                    <p className="text-sm text-muted-foreground">
+                      Microphone blocked — spoken explanations are disabled for
+                      this exam
+                    </p>
+                  )}
+                </>
               )}
             </CardContent>
           </Card>
@@ -514,6 +577,8 @@ const ExamComponent = () => {
   }
 
   if (state === "submitted") {
+    const status = attemptStatus?.status;
+    const resultId = status === "graded" ? attemptStatus?.resultId : null;
     return (
       <div className="flex min-h-screen flex-col bg-background">
         <main className="flex-1 px-4 py-6 flex items-center justify-center">
@@ -522,10 +587,24 @@ const ExamComponent = () => {
               <CardTitle className="text-2xl">Exam Submitted</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
-              <p className="text-muted-foreground">
-                Your exam has been submitted successfully. You will receive your
-                results shortly.
+              <p role="status" className="text-muted-foreground">
+                {resultId
+                  ? "Your result is ready"
+                  : status === "pending_review"
+                    ? "Your teacher is reviewing this submission. Your result will appear once they finish."
+                    : status === "grading_failed"
+                      ? "We couldn't grade this automatically. Your teacher can grade it from their dashboard."
+                      : statusPollExpired
+                        ? "Grading is taking longer than usual. Your result will appear on your dashboard when it's ready."
+                        : "Grading your answers…"}
               </p>
+              {resultId && (
+                <Button asChild className="w-full">
+                  <Link to={`/student/results/${resultId}`}>
+                    View result
+                  </Link>
+                </Button>
+              )}
               {previewData?.leaderboard?.enabled && previewData?.examId && (
                 <Button asChild className="w-full">
                   <Link

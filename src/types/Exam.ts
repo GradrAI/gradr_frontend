@@ -33,6 +33,8 @@ export interface Exam {
   /** "relaxed" disables the fullscreen lockdown for untimed practice quizzes. */
   proctoringMode?: ProctoringMode;
   leaderboard?: LeaderboardSettings;
+  /** Students may record a spoken explanation for essay questions. */
+  vivaEnabled?: boolean;
   meta?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
@@ -72,6 +74,11 @@ export interface Question {
   options?: Option[];
   correctOptionId?: number; // Present in lecturer views, stripped for student exam attempts
   maxMarks?: number;
+  /** Lecturer-only: the reference answer the AI grades essays against. */
+  modelAnswer?: string | null;
+  /** Lecturer-only: marking notes for an essay. */
+  rubric?: string;
+  topic?: string;
 }
 
 export interface Option {

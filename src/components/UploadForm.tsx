@@ -23,6 +23,7 @@ import { useEffect } from "react";
 import api from "@/lib/axios";
 import { Loader2Icon } from "lucide-react";
 import { usePostHog } from '@posthog/react'
+import { validatePbtRubric } from "@/pages/Grader/helpers/pbtRubricSchema";
 
 const formSchema = z.object({
   file: z
@@ -99,10 +100,24 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
       return;
     }
 
+    if (uploadData.pbtRubric) {
+      const rubricError = validatePbtRubric(
+        uploadData.pbtRubric,
+        Number(uploadData.maxScoreAttainable)
+      );
+      if (rubricError) {
+        toast.error(rubricError);
+        return;
+      }
+    }
+
     const formData = new FormData();
 
     for (const [key, val] of Object.entries(uploadData)) {
       if (typeof val === "string") formData.append(key, val);
+    }
+    if (uploadData.pbtRubric) {
+      formData.append("pbtRubric", JSON.stringify(uploadData.pbtRubric));
     }
     const { file } = data;
     for (const [key, val] of Object.entries(file)) {
@@ -121,7 +136,10 @@ const UploadForm = ({ uploadData }: { uploadData: Partial<UploadData> }) => {
       },
       onError: (error: any) => {
         posthog.capture("upload_failed", { error: error.message });
-        toast.error(notifications.UPLOAD.FAILURE);
+        // Rubric validation (400) carries a teacher-readable reason.
+        toast.error(
+          error?.response?.data?.message || notifications.UPLOAD.FAILURE
+        );
       },
     });
   }

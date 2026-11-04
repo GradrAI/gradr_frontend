@@ -8,8 +8,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
-import { useEffect, useState } from "react";
-import { columns } from "./columns";
+import { useEffect, useMemo, useState } from "react";
+import { buildColumns } from "./columns";
+import PbtRubricDialog from "./components/PbtRubricDialog";
 import { Button } from "@/components/ui/button";
 import { Course } from "@/types/Course";
 import { Result } from "@/types/Result";
@@ -44,6 +45,10 @@ const Grader = () => {
   const [exportButtonText, setExportButtonText] = useState(
     "Export to Google Sheets"
   );
+  const [rulesCategory, setRulesCategory] = useState<Partial<Category> | null>(
+    null
+  );
+  const columns = useMemo(() => buildColumns(setRulesCategory), []);
   // Fetch active period
   const { data: activePeriodData } = useQuery({
     queryKey: ["activePeriod"],
@@ -333,6 +338,12 @@ const Grader = () => {
             </>
           )}
         </>
+      )}
+      {rulesCategory && (
+        <PbtRubricDialog
+          category={rulesCategory}
+          onClose={() => setRulesCategory(null)}
+        />
       )}
     </div>
   );

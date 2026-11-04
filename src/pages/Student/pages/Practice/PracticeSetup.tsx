@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/axios";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { startPracticeSession } from "@/requests/practice";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -32,6 +36,13 @@ export default function PracticeSetup() {
   const [mode, setMode] = useState("quick");
   const [questionCount, setQuestionCount] = useState(20);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>(["english"]);
+  const [focusWeakTopics, setFocusWeakTopics] = useState(false);
+
+  const { data: weakTopics = [] } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: async () => await api.get(`/user/student`),
+    select: (res): string[] => res.data?.data?.weaknessProfile?.weakTopics ?? [],
+  });
 
   const availableSubjects = examType === "ncee" ? NCEE_SUBJECTS : SECONDARY_SUBJECTS;
 
@@ -65,7 +76,8 @@ export default function PracticeSetup() {
         examType,
         subjects: selectedSubjects,
         mode,
-        questionCount
+        questionCount,
+        focusWeakTopics: focusWeakTopics && weakTopics.length > 0,
       });
       const session = resp.data.data.session;
       toast.success("Practice session created successfully!");
@@ -214,6 +226,25 @@ export default function PracticeSetup() {
               </div>
             </div>
           </div>
+
+          {weakTopics.length > 0 && (
+            <div className="flex items-center justify-between gap-4 p-5 rounded-2xl border-2 border-slate-200">
+              <div className="space-y-1">
+                <Label htmlFor="focus-weak-topics" className="font-bold text-slate-700">
+                  Focus on my weak topics
+                </Label>
+                <p className="text-sm text-slate-500">
+                  Prioritise questions on: {weakTopics.slice(0, 5).join(", ")}
+                  {weakTopics.length > 5 ? "…" : ""}
+                </p>
+              </div>
+              <Switch
+                id="focus-weak-topics"
+                checked={focusWeakTopics}
+                onCheckedChange={setFocusWeakTopics}
+              />
+            </div>
+          )}
 
           <div className="pt-6 border-t border-slate-100 flex justify-end">
             <Button

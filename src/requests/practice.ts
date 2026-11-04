@@ -1,6 +1,13 @@
 import api from "@/lib/axios";
 
-export const startPracticeSession = async (payload: { examType: string, subjects: string[], mode: string, questionCount: number }) => {
+export const startPracticeSession = async (payload: {
+    examType: string;
+    subjects: string[];
+    mode: string;
+    questionCount: number;
+    /** Bias question selection toward the student's weak topics. */
+    focusWeakTopics?: boolean;
+}) => {
     return await api.post("/practice/sessions", payload);
 };
 

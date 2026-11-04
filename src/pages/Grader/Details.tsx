@@ -31,6 +31,7 @@ import notifications from "@/requests/notifications";
 import { convertGCSUrlToPublicUrl } from "@/lib/convertGCSUrlToPublicUrl";
 import useStore from "@/state";
 import { usePostHog } from '@posthog/react'
+import { formatReviewReason } from "@/lib/reviewReasons";
 
 const formSchema = z.object({
   score: z.string(),
@@ -117,6 +118,29 @@ const Details = () => {
         categoryId,
       });
       return res.data;
+    },
+  });
+
+  const pendingReview = latestResult?.result?.status === "PENDING_REVIEW";
+  const reviewReasons: string[] =
+    latestResult?.result?.gradingMeta?.validationErrors ?? [];
+
+  // Approving keeps the score as-is; the backend marks the result COMPLETED.
+  const { mutate: approveMutate, isPending: approveIsPending } = useMutation({
+    mutationFn: async () => {
+      const res = await api.patch(`/results/${_id}`, {
+        score: displayScore,
+        categoryId,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success("Score approved");
+      queryClient.invalidateQueries({ queryKey: ["singleCourse", courseId] });
+      refetchResult();
+    },
+    onError: (error: { response?: { data?: { message?: string } } }) => {
+      toast.error(error.response?.data?.message || notifications.RESULT.FAILURE);
     },
   });
 
@@ -225,6 +249,36 @@ const Details = () => {
         </p>
       </div>
 
+      {pendingReview && (
+        <div
+          role="status"
+          className="flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800 p-4"
+        >
+          <div className="flex gap-3">
+            <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600" />
+            <div>
+              <p className="font-semibold text-amber-900 dark:text-amber-200">
+                Needs your review — the student can't see this score yet.
+              </p>
+              {reviewReasons.length > 0 && (
+                <ul className="mt-1 list-disc pl-5 text-sm text-amber-900/80 dark:text-amber-200/80">
+                  {reviewReasons.map((reason) => (
+                    <li key={reason}>{formatReviewReason(reason)}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+          <Button
+            onClick={() => approveMutate()}
+            disabled={approveIsPending || isFetchingResult}
+          >
+            {approveIsPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+            Approve score
+          </Button>
+        </div>
+      )}
+
       <div className="w-full h-full flex flex-col gap-8 justify-start border border-border rounded-xl cursor-pointer text-justify p-6 bg-card text-card-foreground overflow-y-auto">
         <div className="flex flex-col justify-start">
           <p className="text-xl m-0 font-bold text-muted-foreground uppercase text-xs tracking-widest mb-2">Overall Score</p>
@@ -251,8 +305,15 @@ const Details = () => {
                 <div key={index} className="p-4 bg-muted/50 dark:bg-zinc-900/50 rounded-xl border border-border dark:border-zinc-800 hover:border-primary/20 transition-colors shadow-sm">
                   <div className="flex justify-between items-center mb-3">
                     <span className="font-bold text-foreground text-sm">{res.questionId || `Question ${index + 1}`}</span>
-                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                      Marks: {res.score} / {res.maxScore}
+                    <span className="flex items-center gap-2">
+                      {res.selected === false && (
+                        <span className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                          Not counted
+                        </span>
+                      )}
+                      <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                        Marks: {res.score} / {res.maxScore}
+                      </span>
                     </span>
                   </div>
                   <div className="space-y-2">

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -245,6 +245,9 @@ const Exams = () => {
                       PDF
                     </a>
                   )}
+                  <Button asChild size="sm" variant="ghost">
+                    <Link to={`${exam._id}/submissions`}>Submissions</Link>
+                  </Button>
                   <Button
                     size="sm"
                     variant="outline"

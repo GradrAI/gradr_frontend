@@ -3,8 +3,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
 import { Category } from "@/types/Category";
+import { Button } from "@/components/ui/button";
 
-export const columns: ColumnDef<Partial<Category>>[] = [
+export const buildColumns = (
+  onEditRules: (category: Partial<Category>) => void
+): ColumnDef<Partial<Category>>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -80,6 +83,20 @@ export const columns: ColumnDef<Partial<Category>>[] = [
       <DataTableColumnHeader column={column} title="No. of Students" />
     ),
     cell: ({ row }) => <p className="">{row.original?.students?.length}</p>,
+  },
+  {
+    id: "examRules",
+    header: () => "Exam rules",
+    cell: ({ row }) => (
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onEditRules(row.original)}
+      >
+        Exam rules
+      </Button>
+    ),
+    enableSorting: false,
   },
   {
     id: "expander",
