@@ -8,5 +8,6 @@ export type UpdatedResource = Resource & {
     score: String;
     explanation: String;
     feedback: String;
+    status?: "COMPLETED" | "PENDING_REVIEW";
   };
 };
