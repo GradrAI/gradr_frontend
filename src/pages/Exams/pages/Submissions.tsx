@@ -43,8 +43,10 @@ const Submissions = () => {
       toast.success("Grading restarted");
       queryClient.invalidateQueries({ queryKey: ["examSubmissions", examId] });
     },
-    onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message ?? "Could not restart grading");
+    onError: (error: { response?: { data?: { error?: string; message?: string } } }) => {
+      toast.error(
+        error.response?.data?.error ?? error.response?.data?.message ?? "Could not restart grading"
+      );
     },
   });
 

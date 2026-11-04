@@ -21,7 +21,8 @@ type RecorderState =
   | "processed"
   | "no_speech"
   | "failed"
-  | "limit";
+  | "limit"
+  | "rate_limited";
 
 const STATUS_COPY: Partial<Record<RecorderState, string>> = {
   processing: "Processing…",
@@ -29,6 +30,7 @@ const STATUS_COPY: Partial<Record<RecorderState, string>> = {
   no_speech: "No speech detected — try again",
   failed: "Couldn't process this recording; your written answer still counts",
   limit: "Recording limit reached",
+  rate_limited: "Too many recordings — wait a minute and try again",
 };
 
 /** The first container this browser's MediaRecorder can produce, or "" for its default. */
@@ -82,9 +84,12 @@ const VivaRecorder = ({ attemptId, questionId }: VivaRecorderProps) => {
       ]);
       setState(status);
     } catch (error) {
-      setState(
-        isAxiosError(error) && error.response?.status === 429 ? "limit" : "failed"
-      );
+      if (isAxiosError(error) && error.response?.status === 429) {
+        const code = error.response.data?.error ?? error.response.data?.message;
+        setState(code === "VIVA_RATE_LIMITED" ? "rate_limited" : "limit");
+      } else {
+        setState("failed");
+      }
     }
   };
 

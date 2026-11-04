@@ -17,7 +17,7 @@ export interface AttemptStatusResponse {
   resultId: string | null;
   resultStatus: ResultStatus | null;
   score: number | null;
-  maxScore: number;
+  maxScore: number | null;
 }
 
 /** GET /exam/attempts/mine. */
