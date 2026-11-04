@@ -315,9 +315,19 @@ export function DataTable<TData, TValue>({
                                       {resource?.fileUrl}
                                     </TableCell>
                                     <TableCell
-                                      className={`font-semibold truncate max-w-sm ${resource?.result ? "text-green-500" : "text-red-500"}`}
+                                      className={`font-semibold truncate max-w-sm ${
+                                        resource?.result?.status === "PENDING_REVIEW"
+                                          ? "text-amber-600"
+                                          : resource?.result
+                                            ? "text-green-500"
+                                            : "text-red-500"
+                                      }`}
                                     >
-                                      {resource?.result ? "Graded" : "Ungraded"}
+                                      {resource?.result?.status === "PENDING_REVIEW"
+                                        ? "Needs review"
+                                        : resource?.result
+                                          ? "Graded"
+                                          : "Ungraded"}
                                     </TableCell>
                                     <TableCell>
                                       {resource?.result?.score
