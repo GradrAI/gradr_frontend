@@ -1,4 +1,5 @@
 const APK_URL = "https://storage.googleapis.com/gradr-421618-app-downloads/android/gradrai-latest.apk";
+const DESKTOP_URL = "https://storage.googleapis.com/gradr-421618-app-downloads/desktop/gradrai-desktop-latest.exe";
 
 const DownloadApp = () => {
   return (
@@ -33,6 +34,34 @@ const DownloadApp = () => {
           GradrAI is coming to Google Play. If you install it from Google Play later, uninstall this version first.
           Practice that has synced stays in your GradrAI account.
         </p>
+      </section>
+
+      <section className="mt-10 border-t pt-8">
+        <h2 className="text-xl font-semibold mb-2">GradrAI Desktop for schools (Windows)</h2>
+        <p className="mb-4">
+          Run computer-based exams on a teacher&apos;s laptop without internet: students join over the school network,
+          multiple-choice answers are marked on the spot, and results sync to gradrai.com when you are back online.
+        </p>
+        <a href={DESKTOP_URL} className="inline-block bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg">
+          Download for Windows
+        </a>
+        <p className="mt-2 text-sm">About 120 MB. Windows 10 or 11, 64-bit.</p>
+        <ol className="list-decimal pl-6 space-y-2 mt-4">
+          <li>
+            Run the installer. If Windows says it protected your PC, click &quot;More info&quot;, then &quot;Run
+            anyway&quot;.
+          </li>
+          <li>
+            For offline question generation and essay marking, install{" "}
+            <a className="underline" href="https://ollama.com/download">
+              Ollama
+            </a>
+            . The first start downloads the AI model (about 10 GB), so do it once on a good connection.
+          </li>
+          <li>
+            Open GradrAI Desktop and enter your school&apos;s Desktop API Key, shown under Settings on gradrai.com.
+          </li>
+        </ol>
       </section>
 
       <p className="mt-8 text-sm">
