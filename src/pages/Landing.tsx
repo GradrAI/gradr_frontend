@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import api from "@/lib/axios";
@@ -37,6 +37,15 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 
 import BackedBy from "@/components/landing/BackedBy";
 import ContactForm from "@/components/landing/ContactForm";
+import xLogo from "@/assets/social-x.svg";
+import linkedInLogo from "@/assets/social-linkedin.png";
+import facebookLogo from "@/assets/social-facebook.png";
+
+const socialLinks = [
+  { name: "X", href: "https://x.com/gradrai", logo: xLogo },
+  { name: "LinkedIn", href: "https://www.linkedin.com/company/gradrai/", logo: linkedInLogo },
+  { name: "Facebook", href: "https://www.facebook.com/people/Gradrai/61594293488884/", logo: facebookLogo },
+];
 
 const Landing = () => {
   const { t, i18n } = useTranslation();
@@ -298,7 +307,7 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className="hidden md:block">
+            <div className="hidden xl:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 <button
                   onClick={() => scrollToSection(featuresRef)}
@@ -318,6 +327,12 @@ const Landing = () => {
                 >
                   {t("nav.pricing")}
                 </button>
+                <Link
+                  to="/blog"
+                  className="rounded-lg bg-primary/10 text-primary hover:bg-primary/20 px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {t("nav.blog")}
+                </Link>
                 <button
                   onClick={scrollToDemo}
                   className="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
@@ -327,7 +342,7 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden xl:flex items-center space-x-4">
               <LanguageToggle />
               <ThemeToggle />
               <Button
@@ -348,7 +363,7 @@ const Landing = () => {
               </Button>
             </div>
 
-            <div className="md:hidden flex items-center space-x-2">
+            <div className="xl:hidden flex items-center space-x-2">
               <LanguageToggle />
               <ThemeToggle />
               <button
@@ -365,7 +380,7 @@ const Landing = () => {
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-background border-t border-border">
+          <div className="xl:hidden bg-background border-t border-border">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <button
                 onClick={() => scrollToSection(featuresRef)}
@@ -385,6 +400,13 @@ const Landing = () => {
               >
                 {t("nav.pricing")}
               </button>
+              <Link
+                to="/blog"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block rounded-lg bg-primary/10 text-primary hover:bg-primary/20 px-3 py-2 text-base font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {t("nav.blog")}
+              </Link>
               <button
                 onClick={scrollToDemo}
                 className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary w-full text-left"
@@ -1021,6 +1043,25 @@ const Landing = () => {
                   <span>contact@gradrai.com</span>
                 </div>
               </div>
+              <div className="mt-8">
+                <h3 className="text-white font-semibold mb-3">{t("footer.followUs")}</h3>
+                <ul className="flex flex-wrap gap-4">
+                  {socialLinks.map((social) => (
+                    <li key={social.name}>
+                      <a
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={t("footer.socialLink", { platform: social.name })}
+                        title={t("footer.socialLink", { platform: social.name })}
+                        className="flex h-12 w-12 items-center justify-center rounded-lg hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                      >
+                        <img src={social.logo} alt="" width={24} height={24} className="h-6 w-6 object-contain" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
             <div>
@@ -1049,6 +1090,11 @@ const Landing = () => {
                   >
                     {t("footer.pricing")}
                   </button>
+                </li>
+                <li>
+                  <Link to="/blog" className="text-slate-400 hover:text-white transition-colors">
+                    {t("nav.blog")}
+                  </Link>
                 </li>
               </ul>
             </div>

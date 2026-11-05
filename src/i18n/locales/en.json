@@ -3,6 +3,7 @@
     "solutions": "Solutions",
     "whoItsFor": "Who it's for",
     "pricing": "Pricing",
+    "blog": "Blog",
     "contact": "Contact",
     "signIn": "Sign In",
     "signUp": "Sign Up",
@@ -364,6 +365,8 @@
     "support": "Support",
     "helpCenter": "Email support",
     "contactUs": "Contact Us",
+    "followUs": "Follow GradrAI",
+    "socialLink": "GradrAI on {{platform}} (opens in a new tab)",
     "copyright": "© {{year}} GradrAI. All rights reserved.",
     "privacy": "Privacy",
     "terms": "Terms"

@@ -3,6 +3,7 @@
     "solutions": "Solutions",
     "whoItsFor": "À qui s'adresse GradrAI",
     "pricing": "Tarifs",
+    "blog": "Blog",
     "contact": "Contact",
     "signIn": "Connexion",
     "signUp": "Inscription",
@@ -364,6 +365,8 @@
     "support": "Support",
     "helpCenter": "Assistance par e-mail",
     "contactUs": "Nous contacter",
+    "followUs": "Suivez GradrAI",
+    "socialLink": "GradrAI sur {{platform}} (s’ouvre dans un nouvel onglet)",
     "copyright": "© {{year}} GradrAI. Tous droits réservés.",
     "privacy": "Confidentialité",
     "terms": "Conditions"
